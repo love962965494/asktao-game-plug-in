@@ -1,0 +1,49 @@
+{
+  "name": "asktao-game-plug-in",
+  "version": "1.0.0",
+  "main": "main.js",
+  "repository": "git@github.com:love962965494/asktao-game-plug-in.git",
+  "author": "shenchao <shenchao20@jd.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm run start:renderer",
+    "start:main": "cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
+    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.renderer.dev.ts"
+  },
+  "devDependencies": {
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-router": "^5.1.17",
+    "@types/react-router-dom": "^5.3.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "electron": "^16.0.5",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-rebuild": "^3.2.5",
+    "html-webpack-plugin": "^5.5.0",
+    "node-loader": "^2.0.0",
+    "react-refresh": "^0.11.0",
+    "react-refresh-typescript": "^2.0.3",
+    "sass": "^1.45.0",
+    "sass-loader": "^12.4.0",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "electron-debug": "^3.2.0",
+    "electron-log": "^4.4.3",
+    "electron-updater": "^4.6.1",
+    "history": "^5.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
+    "robotjs": "^0.6.0"
+  }
+}
