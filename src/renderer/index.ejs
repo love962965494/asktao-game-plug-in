@@ -7,12 +7,4 @@
   <body>
     <div id="root">哈哈哈</div>
   </body>
-  <script>
-    window.electron.ipcRenderer.once('ipc-example', (arg) => {
-      // eslint-disable-next-line no-console
-      console.log(arg);
-    });
-
-    window.electron.ipcRenderer.myPing();
-  </script>
 </html>
