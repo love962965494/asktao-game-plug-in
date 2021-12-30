@@ -5,7 +5,7 @@ import webpackPaths from './webpack.paths'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { spawn } from 'child_process'
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 
 const path = require('path')
 
@@ -65,9 +65,9 @@ export default merge(baseConfig, {
       },
     ],
   },
-  plugins: ([
+  plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }),
     new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -79,13 +79,19 @@ export default merge(baseConfig, {
         removeComments: true,
       },
     }),
-  ]) as any[],
+  ] as any[],
   node: {
     __dirname: false,
     __filename: false,
   },
   devServer: {
     port,
+    proxy: {
+      '/api': {
+        target: 'https://ocr.wdku.net',
+        pathRewrite: { '^/api': '' },
+      },
+    },
     compress: true,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },

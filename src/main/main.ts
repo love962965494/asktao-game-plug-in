@@ -15,6 +15,12 @@ import log from 'electron-log'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import './ipcMain'
+import startServer from '../server'
+
+// 服务端端口号
+const port = 3000
+// 启动服务端服务
+startServer(port)
 
 export default class AppUpdater {
   constructor() {

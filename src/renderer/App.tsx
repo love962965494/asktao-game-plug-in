@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { Bitmap } from 'robotjs'
+import { requestByGet, requestByPost } from 'utils/http'
 import './App.css'
 
 const AppContext = createContext({
@@ -9,15 +9,10 @@ const AppContext = createContext({
 const Hello = () => {
   const { ipcRenderer } = useContext(AppContext)
   const [isTimerStarted, setIsTimerStarted] = useState<boolean>(true)
-  const [imgSrc, setImgSrc] = useState<Bitmap>()
 
   useEffect(() => {
     ipcRenderer.on('get-mouse-pos', function (pos: { x: number; y: number }) {
       console.log('args: ', pos)
-    })
-
-    ipcRenderer.on('get-image', (img: Bitmap) => {
-      setImgSrc(img)
     })
   }, [])
 
@@ -36,14 +31,14 @@ const Hello = () => {
   }, [isTimerStarted])
 
   const handleMoveMouseBtnClick = () => {
-    ipcRenderer.send('move-mouse', { x: 112, y: 72 })
+    ipcRenderer.send('move-mouse', { x: 439, y: 929 })
   }
 
   const handleToggleTimerBtnClick = () => {
     setIsTimerStarted(!isTimerStarted)
   }
 
-  const handleGetImageBtnClick = () => {
+  const handleGetImageBtnClick = async () => {
     ipcRenderer.send('get-image', { x: 6, y: 91 })
   }
 
@@ -58,7 +53,6 @@ const Hello = () => {
       <button type="button" onClick={handleGetImageBtnClick}>
         获取截图
       </button>
-      {imgSrc && <img src={imgSrc} alt="截图" />}
     </div>
   )
 }
