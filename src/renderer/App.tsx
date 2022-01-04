@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { requestByGet, requestByPost } from 'utils/http'
 import './App.css'
 
 const AppContext = createContext({
@@ -8,11 +7,15 @@ const AppContext = createContext({
 
 const Hello = () => {
   const { ipcRenderer } = useContext(AppContext)
-  const [isTimerStarted, setIsTimerStarted] = useState<boolean>(true)
+  const [isTimerStarted, setIsTimerStarted] = useState<boolean>(false)
 
   useEffect(() => {
     ipcRenderer.on('get-mouse-pos', function (pos: { x: number; y: number }) {
-      console.log('args: ', pos)
+      console.log('get-mouse-pos args: ', pos)
+    })
+
+    ipcRenderer.on('get-process', function (processes: string[]) {
+      console.log('get-process data: ', processes)
     })
   }, [])
 
@@ -31,7 +34,7 @@ const Hello = () => {
   }, [isTimerStarted])
 
   const handleMoveMouseBtnClick = () => {
-    ipcRenderer.send('move-mouse', { x: 439, y: 929 })
+    ipcRenderer.send('move-mouse', { x: 1303, y: 820 })
   }
 
   const handleToggleTimerBtnClick = () => {
@@ -40,6 +43,10 @@ const Hello = () => {
 
   const handleGetImageBtnClick = async () => {
     ipcRenderer.send('get-image', { x: 6, y: 91 })
+  }
+
+  const handleGetProcessBtnClick = () => {
+    ipcRenderer.send('get-process')
   }
 
   return (
@@ -52,6 +59,9 @@ const Hello = () => {
       </button>
       <button type="button" onClick={handleGetImageBtnClick}>
         获取截图
+      </button>
+      <button type="button" onClick={handleGetProcessBtnClick}>
+        获取进程
       </button>
     </div>
   )

@@ -133,3 +133,5 @@ app
     })
   })
   .catch(console.log)
+
+export { mainWindow }
