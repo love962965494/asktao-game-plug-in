@@ -34,7 +34,7 @@ const Hello = () => {
   }, [isTimerStarted])
 
   const handleMoveMouseBtnClick = () => {
-    ipcRenderer.send('move-mouse', { x: 1303, y: 820 })
+    ipcRenderer.send('move-mouse', { x: 1228, y: 712 })
   }
 
   const handleToggleTimerBtnClick = () => {
