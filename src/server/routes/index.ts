@@ -1,8 +1,10 @@
 import { FastifyInstance } from 'fastify'
-import { useGetTextFromImage } from './getTextFromImage'
+import getTextFromImage from './getTextFromImage'
+import getConstantsConfig from './getConstantsConfig'
 
 async function routes(fastify: FastifyInstance, options: any) {
-  useGetTextFromImage(fastify)
+  getTextFromImage(fastify)
+  getConstantsConfig(fastify)
 }
 
 export default routes

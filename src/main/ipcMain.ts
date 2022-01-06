@@ -1,12 +1,8 @@
-import { BrowserWindow, ipcMain, screen } from 'electron'
+import { ipcMain } from 'electron'
 import robot, { Bitmap } from 'robotjs'
 import Jimp from 'jimp'
 import path from 'path'
 import GameWindowControl from '../utils/gameWindowControll'
-import { getProcessesByName } from '../utils/systemCotroll'
-
-// 存放游戏实例和对应的electron窗口
-const windows: Array<{ gameInstance: GameWindowControl; subWindow: object }> = []
 
 // 将截图文件转换为png图片
 function screenCaptureToFile2(robotScreenPic: Bitmap, path: string) {
@@ -28,47 +24,7 @@ function screenCaptureToFile2(robotScreenPic: Bitmap, path: string) {
   })
 }
 
-async function init() {
-  const processes = await getProcessesByName('asktao')
-
-  const gameInstances = processes.map(([_pName, pId]) => {
-    const gameInstance = new GameWindowControl(+pId)
-
-    return gameInstance
-  })
-
-  for (const gameInstance of gameInstances) {
-    // gameInstance.showGameWindow()
-
-    const { left, top, right, bottom } = gameInstance.getDimensions()
-    const { scaleFactor } = screen.getPrimaryDisplay()
-
-    const subWindow = {
-      left,
-      top,
-      right,
-      bottom,
-      scaleFactor,
-    }
-
-    // const subWindow = new BrowserWindow({
-    //   width: (right - left) / scaleFactor,
-    //   height: (bottom - top) / scaleFactor,
-    //   x: left,
-    //   y: top,
-    //   show: true,
-    //   frame: false,
-    //   webPreferences: {
-    //     devTools: false,
-    //   },
-    // })
-
-    windows.push({
-      gameInstance,
-      subWindow,
-    })
-  }
-
+export default function init() {
   ipcMain.on('get-mouse-pos', (event, pid) => {
     const instance = new GameWindowControl(pid)
 
@@ -91,6 +47,3 @@ async function init() {
 
   // subWindow.loadFile(path.join(__dirname, './test.html'))
 }
-
-// 初始化各种ipcMain事件
-init()

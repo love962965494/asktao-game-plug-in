@@ -1,6 +1,17 @@
 import Fastify from 'fastify'
 import routes from './routes'
 
+export const HttpStatus = {
+  Success: {
+    status: 200,
+    statusText: '请求数据成功！',
+  },
+  Failure: {
+    status: 500,
+    statusText: '请求数据失败！',
+  },
+}
+
 const fastify = Fastify({
   logger: true,
 })

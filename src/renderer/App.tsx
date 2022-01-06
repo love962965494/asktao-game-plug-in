@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import './App.css'
 import Pages from './pages'
+import { requestByGet } from '../utils/http'
 
 const AppContext = createContext({
   ipcRenderer: window.electron.ipcRenderer,
@@ -29,7 +30,6 @@ const Hello = () => {
     }
 
     return () => {
-      console.log('return hhh')
       window.clearInterval(interval)
     }
   }, [isTimerStarted])
@@ -50,6 +50,12 @@ const Hello = () => {
     ipcRenderer.send('get-process')
   }
 
+  const handleGetGameServerGroupBtnClick = async () => {
+    const data = await requestByGet('/getGameServerGroup')
+
+    console.log('data: ', data)
+  }
+
   return (
     <div>
       <button type="button" onClick={handleMoveMouseBtnClick}>
@@ -64,10 +70,13 @@ const Hello = () => {
       <button type="button" onClick={handleGetProcessBtnClick}>
         获取进程
       </button>
+      <button type="button" onClick={handleGetGameServerGroupBtnClick}>
+        获取服务器区组
+      </button>
     </div>
   )
 }
 
 export default function App() {
-  return <Hello />
+  return <Pages />
 }

@@ -1,4 +1,5 @@
 import { Form, Button, List, Avatar } from 'antd'
+import { AddAccount } from './components'
 
 const FormItem = Form.Item
 const ListItem = List.Item
@@ -12,7 +13,6 @@ export default function AccountListManage() {
       <FormItem>
         <Button type="primary">添加</Button>
       </FormItem>
-
       <List
         itemLayout="horizontal"
         dataSource={data}
@@ -25,7 +25,9 @@ export default function AccountListManage() {
             />
           </ListItem>
         )}
-      ></List>
+      />
+
+      <AddAccount />
     </Form>
   )
 }

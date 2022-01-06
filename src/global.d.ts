@@ -159,3 +159,8 @@ declare module 'win-control' {
     ASYNCWINDOWPOS = 0x4000,
   }
 }
+
+declare module '*.module.scss' {
+  const classes: { [key: string]: string }
+  export default classes
+}

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
 
 const service = axios.create({
   baseURL: '/api',
@@ -7,7 +7,6 @@ const service = axios.create({
 function sponsorRequest(method: 'get' | 'post', requestConfig?: AxiosRequestConfig) {
   return function (url: string, params?: any) {
     const paramsType = method === 'get' ? 'params' : 'data'
-    console.log('url: ', url)
     const config = {
       method,
       url,
@@ -23,7 +22,7 @@ async function requestByGet(url: string) {
   const sponsorRequestByGet = sponsorRequest('get')
 
   try {
-    const { data } = await sponsorRequestByGet(url)
+    const data = await sponsorRequestByGet(url)
 
     return data
   } catch (error) {

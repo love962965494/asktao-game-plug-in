@@ -9,18 +9,23 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path'
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, screen } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import './ipcMain'
 import startServer from '../server'
+import { getProcessesByName } from '../utils/systemCotroll'
+import GameWindowControl from '../utils/gameWindowControll'
 
 // 服务端端口号
 const port = 3000
-// 启动服务端服务
-startServer(port)
+
+// 存放游戏实例和对应的electron窗口
+const windows: Array<{ gameInstance: GameWindowControl; subWindow: object }> = []
+
+let mainWindow: BrowserWindow | null = null
 
 export default class AppUpdater {
   constructor() {
@@ -29,8 +34,6 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify()
   }
 }
-
-let mainWindow: BrowserWindow | null = null
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support')
@@ -111,6 +114,51 @@ const createWindow = async () => {
 }
 
 /**
+ * 获取游戏进程，创建对应实例和伴生的控制窗口
+ */
+async function createGameInstances() {
+  const processes = await getProcessesByName('asktao')
+
+  const gameInstances = processes.map(([_pName, pId]) => {
+    const gameInstance = new GameWindowControl(+pId)
+
+    return gameInstance
+  })
+
+  for (const gameInstance of gameInstances) {
+    gameInstance.showGameWindow()
+
+    const { left, top, right, bottom } = gameInstance.getDimensions()
+    const { scaleFactor } = screen.getPrimaryDisplay()
+
+    const subWindow = new BrowserWindow({
+      width: (right - left) / scaleFactor,
+      height: (bottom - top) / scaleFactor,
+      x: left,
+      y: top,
+      show: true,
+      frame: false,
+      webPreferences: {
+        devTools: false,
+      },
+    })
+
+    windows.push({
+      gameInstance,
+      subWindow,
+    })
+  }
+}
+
+function init() {
+  createWindow()
+  // 启动服务端服务
+  startServer(port)
+  // 创建游戏实例
+  createGameInstances()
+}
+
+/**
  * Add event listeners...
  */
 
@@ -125,7 +173,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow()
+    init()
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
