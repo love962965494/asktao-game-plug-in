@@ -3,10 +3,10 @@ import robot, { Bitmap } from 'robotjs'
 import Jimp from 'jimp'
 import path from 'path'
 import GameWindowControl from '../utils/gameWindowControll'
-import { getProcessesByName } from 'utils/systemCotroll'
+import { getProcessesByName } from '../utils/systemCotroll'
 
 // 存放游戏实例和对应的electron窗口
-const windows: Array<{ gameInstance: GameWindowControl; subWindow: BrowserWindow }> = []
+const windows: Array<{ gameInstance: GameWindowControl; subWindow: object }> = []
 
 // 将截图文件转换为png图片
 function screenCaptureToFile2(robotScreenPic: Bitmap, path: string) {
@@ -38,22 +38,30 @@ async function init() {
   })
 
   for (const gameInstance of gameInstances) {
-    gameInstance.showGameWindow()
+    // gameInstance.showGameWindow()
 
     const { left, top, right, bottom } = gameInstance.getDimensions()
     const { scaleFactor } = screen.getPrimaryDisplay()
 
-    const subWindow = new BrowserWindow({
-      width: (right - left) / scaleFactor,
-      height: (bottom - top) / scaleFactor,
-      x: left,
-      y: top,
-      show: true,
-      frame: false,
-      webPreferences: {
-        devTools: false,
-      },
-    })
+    const subWindow = {
+      left,
+      top,
+      right,
+      bottom,
+      scaleFactor,
+    }
+
+    // const subWindow = new BrowserWindow({
+    //   width: (right - left) / scaleFactor,
+    //   height: (bottom - top) / scaleFactor,
+    //   x: left,
+    //   y: top,
+    //   show: true,
+    //   frame: false,
+    //   webPreferences: {
+    //     devTools: false,
+    //   },
+    // })
 
     windows.push({
       gameInstance,
@@ -61,10 +69,13 @@ async function init() {
     })
   }
 
-  ipcMain.on('get-mouse-pos', (event) => {
+  ipcMain.on('get-mouse-pos', (event, pid) => {
+    const instance = new GameWindowControl(pid)
+
+    const { left, top } = instance.getDimensions()
     const { x, y } = robot.getMousePos()
 
-    event.reply('get-mouse-pos', { x, y })
+    event.reply('get-mouse-pos', { x: x - left, y: y - top })
   })
 
   ipcMain.on('move-mouse', (_event, { x, y }) => {

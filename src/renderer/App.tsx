@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import './App.css'
+import Pages from './pages'
 
 const AppContext = createContext({
   ipcRenderer: window.electron.ipcRenderer,
@@ -23,7 +24,7 @@ const Hello = () => {
     let interval: number
     if (isTimerStarted) {
       interval = window.setInterval(() => {
-        window.electron.ipcRenderer.send('get-mouse-pos')
+        window.electron.ipcRenderer.send('get-mouse-pos', 15896)
       }, 3000)
     }
 
