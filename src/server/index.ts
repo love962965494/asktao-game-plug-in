@@ -1,14 +1,16 @@
 import Fastify from 'fastify'
 import routes from './routes'
 
+export type HttpCodes = typeof HttpStatus[keyof typeof HttpStatus]['code']
+
 export const HttpStatus = {
   Success: {
-    status: 200,
-    statusText: '请求数据成功！',
+    code: 200 as const,
+    msg: '请求数据成功！',
   },
   Failure: {
-    status: 500,
-    statusText: '请求数据失败！',
+    code: 500 as const,
+    msg: '请求数据失败！',
   },
 }
 

@@ -1,0 +1,18 @@
+[
+  {
+    "groupName": "测试",
+    "accountList": [
+      {
+        "account": "账户号",
+        "password": "密码",
+        "serverGroup": ["大区", "区名"],
+        "roleInfo": {
+          "name": "",
+          "male": "",
+          "sect": "",
+          "rank": ""
+        }
+      }
+    ]
+  }
+]

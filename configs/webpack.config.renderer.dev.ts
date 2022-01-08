@@ -88,7 +88,7 @@ export default merge(baseConfig, {
     port,
     proxy: {
       '/api': {
-        target: 'https://ocr.wdku.net',
+        target: 'http://localhost:3000',
         pathRewrite: { '^/api': '' },
       },
     },

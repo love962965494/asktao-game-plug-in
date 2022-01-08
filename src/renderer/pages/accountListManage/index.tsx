@@ -1,12 +1,15 @@
 import { Form, Button, List, Avatar } from 'antd'
 import { AddAccount } from './components'
+import { useGameServerGroup } from './hooks'
 
 const FormItem = Form.Item
 const ListItem = List.Item
 const ListItemMeta = ListItem.Meta
 
 export default function AccountListManage() {
-  const data = []
+  const gameServerGroup = useGameServerGroup()
+
+  console.log('gameServerGrouphhh: ', gameServerGroup)
 
   return (
     <Form>
@@ -15,7 +18,7 @@ export default function AccountListManage() {
       </FormItem>
       <List
         itemLayout="horizontal"
-        dataSource={data}
+        dataSource={[]}
         renderItem={(item) => (
           <ListItem>
             <ListItemMeta

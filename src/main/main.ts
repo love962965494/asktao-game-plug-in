@@ -15,9 +15,10 @@ import log from 'electron-log'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import './ipcMain'
+import { getProcessesByName } from 'utils/systemCotroll'
+import GameWindowControl from 'utils/gameWindowControll'
 import startServer from '../server'
-import { getProcessesByName } from '../utils/systemCotroll'
-import GameWindowControl from '../utils/gameWindowControll'
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
 // 服务端端口号
 const port = 3000
@@ -46,22 +47,9 @@ if (isDevelopment) {
   require('electron-debug')()
 }
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer')
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
-  const extensions = ['REACT_DEVELOPER_TOOLS']
-
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log)
-}
-
 const createWindow = async () => {
   if (isDevelopment) {
-    await installExtensions()
+    await installExtension(REACT_DEVELOPER_TOOLS)
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -155,7 +143,7 @@ function init() {
   // 启动服务端服务
   startServer(port)
   // 创建游戏实例
-  createGameInstances()
+  // createGameInstances()
 }
 
 /**

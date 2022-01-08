@@ -1,10 +1,11 @@
 import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
+import { HttpCodes } from 'server'
 
 const service = axios.create({
   baseURL: '/api',
 })
 
-function sponsorRequest(method: 'get' | 'post', requestConfig?: AxiosRequestConfig) {
+function sponsorRequest<T>(method: 'get' | 'post', requestConfig?: AxiosRequestConfig) {
   return function (url: string, params?: any) {
     const paramsType = method === 'get' ? 'params' : 'data'
     const config = {
@@ -14,20 +15,22 @@ function sponsorRequest(method: 'get' | 'post', requestConfig?: AxiosRequestConf
       ...requestConfig,
     }
 
-    return service(config)
+    return service(config) as AxiosPromise<{ code: HttpCodes; msg: string; data?: T; error?: Error }>
   }
 }
 
-async function requestByGet(url: string) {
-  const sponsorRequestByGet = sponsorRequest('get')
+async function requestByGet<T>(url: string) {
+  const sponsorRequestByGet = sponsorRequest<T>('get')
 
-  try {
-    const data = await sponsorRequestByGet(url)
+  const {
+    data: { code, data, error },
+  } = await sponsorRequestByGet(url)
 
-    return data
-  } catch (error) {
-    console.log('requestByGet error: ', error)
+  if (code === 500) {
+    throw error
   }
+
+  return data as T
 }
 
 async function requestByPost(url: string, params: any) {

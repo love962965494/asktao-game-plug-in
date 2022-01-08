@@ -1,5 +1,6 @@
 import webpack from 'webpack'
 import webpackPaths from './webpack.paths'
+import path from 'path'
 
 export default {
   stats: 'errors-only',
@@ -29,7 +30,13 @@ export default {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: [webpackPaths.srcPath, 'node_modules'],
+    // modules: [webpackPaths.srcPath, 'node_modules'],
+    // alias: {
+    //   constants: webpackPaths.srcConstantsPath,
+    //   assets: webpackPaths.srcAssetsPath,
+    //   server: webpackPaths.srcServerPath,
+    //   utils: webpackPaths.srcUtilsPath,
+    // },
   },
   plugins: [
     new webpack.EnvironmentPlugin({
