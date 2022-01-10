@@ -20,8 +20,5 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "outDir": "release/app/dist",
-    "paths": {
-      "utils/*": ["utils/*"]
-    }
   },
 }
