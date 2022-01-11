@@ -1,5 +1,6 @@
 import { Input, Modal, Form, Button, Space } from 'antd'
 import { SyntheticEvent, useEffect, useState } from 'react'
+import { simpleCloneKeep } from 'utils/toolkits'
 import { useGameServerGroup } from '../../hooks'
 import styles from './gameServerGroup.module.scss'
 
@@ -17,7 +18,7 @@ export function GameServerGroup({ onChange }: IGameServerGroup) {
   const [filterGameServerGroup, setFilterGameServerGroup] = useState(gameServerGroup)
 
   useEffect(() => {
-    setFilterGameServerGroup(JSON.parse(JSON.stringify(gameServerGroup)))
+    setFilterGameServerGroup(simpleCloneKeep(gameServerGroup))
   }, [gameServerGroup])
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export function GameServerGroup({ onChange }: IGameServerGroup) {
   const handleFormReset = () => {
     form.resetFields()
 
-    setFilterGameServerGroup(JSON.parse(JSON.stringify(gameServerGroup)))
+    setFilterGameServerGroup(simpleCloneKeep(gameServerGroup))
   }
 
   const handleModalSubmit = () => setVisible(false)

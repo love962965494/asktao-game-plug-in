@@ -2,6 +2,11 @@ import { FastifyInstance } from 'fastify'
 import { HttpStatus } from '../index'
 import GameAccountList from '../../constants/GameAccountList.json'
 import GameServerGroup from '../../constants/GameServerGroup.json'
+import fs from 'fs/promises'
+import { constantsPath } from '../../paths'
+import path from 'path'
+import { GameAccount } from 'constants/types'
+import Item from 'antd/lib/list/Item'
 
 /**
  * 获取游戏区组信息
@@ -26,9 +31,25 @@ function getGameAccountList(fastify: FastifyInstance) {
  */
 function addGameAccount(fastify: FastifyInstance) {
   fastify.post('/addGameAccount', (request, response) => {
-    console.log('request: ', request)
+    try {
+      // const { account, password, serverGroup, groupName } = request.body as GameAccount & { groupName: string; serverGroup: string }
+      // const data = []
+      // const item = GameAccountList.find(item => item.groupName === groupName)
+      // if (item) {
+      //   item.accountList.push({
+      //     account,
+      //     password,
+      //     serverGroup: serverGroup.split('/')
+      //   })
+      // }
+      fs.writeFile(path.resolve(constantsPath, 'test.json'), JSON.stringify(request.body))
 
-    response.send('hhh')
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('addGameAccount error: ', error)
+
+      response.send({ ...HttpStatus.Failure })
+    }
   })
 }
 

@@ -1,0 +1,24 @@
+.groupName {
+  position: relative;
+  padding: 0 30px;
+  line-height: 32px;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.red {
+  color: rgb(215 41 23);
+}

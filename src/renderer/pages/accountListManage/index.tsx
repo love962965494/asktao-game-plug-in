@@ -32,6 +32,7 @@ export default function AccountListManage() {
   const { addModalVisible } = state
 
   const { loading, gameAccountList, getGameAccountList } = useGameAccountList()
+  const groupNameList: [string, number][] = gameAccountList.map((item) => [item.groupName, item.accountList.length])
   const addAccount = useAddAccount()
 
   const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
@@ -59,7 +60,12 @@ export default function AccountListManage() {
         </Spin>
       ))}
 
-      <AddAccount visible={addModalVisible} hideModal={hideAddModal} addAccount={addAccount} />
+      <AddAccount
+        addAccount={addAccount}
+        hideModal={hideAddModal}
+        visible={addModalVisible}
+        groupNameList={groupNameList}
+      />
     </Form>
   )
 }
