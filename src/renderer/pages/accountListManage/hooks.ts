@@ -8,7 +8,7 @@ export function useGameServerGroup() {
   useEffect(() => {
     async function getData() {
       const data = await requestByGet<GameServerGroup>('/getGameServerGroup')
-
+      console.log('useGameServerGroup data: ', data)
       setGameServerGroup(data)
     }
 

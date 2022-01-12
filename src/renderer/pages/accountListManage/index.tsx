@@ -53,7 +53,7 @@ export default function AccountListManage() {
             dataSource={group.accountList}
             renderItem={(item) => (
               <ListItem>
-                <ListItemMeta avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />} title={item.roleInfo.name} />
+                <ListItemMeta avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />} title={item.serverGroup} />
               </ListItem>
             )}
           />
@@ -65,6 +65,7 @@ export default function AccountListManage() {
         hideModal={hideAddModal}
         visible={addModalVisible}
         groupNameList={groupNameList}
+        refreshData={getGameAccountList}
       />
     </Form>
   )

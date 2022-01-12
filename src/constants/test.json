@@ -1,1 +1,23 @@
-{"account":"213","password":"123","serverGroup":"网通二区/追风踏月","groupName":"测试"}
+[
+    {
+        "groupName": "测试",
+        "accountList": [
+            {
+                "account": "账户号",
+                "password": "密码",
+                "serverGroup": [
+                    "大区",
+                    "区名"
+                ]
+            },
+            {
+                "account": "阿松大",
+                "password": "企鹅",
+                "serverGroup": [
+                    "双线一区",
+                    "逐日追风"
+                ]
+            }
+        ]
+    }
+]

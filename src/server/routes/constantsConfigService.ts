@@ -1,12 +1,10 @@
 import { FastifyInstance } from 'fastify'
 import { HttpStatus } from '../index'
-import GameAccountList from '../../constants/GameAccountList.json'
 import GameServerGroup from '../../constants/GameServerGroup.json'
 import fs from 'fs/promises'
 import { constantsPath } from '../../paths'
 import path from 'path'
-import { GameAccount } from 'constants/types'
-import Item from 'antd/lib/list/Item'
+import { GameAccount, GameAccountList } from 'constants/types'
 
 /**
  * 获取游戏区组信息
@@ -21,8 +19,10 @@ function getGameSeverGroup(fastify: FastifyInstance) {
  * 获取游戏账户列表信息
  */
 function getGameAccountList(fastify: FastifyInstance) {
-  fastify.get('/getGameAccountList', (_request, response) => {
-    response.send({ ...HttpStatus.Success, data: GameAccountList })
+  fastify.get('/getGameAccountList', async (_request, response) => {
+    const GameAccountList = await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+
+    response.send({ ...HttpStatus.Success, data: JSON.parse(GameAccountList) })
   })
 }
 
@@ -30,19 +30,32 @@ function getGameAccountList(fastify: FastifyInstance) {
  * 添加游戏账户
  */
 function addGameAccount(fastify: FastifyInstance) {
-  fastify.post('/addGameAccount', (request, response) => {
+  fastify.post('/addGameAccount', async (request, response) => {
     try {
-      // const { account, password, serverGroup, groupName } = request.body as GameAccount & { groupName: string; serverGroup: string }
-      // const data = []
-      // const item = GameAccountList.find(item => item.groupName === groupName)
-      // if (item) {
-      //   item.accountList.push({
-      //     account,
-      //     password,
-      //     serverGroup: serverGroup.split('/')
-      //   })
-      // }
-      fs.writeFile(path.resolve(constantsPath, 'test.json'), JSON.stringify(request.body))
+      const { account, password, serverGroup, groupName } = request.body as GameAccount & { groupName: string }
+      const GameAccountList = await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+
+      const newGameAccountList = JSON.parse(GameAccountList) as GameAccountList
+      const item = newGameAccountList.find((item) => item.groupName === groupName)
+      if (item) {
+        item.accountList.push({
+          account,
+          password,
+          serverGroup,
+        })
+      } else {
+        newGameAccountList.push({
+          groupName,
+          accountList: [
+            {
+              account,
+              password,
+              serverGroup,
+            },
+          ],
+        })
+      }
+      fs.writeFile(path.resolve(constantsPath, 'GameAccountList.json'), JSON.stringify(newGameAccountList, undefined, 4))
 
       response.send({ ...HttpStatus.Success })
     } catch (error) {

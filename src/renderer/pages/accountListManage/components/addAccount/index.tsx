@@ -15,6 +15,7 @@ interface IAddAccount {
   hideModal: () => void
   addAccount: (account: GameAccount) => Promise<void>
   groupNameList: [string, number][]
+  refreshData: () => void
 }
 
 interface IState {
@@ -50,7 +51,7 @@ const initialState: IState = {
 }
 
 export function AddAccount(props: IAddAccount) {
-  const { visible, hideModal, addAccount, groupNameList } = props
+  const { visible, hideModal, addAccount, groupNameList, refreshData } = props
   const [addAccountForm] = Form.useForm()
   const [addGroupNameForm] = Form.useForm()
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -82,17 +83,18 @@ export function AddAccount(props: IAddAccount) {
   const handleAddAccountFormSubmit = () => {
     addAccountForm
       .validateFields()
-      .then(async (account) => {
+      .then(async (account: GameAccount) => {
         console.log('account: ', account)
         try {
           dispatch({ type: 'SET_LOADING', payload: { loading: true } })
-          await addAccount(account)
+          await addAccount({ ...account, serverGroup: (account.serverGroup as unknown as string).split('/') })
           addAccountForm.resetFields()
+          hideModal()
+          refreshData()
         } catch (error) {
           console.log('addAccount error: ', error)
         } finally {
           dispatch({ type: 'SET_LOADING', payload: { loading: false } })
-          hideModal()
         }
       })
       .catch((err) => {
@@ -148,62 +150,65 @@ export function AddAccount(props: IAddAccount) {
     dispatch({ type: 'SET_TRUE_GROUP_NAME_LIST', payload: { trueGroupNameList: trueGroupNameList.slice(0, -1) } })
   }
 
-  return [
-    <Modal
-      title="添加账号"
-      key="addAccount"
-      visible={visible}
-      confirmLoading={loading}
-      onOk={handleAddAccountFormSubmit}
-      onCancel={handleAddAccountFormReset}
-    >
-      <Form labelCol={{ span: 4 }} form={addAccountForm}>
-        <FormItem label="账户号" name="account" rules={[{ required: true, message: '账户号必填' }]}>
-          <Input />
-        </FormItem>
-        <FormItem label="密码" name="password" rules={[{ required: true, message: '密码必填' }]}>
-          <Input />
-        </FormItem>
-        <FormItem label="区组" name="serverGroup" rules={[{ required: true, message: '区组必填' }]}>
-          <GameServerGroup />
-        </FormItem>
-        <FormItem label="账号分组" name="groupName" rules={[{ required: true, message: '账号分组必填' }]}>
-          <Select onSelect={handleGroupNameChange} optionLabelProp="value">
-            {trueGroupNameList.map(([groupName, accountsNum], index) => (
-              <SelectOption key={groupName} disabled={accountsNum === 5} className={styles.groupName}>
-                <span className={styles.left}>{groupName}</span>
-                <span className={styles.right}>{accountsNum}</span>
-                {hasAddedGroupName && index === trueGroupNameList.length - 1 && (
-                  <CloseOutlined className={styles.close + ' ' + styles.red} onClick={handleDeleteGroupNameClick} />
-                )}
-              </SelectOption>
-            ))}
-            {!hasAddedGroupName && (
-              <SelectOption key="add" className={styles.groupName + ' ' + styles.red}>
-                <PlusOutlined style={{ marginRight: '15px' }} />
-                添加分组
-              </SelectOption>
-            )}
-          </Select>
-        </FormItem>
-      </Form>
-    </Modal>,
-    <Modal
-      key="addGroupNmae"
-      title="添加分组"
-      visible={addGroupNameVisible}
-      onOk={handleAddGroupNameFormSubmit}
-      onCancel={handleAddGroupNameFormReset}
-    >
-      <Form form={addGroupNameForm}>
-        <FormItem
-          label="分组名"
-          name="groupName"
-          rules={[{ validator: validateGroupName }, { required: true, message: '分组名不能为空' }]}
-        >
-          <Input />
-        </FormItem>
-      </Form>
-    </Modal>,
-  ]
+  return (
+    <>
+      <Modal
+        title="添加账号"
+        key="addAccount"
+        visible={visible}
+        confirmLoading={loading}
+        onOk={handleAddAccountFormSubmit}
+        onCancel={handleAddAccountFormReset}
+      >
+        <Form labelCol={{ span: 4 }} form={addAccountForm}>
+          <FormItem label="账户号" name="account" rules={[{ required: true, message: '账户号必填' }]}>
+            <Input />
+          </FormItem>
+          <FormItem label="密码" name="password" rules={[{ required: true, message: '密码必填' }]}>
+            <Input />
+          </FormItem>
+          <FormItem label="区组" name="serverGroup" rules={[{ required: true, message: '区组必填' }]}>
+            <GameServerGroup />
+          </FormItem>
+          <FormItem label="账号分组" name="groupName" rules={[{ required: true, message: '账号分组必填' }]}>
+            <Select onSelect={handleGroupNameChange} optionLabelProp="value">
+              {trueGroupNameList.map(([groupName, accountsNum], index) => (
+                <SelectOption key={groupName} disabled={accountsNum === 5} className={styles.groupName}>
+                  <span className={styles.left}>{groupName}</span>
+                  <span className={styles.right}>{accountsNum}</span>
+                  {hasAddedGroupName && index === trueGroupNameList.length - 1 && (
+                    <CloseOutlined className={styles.close + ' ' + styles.red} onClick={handleDeleteGroupNameClick} />
+                  )}
+                </SelectOption>
+              ))}
+              {!hasAddedGroupName && (
+                <SelectOption key="add" className={styles.groupName + ' ' + styles.red}>
+                  <PlusOutlined style={{ marginRight: '15px' }} />
+                  添加分组
+                </SelectOption>
+              )}
+            </Select>
+          </FormItem>
+        </Form>
+      </Modal>
+      <Modal
+        key="addGroupNmae"
+        title="添加分组"
+        visible={addGroupNameVisible}
+        onOk={handleAddGroupNameFormSubmit}
+        onCancel={handleAddGroupNameFormReset}
+      >
+        <Form form={addGroupNameForm}>
+          <FormItem
+            label="分组名"
+            name="groupName"
+            rules={[{ validator: validateGroupName }, { required: true, message: '分组名不能为空' }]}
+          >
+            <Input />
+          </FormItem>
+        </Form>
+      </Modal>
+      ,
+    </>
+  )
 }
