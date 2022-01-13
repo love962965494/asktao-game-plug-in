@@ -1,59 +1,14 @@
 [
     {
         "groupName": "测试",
+        "serverGroup": [
+            "双线一区",
+            "吉祥鼠"
+        ],
         "accountList": [
             {
-                "account": "账户号",
-                "password": "密码",
-                "serverGroup": [
-                    "大区",
-                    "区名"
-                ]
-            },
-            {
-                "account": "阿德亲吻",
-                "password": "阿松大",
-                "serverGroup": [
-                    "网通二区",
-                    "倩女幽魂"
-                ]
-            },
-            {
-                "account": "啊大苏打",
-                "password": "额为全额",
-                "serverGroup": [
-                    "网通二区",
-                    "玄武七星"
-                ]
-            },
-            {
-                "account": "热帖",
-                "password": "而我却",
-                "serverGroup": [
-                    "网通二区",
-                    "倩女幽魂"
-                ]
-            },
-            {
-                "account": "大大大撒",
-                "password": "王企鹅王企鹅",
-                "serverGroup": [
-                    "联运一区",
-                    "万妖现世"
-                ]
-            }
-        ]
-    },
-    {
-        "groupName": "急急急",
-        "accountList": [
-            {
-                "account": "大苏打",
-                "password": "日期认为",
-                "serverGroup": [
-                    "网通二区",
-                    "倩女幽魂"
-                ]
+                "account": "哈哈哈",
+                "password": "请二位"
             }
         ]
     }

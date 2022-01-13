@@ -19,17 +19,14 @@ export function useGameServerGroup() {
 }
 
 export function useGameAccountList() {
-  const [loading, setLoading] = useState(false)
   const [gameAccountList, setGameAccountList] = useState<GameAccountList>([])
   const getGameAccountList = useCallback(async () => {
     try {
-      setLoading(true)
-      const data = await requestByGet<GameAccountList>('/getGameAccountList')
-      setGameAccountList(data)
+      const gameAccountList = await requestByGet<GameAccountList>('/getGameAccountList')
+
+      setGameAccountList(gameAccountList)
     } catch (error) {
       console.log('useGameAccountList error: ', error)
-    } finally {
-      setLoading(false)
     }
   }, [])
 
@@ -37,7 +34,7 @@ export function useGameAccountList() {
     getGameAccountList()
   }, [])
 
-  return { loading, gameAccountList, getGameAccountList }
+  return { gameAccountList, getGameAccountList }
 }
 
 export function useAddAccount() {

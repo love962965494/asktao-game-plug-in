@@ -1,6 +1,6 @@
 import { Form, Input, Modal, Select } from 'antd'
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons'
-import { GameAccount } from 'constants/types'
+import { GameAccount, GameAccountList } from 'constants/types'
 import { useEffect, useReducer } from 'react'
 import { GameServerGroup } from '../gameServerGroup'
 import { RuleObject } from 'antd/lib/form'
@@ -10,33 +10,34 @@ import styles from './addAccount.module.scss'
 const FormItem = Form.Item
 const SelectOption = Select.Option
 
+type IAccountAndServerGroup = Array<{ groupName: string; serverGroup: string; accountsNum: number }>
 interface IAddAccount {
   visible: boolean
   hideModal: () => void
-  addAccount: (account: GameAccount) => Promise<void>
-  groupNameList: [string, number][]
   refreshData: () => void
+  accountAndServerGroupList: IAccountAndServerGroup
+  addAccount: (account: GameAccount) => Promise<void>
 }
 
 interface IState {
   loading: boolean
   hasAddedGroupName: boolean
   addGroupNameVisible: boolean
-  trueGroupNameList: [string, number][]
+  trueAccountAndServerGroupList: IAccountAndServerGroup
 }
 
 type IActionTypes =
   | 'SET_LOADING'
   | 'SET_HAS_ADDED_GROUP_NAME'
   | 'SET_ADD_GROUP_NAME_VISIBLE'
-  | 'SET_TRUE_GROUP_NAME_LIST'
+  | 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST'
 
 function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
   switch (action.type) {
     case 'SET_LOADING':
     case 'SET_HAS_ADDED_GROUP_NAME':
     case 'SET_ADD_GROUP_NAME_VISIBLE':
-    case 'SET_TRUE_GROUP_NAME_LIST':
+    case 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST':
       return { ...state, ...action.payload }
     default:
       return state
@@ -45,27 +46,27 @@ function reducer(state: IState, action: { type: IActionTypes; payload: Partial<I
 
 const initialState: IState = {
   loading: false,
-  addGroupNameVisible: false,
   hasAddedGroupName: false,
-  trueGroupNameList: [],
+  addGroupNameVisible: false,
+  trueAccountAndServerGroupList: [],
 }
 
 export function AddAccount(props: IAddAccount) {
-  const { visible, hideModal, addAccount, groupNameList, refreshData } = props
+  const { visible, hideModal, addAccount, accountAndServerGroupList, refreshData } = props
   const [addAccountForm] = Form.useForm()
   const [addGroupNameForm] = Form.useForm()
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { loading, addGroupNameVisible, hasAddedGroupName, trueGroupNameList } = state
+  const { loading, addGroupNameVisible, hasAddedGroupName, trueAccountAndServerGroupList } = state
 
   useEffect(() => {
     dispatch({
-      type: 'SET_TRUE_GROUP_NAME_LIST',
-      payload: { trueGroupNameList: simpleCloneKeep(groupNameList) },
+      type: 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST',
+      payload: { trueAccountAndServerGroupList: simpleCloneKeep(accountAndServerGroupList) },
     })
-  }, [groupNameList])
+  }, [accountAndServerGroupList])
 
   const validateGroupName = (_: RuleObject, value: string) => {
-    if (groupNameList.find(([groupName]) => groupName === value)) {
+    if (accountAndServerGroupList.find(({ groupName }) => groupName === value)) {
       return Promise.reject(new Error('分组名已经存在'))
     }
 
@@ -83,11 +84,11 @@ export function AddAccount(props: IAddAccount) {
   const handleAddAccountFormSubmit = () => {
     addAccountForm
       .validateFields()
-      .then(async (account: GameAccount) => {
+      .then(async (account: GameAccount & { groupName: string; serverGroup: string }) => {
         console.log('account: ', account)
         try {
           dispatch({ type: 'SET_LOADING', payload: { loading: true } })
-          await addAccount({ ...account, serverGroup: (account.serverGroup as unknown as string).split('/') })
+          await addAccount({ ...account })
           addAccountForm.resetFields()
           hideModal()
           refreshData()
@@ -111,9 +112,12 @@ export function AddAccount(props: IAddAccount) {
     if (value === 'add') {
       showAddGroupModal()
       addAccountForm.setFieldsValue({
-        groupName: {
-          value: undefined,
-        },
+        groupName: { value: undefined },
+        serverGroup: undefined,
+      })
+    } else {
+      addAccountForm.setFieldsValue({
+        serverGroup: trueAccountAndServerGroupList.find(({ groupName }) => groupName === value)?.serverGroup,
       })
     }
   }
@@ -121,11 +125,16 @@ export function AddAccount(props: IAddAccount) {
   const handleAddGroupNameFormSubmit = () => {
     addGroupNameForm
       .validateFields()
-      .then(({ groupName }) => {
+      .then(({ groupName, serverGroup }) => {
         dispatch({ type: 'SET_HAS_ADDED_GROUP_NAME', payload: { hasAddedGroupName: true } })
         dispatch({
-          type: 'SET_TRUE_GROUP_NAME_LIST',
-          payload: { trueGroupNameList: [...trueGroupNameList, [groupName, 0]] },
+          type: 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST',
+          payload: {
+            trueAccountAndServerGroupList: [
+              ...trueAccountAndServerGroupList,
+              { groupName, serverGroup, accountsNum: 0 },
+            ],
+          },
         })
         addGroupNameForm.resetFields()
         hideAddGroupModal()
@@ -147,7 +156,10 @@ export function AddAccount(props: IAddAccount) {
       },
     })
     dispatch({ type: 'SET_HAS_ADDED_GROUP_NAME', payload: { hasAddedGroupName: false } })
-    dispatch({ type: 'SET_TRUE_GROUP_NAME_LIST', payload: { trueGroupNameList: trueGroupNameList.slice(0, -1) } })
+    dispatch({
+      type: 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST',
+      payload: { trueAccountAndServerGroupList: trueAccountAndServerGroupList.slice(0, -1) },
+    })
   }
 
   return (
@@ -167,16 +179,13 @@ export function AddAccount(props: IAddAccount) {
           <FormItem label="密码" name="password" rules={[{ required: true, message: '密码必填' }]}>
             <Input />
           </FormItem>
-          <FormItem label="区组" name="serverGroup" rules={[{ required: true, message: '区组必填' }]}>
-            <GameServerGroup />
-          </FormItem>
           <FormItem label="账号分组" name="groupName" rules={[{ required: true, message: '账号分组必填' }]}>
             <Select onSelect={handleGroupNameChange} optionLabelProp="value">
-              {trueGroupNameList.map(([groupName, accountsNum], index) => (
+              {trueAccountAndServerGroupList.map(({ groupName, accountsNum }, index) => (
                 <SelectOption key={groupName} disabled={accountsNum === 5} className={styles.groupName}>
                   <span className={styles.left}>{groupName}</span>
                   <span className={styles.right}>{accountsNum}</span>
-                  {hasAddedGroupName && index === trueGroupNameList.length - 1 && (
+                  {hasAddedGroupName && index === trueAccountAndServerGroupList.length - 1 && (
                     <CloseOutlined className={styles.close + ' ' + styles.red} onClick={handleDeleteGroupNameClick} />
                   )}
                 </SelectOption>
@@ -189,6 +198,9 @@ export function AddAccount(props: IAddAccount) {
               )}
             </Select>
           </FormItem>
+          <FormItem label="区组" name="serverGroup" rules={[{ required: true, message: '区组必填' }]}>
+            <Input readOnly />
+          </FormItem>
         </Form>
       </Modal>
       <Modal
@@ -198,7 +210,7 @@ export function AddAccount(props: IAddAccount) {
         onOk={handleAddGroupNameFormSubmit}
         onCancel={handleAddGroupNameFormReset}
       >
-        <Form form={addGroupNameForm}>
+        <Form form={addGroupNameForm} labelCol={{ span: 4 }}>
           <FormItem
             label="分组名"
             name="groupName"
@@ -206,9 +218,11 @@ export function AddAccount(props: IAddAccount) {
           >
             <Input />
           </FormItem>
+          <FormItem label="区组" name="serverGroup" rules={[{ required: true, message: '区组必填' }]}>
+            <GameServerGroup />
+          </FormItem>
         </Form>
       </Modal>
-      ,
     </>
   )
 }

@@ -1,0 +1,8 @@
+:root {
+  --success-color: #09bf9d;
+  --danger-color: #ff7875;;
+}
+
+.descriptions span > span {
+  color: var(--success-color);
+}

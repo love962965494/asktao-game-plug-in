@@ -1,5 +1,5 @@
 import { Input, Modal, Form, Button, Space } from 'antd'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { MouseEventHandler, SyntheticEvent, useEffect, useState } from 'react'
 import { simpleCloneKeep } from 'utils/toolkits'
 import { useGameServerGroup } from '../../hooks'
 import styles from './gameServerGroup.module.scss'
@@ -30,7 +30,7 @@ export function GameServerGroup({ onChange }: IGameServerGroup) {
 
   const handleInputClick = () => setVisible(true)
 
-  const handleServerGroupClick = ($event: SyntheticEvent) => {
+  const handleServerGroupClick: MouseEventHandler<HTMLUListElement> = ($event) => {
     const { target, currentTarget } = $event as unknown as { target: HTMLElement; currentTarget: HTMLUListElement }
     const role = currentTarget.getAttribute('role')
 

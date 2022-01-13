@@ -1,0 +1,12 @@
+.groupList:not(:last-child) {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #ccc;
+}
+
+.listItem {
+  > div {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+    margin-bottom: 5px;
+  }
+}

@@ -1,9 +1,49 @@
-import GameAccountList from './GameAccountList.json'
-import GameServerGroup from './GameServerGroup.json'
+import GameServerGroupData from './GameServerGroup.json'
 
-type GameAccount = typeof GameAccountList[0]['accountList'][0]
-type GameAccountList = typeof GameAccountList
+/**
+ * 登录状态
+ */
+export type ILoginStatus = '已登录' | '离线'
 
-type GameServerGroup = typeof GameServerGroup
+/**
+ * 账号角色信息
+ */
+export type GameAccount = {
+  account: string
+  password: string
+  rank?: number
+  roleName?: string
+  loginStatus?: ILoginStatus
+}
 
-export { GameAccount, GameAccountList, GameServerGroup }
+/**
+ * 账号分组信息
+ */
+export type GameAccountList = Array<{
+  thread?: number
+  groupName: string
+  accountList: GameAccount[]
+  serverGroup: [string, string]
+}>
+
+/**
+ * 游戏区组
+ */
+export type GameServerGroup = typeof GameServerGroupData
+
+/**
+ * 游戏坐标
+ */
+export type GamePoint = {
+  name: string
+  shortcut?: string
+  point: [number, number]
+}
+
+/**
+ * 游戏坐标分组
+ */
+export type GamePointList = Array<{
+  tag: string
+  pointList: GamePoint[]
+}>
