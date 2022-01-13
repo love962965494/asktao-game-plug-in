@@ -39,7 +39,11 @@ export function useGameAccountList() {
 
 export function useAddAccount() {
   const addAccount = useCallback(async (account: GameAccount) => {
-    await requestByPost('/addGameAccount', account)
+    try {
+      await requestByPost('/addGameAccount', account)
+    } catch (error) {
+      console.log('useAddAccount error: ', error)
+    }
   }, [])
 
   return (account: GameAccount) => addAccount(account)

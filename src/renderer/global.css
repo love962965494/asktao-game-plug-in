@@ -1,8 +1,20 @@
 :root {
   --success-color: #09bf9d;
-  --danger-color: #ff7875;;
+  --danger-color: #ff7875;
 }
 
 .descriptions span > span {
   color: var(--success-color);
+}
+
+.red {
+  color: var(--danger-color);
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
 }

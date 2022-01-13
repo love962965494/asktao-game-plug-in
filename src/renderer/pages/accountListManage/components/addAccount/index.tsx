@@ -1,6 +1,6 @@
-import { Form, Input, Modal, Select } from 'antd'
+import { Form, Input, Modal, Select, Space } from 'antd'
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons'
-import { GameAccount, GameAccountList } from 'constants/types'
+import { GameAccount } from 'constants/types'
 import { useEffect, useReducer } from 'react'
 import { GameServerGroup } from '../gameServerGroup'
 import { RuleObject } from 'antd/lib/form'
@@ -20,21 +20,15 @@ interface IAddAccount {
 }
 
 interface IState {
-  loading: boolean
   hasAddedGroupName: boolean
   addGroupNameVisible: boolean
   trueAccountAndServerGroupList: IAccountAndServerGroup
 }
 
-type IActionTypes =
-  | 'SET_LOADING'
-  | 'SET_HAS_ADDED_GROUP_NAME'
-  | 'SET_ADD_GROUP_NAME_VISIBLE'
-  | 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST'
+type IActionTypes = 'SET_HAS_ADDED_GROUP_NAME' | 'SET_ADD_GROUP_NAME_VISIBLE' | 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST'
 
 function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
   switch (action.type) {
-    case 'SET_LOADING':
     case 'SET_HAS_ADDED_GROUP_NAME':
     case 'SET_ADD_GROUP_NAME_VISIBLE':
     case 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST':
@@ -45,7 +39,6 @@ function reducer(state: IState, action: { type: IActionTypes; payload: Partial<I
 }
 
 const initialState: IState = {
-  loading: false,
   hasAddedGroupName: false,
   addGroupNameVisible: false,
   trueAccountAndServerGroupList: [],
@@ -56,7 +49,7 @@ export function AddAccount(props: IAddAccount) {
   const [addAccountForm] = Form.useForm()
   const [addGroupNameForm] = Form.useForm()
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { loading, addGroupNameVisible, hasAddedGroupName, trueAccountAndServerGroupList } = state
+  const { addGroupNameVisible, hasAddedGroupName, trueAccountAndServerGroupList } = state
 
   useEffect(() => {
     dispatch({
@@ -87,15 +80,12 @@ export function AddAccount(props: IAddAccount) {
       .then(async (account: GameAccount & { groupName: string; serverGroup: string }) => {
         console.log('account: ', account)
         try {
-          dispatch({ type: 'SET_LOADING', payload: { loading: true } })
           await addAccount({ ...account })
           addAccountForm.resetFields()
           hideModal()
           refreshData()
         } catch (error) {
           console.log('addAccount error: ', error)
-        } finally {
-          dispatch({ type: 'SET_LOADING', payload: { loading: false } })
         }
       })
       .catch((err) => {
@@ -111,10 +101,12 @@ export function AddAccount(props: IAddAccount) {
   const handleGroupNameChange = (value: string) => {
     if (value === 'add') {
       showAddGroupModal()
-      addAccountForm.setFieldsValue({
-        groupName: { value: undefined },
-        serverGroup: undefined,
-      })
+      setTimeout(() => {
+        addAccountForm.setFieldsValue({
+          groupName: undefined,
+          serverGroup: undefined,
+        })
+      }, 0)
     } else {
       addAccountForm.setFieldsValue({
         serverGroup: trueAccountAndServerGroupList.find(({ groupName }) => groupName === value)?.serverGroup,
@@ -149,12 +141,16 @@ export function AddAccount(props: IAddAccount) {
     hideAddGroupModal()
   }
 
-  const handleDeleteGroupNameClick = () => {
-    addAccountForm.setFieldsValue({
-      groupName: {
-        value: undefined,
-      },
-    })
+  const handleDeleteGroupNameClick = (groupName: string) => {
+    const { groupName: nowGroupName, serverGroup } = addAccountForm.getFieldsValue(['groupName', 'serverGroup'])
+
+    setTimeout(() => {
+      addAccountForm.setFieldsValue({
+        groupName: nowGroupName && nowGroupName !== groupName ? nowGroupName : undefined,
+        serverGroup: nowGroupName && nowGroupName !== groupName ? serverGroup : undefined,
+      })
+    }, 0)
+
     dispatch({ type: 'SET_HAS_ADDED_GROUP_NAME', payload: { hasAddedGroupName: false } })
     dispatch({
       type: 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST',
@@ -168,7 +164,6 @@ export function AddAccount(props: IAddAccount) {
         title="添加账号"
         key="addAccount"
         visible={visible}
-        confirmLoading={loading}
         onOk={handleAddAccountFormSubmit}
         onCancel={handleAddAccountFormReset}
       >
@@ -183,17 +178,22 @@ export function AddAccount(props: IAddAccount) {
             <Select onSelect={handleGroupNameChange} optionLabelProp="value">
               {trueAccountAndServerGroupList.map(({ groupName, accountsNum }, index) => (
                 <SelectOption key={groupName} disabled={accountsNum === 5} className={styles.groupName}>
-                  <span className={styles.left}>{groupName}</span>
-                  <span className={styles.right}>{accountsNum}</span>
+                  <span className="left">{groupName}</span>
+                  <span className="right">{accountsNum}</span>
                   {hasAddedGroupName && index === trueAccountAndServerGroupList.length - 1 && (
-                    <CloseOutlined className={styles.close + ' ' + styles.red} onClick={handleDeleteGroupNameClick} />
+                    <CloseOutlined
+                      className={styles.close + ' red'}
+                      onClick={handleDeleteGroupNameClick.bind(null, groupName)}
+                    />
                   )}
                 </SelectOption>
               ))}
               {!hasAddedGroupName && (
-                <SelectOption key="add" className={styles.groupName + ' ' + styles.red}>
-                  <PlusOutlined style={{ marginRight: '15px' }} />
-                  添加分组
+                <SelectOption key="add" className={styles.groupName + ' red'}>
+                  <Space>
+                    <PlusOutlined />
+                    添加分组
+                  </Space>
                 </SelectOption>
               )}
             </Select>
@@ -203,6 +203,7 @@ export function AddAccount(props: IAddAccount) {
           </FormItem>
         </Form>
       </Modal>
+
       <Modal
         key="addGroupNmae"
         title="添加分组"

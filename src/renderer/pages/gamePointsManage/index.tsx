@@ -58,7 +58,11 @@ export default function GamePointManage() {
         </div>
       ))}
 
-      <AddGamePoint visible={addModalVisible} hideModal={hideAddModal} />
+      <AddGamePoint
+        hideModal={hideAddModal}
+        visible={addModalVisible}
+        tagList={gamePointList.map((item) => item.tag)}
+      />
     </Form>
   )
 }
