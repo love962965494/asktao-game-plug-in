@@ -1,10 +1,11 @@
-import { FastifyInstance } from 'fastify'
-import { HttpStatus } from '../index'
-import GameServerGroup from '../../constants/GameServerGroup.json'
-import fs from 'fs/promises'
-import { constantsPath } from '../../paths'
 import path from 'path'
+import fs from 'fs/promises'
+import { HttpStatus } from '../index'
+import { FastifyInstance } from 'fastify'
+import { constantsPath } from '../../paths'
+import GameServerGroup from '../../constants/GameServerGroup.json'
 import { GameAccount, GameAccountList, GamePoint, GamePointList } from 'constants/types'
+const uuid = require('uuid')
 
 /**
  * 获取游戏区组信息
@@ -37,11 +38,13 @@ function addGameAccount(fastify: FastifyInstance) {
         serverGroup: string
       }
       const GameAccountList = await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
-
       const newGameAccountList = JSON.parse(GameAccountList) as GameAccountList
       const item = newGameAccountList.find((item) => item.groupName === groupName)
+      const id = uuid.v4()
+
       if (item) {
         item.accountList.push({
+          id,
           account,
           password,
         })
@@ -51,6 +54,7 @@ function addGameAccount(fastify: FastifyInstance) {
           serverGroup: serverGroup.split('/') as [string, string],
           accountList: [
             {
+              id,
               account,
               password,
             },
@@ -90,6 +94,9 @@ function addGamePoint(fastify: FastifyInstance) {
   fastify.post('/addGamePoint', async (request, response) => {
     try {
       const { tag, ...gamePoint } = request.body as GamePoint & { tag: string }
+
+      console.log('uuid: ', uuid)
+      gamePoint.id = uuid.v4()
       const GamePointList = await fs.readFile(path.join(constantsPath, 'GamePointList.json'), 'utf-8')
       const newGamePointList = JSON.parse(GamePointList) as GamePointList
       const item = newGamePointList.find((item) => item.tag === tag)
@@ -112,10 +119,61 @@ function addGamePoint(fastify: FastifyInstance) {
   })
 }
 
+/**
+ * 修改游戏坐标
+ */
+function editGamePoint(fastify: FastifyInstance) {
+  fastify.post('/editGamePoint', async (request, response) => {
+    try {
+      const { tag, ...gamePoint } = request.body as GamePoint & { tag: string }
+      const GamePointList = await fs.readFile(path.join(constantsPath, 'GamePointList.json'), 'utf-8')
+      const newGamePointList = JSON.parse(GamePointList) as GamePointList
+      let hasEdit = false
+
+      for (const item of newGamePointList) {
+        for (const [index, point] of item.pointList.entries()) {
+          if (point.id === gamePoint.id) {
+            if (tag === item.tag) {
+              item.pointList.splice(index, 1, gamePoint)
+              hasEdit = true
+            } else {
+              item.pointList.splice(index, 1)
+            }
+
+            break
+          }
+        }
+      }
+
+      if (!hasEdit) {
+        const item = newGamePointList.find((item) => item.tag === tag)
+
+        if (item) {
+          item.pointList.push(gamePoint)
+        } else {
+          newGamePointList.push({
+            tag,
+            pointList: [gamePoint],
+          })
+        }
+      }
+
+      await fs.writeFile(path.join(constantsPath, 'GamePointList.json'), JSON.stringify(newGamePointList, undefined, 4))
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('editGamePoint error: ', error)
+    }
+  })
+}
+
 export default function getConstantsConfig(fastify: FastifyInstance) {
+  // 游戏账户管理
   getGameSeverGroup(fastify)
   getGameAccountList(fastify)
   addGameAccount(fastify)
+
+  // 游戏坐标管理
   getGamePointList(fastify)
   addGamePoint(fastify)
+  editGamePoint(fastify)
 }

@@ -78,7 +78,6 @@ export function AddAccount(props: IAddAccount) {
     addAccountForm
       .validateFields()
       .then(async (account: GameAccount & { groupName: string; serverGroup: string }) => {
-        console.log('account: ', account)
         try {
           await addAccount({ ...account })
           addAccountForm.resetFields()
@@ -128,8 +127,11 @@ export function AddAccount(props: IAddAccount) {
             ],
           },
         })
-        addGroupNameForm.resetFields()
         hideAddGroupModal()
+        addAccountForm.setFieldsValue({
+          groupName,
+          serverGroup
+        })
       })
       .catch((err) => {
         console.log('handleAddGroupNameFormSubmit error: ', err)

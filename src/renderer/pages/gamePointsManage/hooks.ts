@@ -33,3 +33,15 @@ export function useAddGamePoint() {
 
   return (gamePoint: GamePoint) => addGamePoint(gamePoint)
 }
+
+export function useEditGamePoint() {
+  const editGamePoint = useCallback(async (gamePoint: GamePoint) => {
+    try {
+      await requestByPost('/editGamePoint', gamePoint)
+    } catch (error) {
+      console.log('useEditGamePoint error: ', error)
+    }
+  }, [])
+
+  return (gamePoint: GamePoint) => editGamePoint(gamePoint)
+}

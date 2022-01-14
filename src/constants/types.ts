@@ -9,6 +9,7 @@ export type ILoginStatus = '已登录' | '离线'
  * 账号角色信息
  */
 export type GameAccount = {
+  id: string
   account: string
   password: string
   rank?: number
@@ -35,6 +36,7 @@ export type GameServerGroup = typeof GameServerGroupData
  * 游戏坐标
  */
 export type GamePoint = {
+  id: string
   name: string
   shortcut?: string
   point: [number, number]

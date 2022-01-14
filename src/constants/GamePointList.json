@@ -1,1 +1,30 @@
-[]
+[
+    {
+        "tag": "测试啦",
+        "pointList": [
+            {
+                "name": "有有有",
+                "point": [
+                    852,
+                    95
+                ],
+                "shortcut": "Control+Alt+R",
+                "id": "b38e19b0-72f9-4830-8c81-438dd30ef64e"
+            }
+        ]
+    },
+    {
+        "tag": "桀桀桀",
+        "pointList": [
+            {
+                "name": "哈哈哈",
+                "point": [
+                    325,
+                    456
+                ],
+                "shortcut": "Control+Alt+R",
+                "id": "9645fa87-93a4-4a4e-93c3-5b282745426d"
+            }
+        ]
+    }
+]
