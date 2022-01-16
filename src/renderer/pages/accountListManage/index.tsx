@@ -45,7 +45,7 @@ export default function AccountListManage() {
 
       {gameAccountList.map((group) => (
         <div key={group.groupName} className={styles.groupList}>
-          <h3 className="descriptions">
+          <h3 className="descriptions title">
             <Space size="large">
               <span>
                 账户分组：<span>{group.groupName}</span>
@@ -58,6 +58,9 @@ export default function AccountListManage() {
               </Button>
               <Button type="ghost" danger>
                 一键换线
+              </Button>
+              <Button type="ghost" danger>
+                一键换人
               </Button>
             </Space>
           </h3>

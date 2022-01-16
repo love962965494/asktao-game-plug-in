@@ -49,3 +49,25 @@ export type GamePointList = Array<{
   tag: string
   pointList: GamePoint[]
 }>
+
+/**
+ * 游戏任务
+ */
+export type GameTask = {
+  id: string
+  name: string
+  // 任务次数
+  count?: number
+  // 活跃度
+  liveness?: number
+  // 权重
+  weight?: number
+}
+
+/**
+ * 游戏任务分组
+ */
+export type GameTaskList = Array<{
+  tag: string
+  taskList: GameTask[]
+}>

@@ -68,7 +68,7 @@ export default function GamePointManage() {
 
       {gamePointList.map((item) => (
         <div key={item.tag}>
-          <h3 className={styles.title + ' descriptions'}>
+          <h3 className="title descriptions">
             <Space size="large">
               <span>
                 坐标标签：<span>{item.tag}</span>
@@ -78,7 +78,7 @@ export default function GamePointManage() {
 
           <ul className={styles.list}>
             {item.pointList.map((pointItem) => (
-              <li key={pointItem.point.join()}>
+              <li key={pointItem.id}>
                 <a href="#" onClick={handleGamePointClick.bind(null, pointItem, item.tag)}>
                   {`${pointItem.name} (${pointItem.point.join('，')}) ` +
                     (pointItem.shortcut ? `[${pointItem.shortcut}]` : '')}
