@@ -5,7 +5,7 @@ import { requestByGet } from '../utils/http'
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 
-const AppContext = createContext({
+export const AppContext = createContext({
   ipcRenderer: window.electron.ipcRenderer,
 })
 

@@ -1,9 +1,10 @@
 import { Button, Form, Space } from 'antd'
-import { useReducer } from 'react'
+import { useContext, useReducer, useEffect, useState } from 'react'
 import { AddGamePoint, EditGamePoint } from './components'
 import { useAddGamePoint, useEditGamePoint, useGamePointList } from './hooks'
 import styles from './gamePointsManage.module.scss'
 import { GamePoint } from 'constants/types'
+import { AppContext } from 'renderer/App'
 
 const FormItem = Form.Item
 
@@ -36,11 +37,33 @@ const initialState: IState = {
 }
 
 export default function GamePointManage() {
+  const context = useContext(AppContext)
   const { gamePointList, getGamePointList } = useGamePointList()
   const addGamePoint = useAddGamePoint()
   const editGamePoint = useEditGamePoint()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { tag, record, addModalVisible, editModalVisible } = state
+  const [isTimerStarted, setIsTimerStarted] = useState<boolean>(false)
+
+  useEffect(() => {
+    let interval: number
+    if (isTimerStarted) {
+      interval = window.setInterval(() => {
+        context.ipcRenderer.send('get-mouse-pos', 6320)
+      }, 3000)
+    }
+
+    return () => {
+      window.clearInterval(interval)
+    }
+  }, [isTimerStarted])
+
+  useEffect(() => {
+    context.ipcRenderer.on('get-mouse-pos', ({ x, y }) => {
+      console.log('x: ', x)
+      console.log('y: ', y)
+    })
+  }, [])
 
   const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
   const hideAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: false } })
@@ -58,12 +81,22 @@ export default function GamePointManage() {
     dispatch({ type: 'SET_RECORD', payload: { record } })
   }
 
+  const handleToggleTimerBtnClick = () => {
+    setIsTimerStarted(!isTimerStarted)
+  }
+
   return (
     <Form>
       <FormItem>
-        <Button type="primary" onClick={showAddModal}>
-          添加
-        </Button>
+        <Space>
+          <Button type="primary" onClick={showAddModal}>
+            添加
+          </Button>
+
+          <Button type="primary" onClick={handleToggleTimerBtnClick}>
+            切换定时器
+          </Button>
+        </Space>
       </FormItem>
 
       {gamePointList.map((item) => (

@@ -1,17 +1,53 @@
-// const { Window: WindowControl } = require('win-control')
-// import WinControl = require('win-control')
 import { WinControlInstance, Window as WinControl, WindowStates, HWND, SWP } from 'win-control'
 import robot from 'robotjs'
+import { BrowserWindow, screen } from 'electron'
+import path from 'path'
+import { rendererPath } from '../paths'
+
+const gameWindows = new Map<number, GameWindowControl>()
 
 export default class GameWindowControl {
-  public gameWindow: WinControlInstance
+  public gameWindow!: WinControlInstance
+  public alternateWindow!: BrowserWindow
+
   constructor(public pid: number) {
+    const instance = gameWindows.get(pid)
+
+    if (instance) {
+      return instance
+    }
+
     this.pid = pid
     this.gameWindow = WinControl.getByPid(pid)
+
+    this.showGameWindow()
+    const { left, top, right, bottom } = this.getDimensions()
+    const { scaleFactor } = screen.getPrimaryDisplay()
+
+    this.alternateWindow = new BrowserWindow({
+      width: (right - left) / scaleFactor,
+      height: (bottom - top) / scaleFactor,
+      x: left,
+      y: top,
+      show: true,
+      frame: false,
+      webPreferences: {
+        devTools: true,
+      },
+      // transparent: true,
+    })
+
+    this.alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
+
+    gameWindows.set(pid, this)
   }
 
   getGameWindow() {
     return this.gameWindow
+  }
+
+  static getAllGameWindows() {
+    return gameWindows
   }
 
   showGameWindow() {

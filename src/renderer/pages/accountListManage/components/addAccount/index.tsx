@@ -10,19 +10,19 @@ import styles from './addAccount.module.scss'
 const FormItem = Form.Item
 const SelectOption = Select.Option
 
-type IAccountAndServerGroup = Array<{ groupName: string; serverGroup: string; accountsNum: number }>
+type IAccountAndServerGroup = { groupName: string; serverGroup: string; accountsNum: number }
 interface IAddAccount {
   visible: boolean
   hideModal: () => void
   refreshData: () => void
-  accountAndServerGroupList: IAccountAndServerGroup
+  accountAndServerGroupList: IAccountAndServerGroup[]
   addAccount: (account: GameAccount) => Promise<void>
 }
 
 interface IState {
   hasAddedGroupName: boolean
   addGroupNameVisible: boolean
-  trueAccountAndServerGroupList: IAccountAndServerGroup
+  trueAccountAndServerGroupList: IAccountAndServerGroup[]
 }
 
 type IActionTypes = 'SET_HAS_ADDED_GROUP_NAME' | 'SET_ADD_GROUP_NAME_VISIBLE' | 'SET_TRUE_ACCOUNT_AND_SERVER_GROUP_LIST'
@@ -130,7 +130,7 @@ export function AddAccount(props: IAddAccount) {
         hideAddGroupModal()
         addAccountForm.setFieldsValue({
           groupName,
-          serverGroup
+          serverGroup,
         })
       })
       .catch((err) => {

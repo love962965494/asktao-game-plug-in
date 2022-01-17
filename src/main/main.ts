@@ -9,12 +9,12 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path'
-import { app, BrowserWindow, shell, screen } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
-import './ipcMain'
+import initIpcMain from './ipcMain'
 import { getProcessesByName } from '../utils/systemCotroll'
 import GameWindowControl from '../utils/gameWindowControll'
 import startServer from '../server'
@@ -22,9 +22,6 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 
 // 服务端端口号
 const port = 3000
-
-// 存放游戏实例和对应的electron窗口
-const windows: Array<{ gameInstance: GameWindowControl; subWindow: object }> = []
 
 let mainWindow: BrowserWindow | null = null
 
@@ -107,35 +104,9 @@ const createWindow = async () => {
 async function createGameInstances() {
   const processes = await getProcessesByName('asktao')
 
-  const gameInstances = processes.map(([_pName, pId]) => {
-    const gameInstance = new GameWindowControl(+pId)
-
-    return gameInstance
+  processes.map(([_pName, pId]) => {
+    new GameWindowControl(+pId)
   })
-
-  for (const gameInstance of gameInstances) {
-    gameInstance.showGameWindow()
-
-    const { left, top, right, bottom } = gameInstance.getDimensions()
-    const { scaleFactor } = screen.getPrimaryDisplay()
-
-    const subWindow = new BrowserWindow({
-      width: (right - left) / scaleFactor,
-      height: (bottom - top) / scaleFactor,
-      x: left,
-      y: top,
-      show: true,
-      frame: false,
-      webPreferences: {
-        devTools: false,
-      },
-    })
-
-    windows.push({
-      gameInstance,
-      subWindow,
-    })
-  }
 }
 
 function init() {
@@ -144,6 +115,8 @@ function init() {
   startServer(port)
   // 创建游戏实例
   // createGameInstances()
+  // 启动ipc通信
+  initIpcMain()
 }
 
 /**

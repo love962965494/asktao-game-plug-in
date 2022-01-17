@@ -1,17 +1,45 @@
 import { Button, Checkbox, Form, Radio, Select, Space } from 'antd'
+import { useReducer } from 'react'
+import { AddGameTask } from './components'
 import { useGameTaskList } from './hooks'
 
 const FormItem = Form.Item
 const RadioGroup = Radio.Group
 const SelectOption = Select.Option
 
+interface IState {
+  addModalVisible: boolean
+}
+
+type IActionTypes = 'SET_ADD_MODAL_VISIBLE'
+
+function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
+  switch (action.type) {
+    case 'SET_ADD_MODAL_VISIBLE':
+      return { ...state, ...action.payload }
+    default:
+      return state
+  }
+}
+
+const initialState: IState = {
+  addModalVisible: false,
+}
+
 export default function TaskManage() {
   const { gameTaskList, getGameTaskList } = useGameTaskList()
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const { addModalVisible } = state
+
+  const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
+  const hideAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: false } })
 
   return (
     <Form>
       <FormItem>
-        <Button type="primary">添加</Button>
+        <Button type="primary" onClick={showAddModal}>
+          添加
+        </Button>
       </FormItem>
 
       <h2 className="title descriptions">
@@ -67,6 +95,8 @@ export default function TaskManage() {
           </h3>
         </div>
       ))}
+
+      <AddGameTask visible={addModalVisible} hideModal={hideAddModal} />
     </Form>
   )
 }
