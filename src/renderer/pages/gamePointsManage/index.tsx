@@ -63,6 +63,10 @@ export default function GamePointManage() {
       console.log('x: ', x)
       console.log('y: ', y)
     })
+
+    context.ipcRenderer.on('get-all-displays', (data) => {
+      console.log('data: ', data)
+    })
   }, [])
 
   const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
@@ -85,6 +89,10 @@ export default function GamePointManage() {
     setIsTimerStarted(!isTimerStarted)
   }
 
+  const handleTestBtnClick = () => {
+    context.ipcRenderer.send('get-all-displays')
+  }
+
   return (
     <Form>
       <FormItem>
@@ -95,6 +103,10 @@ export default function GamePointManage() {
 
           <Button type="primary" onClick={handleToggleTimerBtnClick}>
             切换定时器
+          </Button>
+
+          <Button type="primary" onClick={handleTestBtnClick}>
+            测试
           </Button>
         </Space>
       </FormItem>

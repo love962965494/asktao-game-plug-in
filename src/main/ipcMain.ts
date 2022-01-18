@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { ipcMain, screen } from 'electron'
 import robot, { Bitmap } from 'robotjs'
 import Jimp from 'jimp'
 import path from 'path'
@@ -45,5 +45,19 @@ export default function init() {
     await screenCaptureToFile2(bitmap, path.join(__dirname, `../assets/${fileNmae}.png`))
   })
 
-  // subWindow.loadFile(path.join(__dirname, './test.html'))
+  ipcMain.on('get-all-displays', (event) => {
+    const displays = screen.getAllDisplays()
+    const point = screen.getCursorScreenPoint()
+    const primaryDisplay = screen.getPrimaryDisplay()
+    const screenPoint = screen.screenToDipPoint(point)
+    const dipPoint = screen.dipToScreenPoint(screenPoint)
+
+    event.reply('get-all-displays', {
+      displays,
+      point,
+      primaryDisplay,
+      screenPoint,
+      dipPoint,
+    })
+  })
 }

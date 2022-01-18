@@ -22,17 +22,34 @@ export default class GameWindowControl {
 
     this.showGameWindow()
     const { left, top, right, bottom } = this.getDimensions()
-    const { scaleFactor } = screen.getPrimaryDisplay()
+    const screens = screen.getAllDisplays()
+    const {
+      scaleFactor,
+      bounds: { width, height },
+    } = screen.getPrimaryDisplay()
+    const widthArr = screens.map(({ scaleFactor, bounds: { width } }) => scaleFactor * width)
+    const heightArr = screens.map(({ scaleFactor, bounds: { height } }) => scaleFactor * height)
+
+    let screenIndex
+  
+
+    // this.hideGameWindow()
+
+    console.log('left: ', left)
+    console.log('top: ', top)
+    console.log('right: ', right)
+    console.log('bottom: ', bottom)
 
     this.alternateWindow = new BrowserWindow({
-      width: (right - left) / scaleFactor,
-      height: (bottom - top) / scaleFactor,
-      x: left,
-      y: top,
+      width: Math.round((right - left) / scaleFactor),
+      height: Math.round((bottom - top) / scaleFactor),
+      x: Math.round(left / scaleFactor),
+      y: Math.round(top / scaleFactor),
+
       show: true,
       frame: false,
       webPreferences: {
-        devTools: true,
+        // devTools: true,
       },
       // transparent: true,
     })
@@ -51,10 +68,14 @@ export default class GameWindowControl {
   }
 
   showGameWindow() {
-    // 先把窗口设置到最顶层
-    this.gameWindow.setPosition(HWND.NOTOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
-    // 再设置窗口显示
-    this.gameWindow.setShowStatus(WindowStates.SHOWNORMAL)
+    // 先设置窗口显示
+    this.gameWindow.setShowStatus(WindowStates.RESTORE)
+    // 再把窗口设置到最顶层
+    // this.gameWindow.setPosition(HWND.NOTOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
+  }
+
+  hideGameWindow() {
+    this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
   }
 
   getDimensions() {
