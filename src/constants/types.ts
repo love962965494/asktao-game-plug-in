@@ -71,3 +71,14 @@ export type GameTaskList = Array<{
   tag: string
   taskList: GameTask[]
 }>
+
+/**
+ * 方向
+ */
+export enum Directions {
+  Middle = 'middle',
+  Left = 'left',
+  Top = 'top',
+  Right = 'right',
+  Bottom = 'bottom',
+}
