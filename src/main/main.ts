@@ -1,20 +1,8 @@
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
 import path from 'path'
 import { app, BrowserWindow, shell } from 'electron'
-import { autoUpdater } from 'electron-updater'
-import log from 'electron-log'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
-import initIpcMain from './ipcMain'
+import registerTasks from './tasks'
 import { getProcessesByName } from '../utils/systemCotroll'
 import GameWindowControl from '../utils/gameWindowControll'
 import startServer from '../server'
@@ -24,14 +12,6 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 const port = 3000
 
 let mainWindow: BrowserWindow | null = null
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info'
-    autoUpdater.logger = log
-    autoUpdater.checkForUpdatesAndNotify()
-  }
-}
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support')
@@ -92,10 +72,6 @@ const createWindow = async () => {
     event.preventDefault()
     shell.openExternal(url)
   })
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater()
 }
 
 /**
@@ -115,8 +91,8 @@ function init() {
   startServer(port)
   // 创建游戏实例
   // createGameInstances()
-  // 启动ipc通信
-  initIpcMain()
+  // 启动ipc通信，注册各种任务
+  registerTasks()
 }
 
 /**

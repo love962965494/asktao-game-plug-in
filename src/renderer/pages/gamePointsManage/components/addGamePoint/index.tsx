@@ -1,6 +1,6 @@
 import { Form, Input, Modal, Space, InputNumber } from 'antd'
 import { KeyboardEventHandler, useEffect, useRef } from 'react'
-import { GamePoint } from 'constants/types'
+import { GamePoint, Point } from 'constants/types'
 import { SelectWithAdd } from 'renderer/components'
 
 const { useForm, Item: FormItem } = Form
@@ -27,8 +27,7 @@ export function AddGamePoint(props: IAddGamePoint) {
       form.setFieldsValue({
         name: record.name,
         point: {
-          x: record.point[0],
-          y: record.point[1],
+          ...record.point,
         },
         shortcut: record.shortcut,
         tag,
@@ -76,11 +75,11 @@ export function AddGamePoint(props: IAddGamePoint) {
   const handleAddGamePointFormSubmit = () => {
     form
       .validateFields()
-      .then(async (gamePoint: GamePoint & { point: { x: number; y: number } }) => {
+      .then(async (gamePoint: GamePoint & { point: Point }) => {
         if (record) {
-          await editGamePoint?.({ ...gamePoint, id: record.id, point: [gamePoint.point.x, gamePoint.point.y] })
+          await editGamePoint?.({ ...gamePoint, id: record.id, point: gamePoint.point })
         } else {
-          await addGamePoint?.({ ...gamePoint, point: [gamePoint.point.x, gamePoint.point.y] })
+          await addGamePoint?.({ ...gamePoint, point: gamePoint.point })
         }
         form.resetFields()
         hideModal()
@@ -106,7 +105,7 @@ export function AddGamePoint(props: IAddGamePoint) {
       <Form
         form={form}
         labelCol={{ span: 4 }}
-        initialValues={{ ...(record || {}), point: { x: record?.point[0], y: record?.point[1] } }}
+        initialValues={{ ...(record || {}), point: { x: record?.point.x, y: record?.point.y } }}
       >
         <FormItem label="坐标名称" name="name" rules={[{ required: true, message: '坐标名称不能为空' }]}>
           <Input />

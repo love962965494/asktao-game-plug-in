@@ -1,3 +1,3 @@
 import { customIpcRenderer } from './preload'
 
-export type CustomIpcRenderer = typeof customIpcRenderer
+export type ICustomIpcRenderer = typeof customIpcRenderer

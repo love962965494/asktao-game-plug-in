@@ -1,9 +1,9 @@
-import { CustomIpcRenderer } from 'main/types'
+import { ICustomIpcRenderer } from 'main/types'
 
 declare global {
   interface Window {
     electron: {
-      ipcRenderer: CustomIpcRenderer
+      ipcRenderer: ICustomIpcRenderer
     }
   }
 }

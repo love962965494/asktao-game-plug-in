@@ -33,13 +33,21 @@ export type GameAccountList = Array<{
 export type GameServerGroup = typeof GameServerGroupData
 
 /**
+ * 坐标
+ */
+export type Point = {
+  x: number
+  y: number
+}
+
+/**
  * 游戏坐标
  */
 export type GamePoint = {
   id: string
   name: string
   shortcut?: string
-  point: [number, number]
+  point: Point
 }
 
 /**

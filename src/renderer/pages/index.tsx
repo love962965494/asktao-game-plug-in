@@ -2,6 +2,7 @@ import { Tabs } from 'antd'
 import AccountListManage from './accountListManage'
 import GamePointsManage from './gamePointsManage'
 import GameTaskManage from './gameTaskManage'
+import Test from './test'
 
 const { TabPane } = Tabs
 
@@ -16,6 +17,9 @@ export default function Pages() {
       </TabPane>
       <TabPane tab="坐标管理" key="3">
         <GamePointsManage />
+      </TabPane>
+      <TabPane tab="功能测试" key="5">
+        <Test />
       </TabPane>
     </Tabs>
   )
