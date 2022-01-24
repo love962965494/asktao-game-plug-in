@@ -1,37 +1,45 @@
 import { Point } from '../../constants/types'
-import { ipcMain } from 'electron'
+import { ipcMain, IpcMainInvokeEvent } from 'electron'
 import robot from 'robotjs'
+import GamePointList from '../../constants/GamePointList.json'
+import GameWindowControl from '../../utils/gameWindowControll'
+
+const YouDaoPid = 10272
+
+async function handleYouDaoOperation(_event: IpcMainInvokeEvent, name: string) {
+  const instance = new GameWindowControl(YouDaoPid)
+  instance.showGameWindow()
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+  const { left, top } = instance.getDimensions()
+  const { left: trueLeft, top: trueTop } = instance.getBounds()
+  const scaleFactor = instance.getScaleFactor()
+  const { x, y } = GamePointList.find((item) => item.tag === '有道词典')?.pointList.find((item) => item.name === name)
+    ?.point!
+
+  // 不同的软件根据屏幕分辨率所作的处理都不相同
+  // 需要确定窗口大小和屏幕分辨率之间的关系后，来决定最后的坐标位置
+  const mouseLeft = left + x * scaleFactor
+  const mouseTop = top + y * scaleFactor
+
+  alternateWindow.setPosition(trueLeft, trueTop)
+  alternateWindow.show()
+  robot.moveMouseSmooth(mouseLeft, mouseTop)
+  alternateWindow.hide()
+  robot.mouseClick()
+  alternateWindow.show()
+}
 
 export function registerTestTasks() {
-  ipcMain.on('test-task', (_event, [{ x: x1, y: y1 }, { x: x2, y: y2 }]: Point[]) => {
-    robot.moveMouseSmooth(x1, y1)
+  ipcMain.on('alternate-window-click', () => {
+    const alternateWindow = GameWindowControl.getAlternateWindow()
+    alternateWindow.hide()
     robot.mouseClick()
-    robot.keyTap('numpad_1')
+    alternateWindow.show()
+  })
 
-    robot.moveMouseSmooth(x2, y2)
-    robot.mouseClick()
-    robot.setMouseDelay(100)
-    robot.mouseClick()
-    robot.keyTap('numpad_2')
+  ipcMain.on('set-position', (_event, pos: Point) => {
+    const instance = GameWindowControl.getAllGameWindows().get(YouDaoPid)!
 
-    robot.moveMouseSmooth(x1, y1)
-    robot.mouseClick()
-    robot.keyTap('numpad_3')
-
-    robot.moveMouseSmooth(x2, y2 - 60)
-    robot.mouseClick()
-    robot.setMouseDelay(100)
-    robot.mouseClick()
-    robot.keyTap('numpad_4')
-
-    robot.moveMouseSmooth(x1, y1)
-    robot.mouseClick()
-    robot.keyTap('numpad_5')
-
-    robot.moveMouseSmooth(x2, y2 -60) 
-    robot.mouseClick()
-    robot.setMouseDelay(100)
-    robot.mouseClick()
-    robot.keyTap('numpad_6')
+    instance.setPosition(pos.x, pos.y)
   })
 }

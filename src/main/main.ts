@@ -3,6 +3,7 @@ import { app, BrowserWindow, shell } from 'electron'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import registerTasks from './tasks'
+import { registerGlobalShortcut, unregisterGloableShortcut } from './shortcut'
 import { getProcessesByName } from '../utils/systemCotroll'
 import GameWindowControl from '../utils/gameWindowControll'
 import startServer from '../server'
@@ -80,8 +81,10 @@ const createWindow = async () => {
 async function createGameInstances() {
   const processes = await getProcessesByName('asktao')
 
-  processes.map(([_pName, pId]) => {
-    new GameWindowControl(+pId)
+  processes.map(([_pName, pId], index) => {
+    const instance = new GameWindowControl(+pId)
+
+    instance.setPosition(1920 + (index % 5) * 300, Math.min(Math.max(index - 4, 0), 1) * 400)
   })
 }
 
@@ -93,6 +96,8 @@ function init() {
   // createGameInstances()
   // 启动ipc通信，注册各种任务
   registerTasks()
+  // 注册全局快捷键
+  registerGlobalShortcut()
 }
 
 /**
@@ -118,5 +123,10 @@ app
     })
   })
   .catch(console.log)
+
+app.on('will-quit', () => {
+  // 卸载全局快捷键
+  unregisterGloableShortcut()
+})
 
 export { mainWindow }

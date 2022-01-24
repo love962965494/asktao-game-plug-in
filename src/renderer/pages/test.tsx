@@ -10,7 +10,7 @@ export default function Test() {
     let interval: number
     if (isTimerStarted) {
       interval = window.setInterval(() => {
-        ipcRenderer.invoke('get-game-point', 6320).then((result) => {
+        ipcRenderer.invoke('get-game-point', 10272).then((result) => {
           console.log('result: ', result)
         })
       }, 3000)
@@ -32,20 +32,17 @@ export default function Test() {
     setIsTimerStarted(!isTimerStarted)
   }
 
-  const handleMoveMouseBtnClick = () => {
-    ipcRenderer.send('test-task', [
-      { x: 2856, y: 575 },
-      { x: 730, y: 325 },
-    ])
+  const handleSetPositionBtnClick = () => {
+    ipcRenderer.send('set-position', { x: 2200, y: 100 })
   }
 
   return (
     <Space>
-      <Button type="primary" onClick={handleMoveMouseBtnClick}>
-        移动鼠标
-      </Button>
       <Button type="primary" onClick={handleToggleTimerBtnClick}>
         切换定时器
+      </Button>
+      <Button type="primary" onClick={handleSetPositionBtnClick}>
+        设置窗口位置
       </Button>
     </Space>
   )

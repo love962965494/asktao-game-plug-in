@@ -82,7 +82,7 @@ export default function GamePointManage() {
             {item.pointList.map((pointItem) => (
               <li key={pointItem.id}>
                 <a href="#" onClick={handleGamePointClick.bind(null, pointItem, item.tag)}>
-                  {`${pointItem.name} (${pointItem.point.join('，')}) ` +
+                  {`${pointItem.name} (${pointItem.point.x}, ${pointItem.point.y}) ` +
                     (pointItem.shortcut ? `[${pointItem.shortcut}]` : '')}
                 </a>
               </li>

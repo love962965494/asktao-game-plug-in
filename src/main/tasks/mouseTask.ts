@@ -17,9 +17,7 @@ export function registerMouseTasks() {
 
   ipcMain.handle('get-game-point', async (_event, pid: number) => {
     const instance = new GameWindowControl(pid)
-    const {
-      bounds: { left, top },
-    } = instance
+    const { left, top } = instance.getDimensions()
     const { x, y } = robot.getMousePos()
 
     return { x, y, left, top }

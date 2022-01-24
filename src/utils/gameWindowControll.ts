@@ -1,8 +1,8 @@
-import { WinControlInstance, Window as WinControl, WindowStates } from 'win-control'
+import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates } from 'win-control'
 import robot from 'robotjs'
 import { BrowserWindow, screen } from 'electron'
 import path from 'path'
-import { rendererPath } from '../paths'
+import { mainPath, rendererPath } from '../paths'
 import { Directions } from '../constants/types'
 
 const gameWindows = new Map<number, GameWindowControl>()
@@ -18,7 +18,7 @@ type IBounds = {
 /**
  * 获取真正的坐标信息
  */
-function getBounds(bounds: IBounds): IBounds {
+function getBoundsAndScaleFactor(bounds: IBounds): IBounds & { scaleFactor: number } {
   let { left, top, right, bottom } = bounds
   // TODO: 目前只处理只有最多两块显示器的情形，因为没有更多显示器用于测试，暂不考虑
   const [screen1, screen2] = screen.getAllDisplays()
@@ -32,6 +32,7 @@ function getBounds(bounds: IBounds): IBounds {
     bounds: { width: subWidth, height: subHeight, x: subX, y: subY },
   } = subScreen
   let direction: Directions
+  let scaleFactor: number
 
   if (left < mainWidth && top < mainHeight && left > 0 && top > 0) {
     // 目标窗口在主屏上
@@ -72,6 +73,7 @@ function getBounds(bounds: IBounds): IBounds {
    */
   switch (direction) {
     case Directions.Middle: {
+      scaleFactor = mainScaleFactor
       left = left / mainScaleFactor
       top = top / mainScaleFactor
       right = right / mainScaleFactor
@@ -79,6 +81,7 @@ function getBounds(bounds: IBounds): IBounds {
       break
     }
     case Directions.Right: {
+      scaleFactor = subScaleFactor
       left = subX + (left - mainWidth * mainScaleFactor) / subScaleFactor
       top = subY + top / subScaleFactor
       right = subX + (right - mainWidth * mainScaleFactor) / subScaleFactor
@@ -86,6 +89,7 @@ function getBounds(bounds: IBounds): IBounds {
       break
     }
     case Directions.Left: {
+      scaleFactor = subScaleFactor
       left = subX + (left + subWidth * subScaleFactor) / subScaleFactor
       top = subY + top / subScaleFactor
       right = subX + (right + subWidth * subScaleFactor) / subScaleFactor
@@ -93,6 +97,7 @@ function getBounds(bounds: IBounds): IBounds {
       break
     }
     case Directions.Top: {
+      scaleFactor = subScaleFactor
       left = subX + left / subScaleFactor
       top = subY + (top + subHeight * subScaleFactor) / subScaleFactor
       right = subX + right / subScaleFactor
@@ -100,6 +105,7 @@ function getBounds(bounds: IBounds): IBounds {
       break
     }
     case Directions.Bottom: {
+      scaleFactor = subScaleFactor
       left = subX + left / subScaleFactor
       top = subY + (top - mainHeight * mainScaleFactor) / subScaleFactor
       right = subX + right / subScaleFactor
@@ -109,10 +115,11 @@ function getBounds(bounds: IBounds): IBounds {
   }
 
   return {
-    left,
-    top,
-    right,
-    bottom,
+    left: Math.round(left),
+    top: Math.round(top),
+    right: Math.round(right),
+    bottom: Math.round(bottom),
+    scaleFactor,
   }
 }
 
@@ -124,11 +131,6 @@ export default class GameWindowControl {
     const instance = gameWindows.get(pid)
 
     if (instance) {
-      // // 虽然已经创建了实例，但是每次访问还是需要更新下窗口位置信息，避免用户移动了窗口位置而导致bug
-      // const bounds = instance.getDimensions()
-
-      // instance.bounds = bounds
-
       return instance
     }
 
@@ -137,32 +139,28 @@ export default class GameWindowControl {
 
     this.showGameWindow()
     const bounds = this.getDimensions()
-    const { left, top, right, bottom } = getBounds(bounds)
+    const { left, top, right, bottom } = getBoundsAndScaleFactor(bounds)
     this.bounds = { left, top, right, bottom }
 
     if (!alternateWindow) {
       alternateWindow = new BrowserWindow({
-        width: Math.round(right - left),
-        height: Math.round(bottom - top),
-        x: Math.round(left),
-        y: Math.round(top),
-
+        width: right - left,
+        height: bottom - top,
+        x: left,
+        y: top,
         show: true,
         frame: false,
         webPreferences: {
-          // devTools: true,
+          devTools: false,
+          preload: path.join(mainPath, 'preload.js'),
         },
-        // transparent: true,
+        transparent: true,
       })
 
       alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
     }
 
     gameWindows.set(pid, this)
-  }
-
-  getGameWindow() {
-    return this.gameWindow
   }
 
   static getAllGameWindows() {
@@ -184,8 +182,43 @@ export default class GameWindowControl {
     this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
   }
 
+  /**
+   * 获取窗口鼠标位置信息
+   */
   getDimensions() {
     return this.gameWindow.getDimensions()
+  }
+
+  /**
+   * 获取窗口实际位置信息，考虑屏幕缩放后的位置
+   */
+  getBounds() {
+    const bounds = this.getDimensions()
+    const { left, top, right, bottom } = getBoundsAndScaleFactor(bounds)
+
+    return {
+      left,
+      top,
+      right,
+      bottom,
+    }
+  }
+
+  /**
+   * 获取窗口所在屏幕的屏幕缩放比
+   */
+  getScaleFactor() {
+    const bounds = this.getDimensions()
+    const { scaleFactor } = getBoundsAndScaleFactor(bounds)
+
+    return scaleFactor
+  }
+
+  /**
+   * 设置窗口位置
+   */
+  setPosition(x: number, y: number) {
+    this.gameWindow.setPosition(HWND.NOTOPMOST, x, y, 0, 0, SWP.NOSIZE)
   }
 
   /**
