@@ -21,19 +21,22 @@ export default function Test() {
     }
   }, [isTimerStarted])
 
-  useEffect(() => {
-    ipcRenderer.on('get-mouse-pos', ({ x, y }: { x: number; y: number }) => {
-      console.log('x: ', x)
-      console.log('y: ', y)
-    })
-  }, [])
-
   const handleToggleTimerBtnClick = () => {
     setIsTimerStarted(!isTimerStarted)
   }
 
   const handleSetPositionBtnClick = () => {
     ipcRenderer.send('set-position', { x: 2200, y: 100 })
+  }
+
+  const handleShowWindowBtnClick = () => {
+    ipcRenderer.send('show-window')
+  }
+
+  const handleGetImagePosBtnClick = () => {
+    ipcRenderer.invoke('get-image-pos').then((res) => {
+      console.log('res: ', typeof res)
+    })
   }
 
   return (
@@ -43,6 +46,12 @@ export default function Test() {
       </Button>
       <Button type="primary" onClick={handleSetPositionBtnClick}>
         设置窗口位置
+      </Button>
+      <Button type="primary" onClick={handleShowWindowBtnClick}>
+        显示窗口
+      </Button>
+      <Button type="primary" onClick={handleGetImagePosBtnClick}>
+        获取图片位置
       </Button>
     </Space>
   )

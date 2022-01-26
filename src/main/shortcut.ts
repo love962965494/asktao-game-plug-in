@@ -2,13 +2,23 @@ import { globalShortcut } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
 
 export function registerGlobalShortcut() {
-  globalShortcut.register('CommandOrControl+Alt+num1', () => {
-    const instance = [...GameWindowControl.getAllGameWindows().values()][0]
-    const alternateWindow = GameWindowControl.getAlternateWindow()
-    const { left, top } = instance.getBounds()
+  for (let i = 0; i < 9; i++) {
+    globalShortcut.register(`CommandOrControl+Alt+num${i}`, () => {
+      const instance = [...GameWindowControl.getAllGameWindows().values()][i]
+      const alternateWindow = GameWindowControl.getAlternateWindow()
+      if (instance) {
+        const { left, top } = instance.getBounds()
 
-    alternateWindow.setPosition(left, top)
-    alternateWindow.show()
+        alternateWindow.setPosition(left, top)
+        alternateWindow.show()
+      }
+    })
+  }
+
+  globalShortcut.register('CommandOrControl+Alt+Enter', () => {
+    const alternateWindow = GameWindowControl.getAlternateWindow()
+
+    alternateWindow.hide()
   })
 }
 

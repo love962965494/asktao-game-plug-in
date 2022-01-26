@@ -172,10 +172,7 @@ export default class GameWindowControl {
   }
 
   showGameWindow() {
-    // 先设置窗口显示
-    this.gameWindow.setShowStatus(WindowStates.RESTORE)
-    // 再把窗口设置到最顶层
-    // this.gameWindow.setPosition(HWND.NOTOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
+    this.gameWindow.setShowStatus(WindowStates.SHOWDEFAULT)
   }
 
   hideGameWindow() {
