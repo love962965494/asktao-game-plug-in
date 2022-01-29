@@ -33,10 +33,8 @@ export default function Test() {
     ipcRenderer.send('show-window')
   }
 
-  const handleGetImagePosBtnClick = () => {
-    ipcRenderer.invoke('get-image-pos').then((res) => {
-      console.log('res: ', typeof res)
-    })
+  const handleStartGameBtnClick = () => {
+    ipcRenderer.send('start-game')
   }
 
   return (
@@ -50,8 +48,8 @@ export default function Test() {
       <Button type="primary" onClick={handleShowWindowBtnClick}>
         显示窗口
       </Button>
-      <Button type="primary" onClick={handleGetImagePosBtnClick}>
-        获取图片位置
+      <Button type="primary" onClick={handleStartGameBtnClick}>
+        启动游戏
       </Button>
     </Space>
   )
