@@ -1,7 +1,6 @@
 import sys
 import cv2 as cv
 import numpy as np
-from platformdirs import os
 
 img = None
 templ = None
@@ -19,19 +18,11 @@ def main(argv):
     global img
     global templ
     src_path, obj_path = argv
-    # src_path = os.path.join(os.getcwd() + '\python\images\temp\screenCapture.jpg')
-    # obj_path = os.path.join(os.getcwd() + '\python\images\GUIElements\gameLogo.png')
     img = cv_imread(src_path)
     templ = cv_imread(obj_path)
     if ((img is None) or (templ is None)):
         print('Can\'t read one of the images')
         return -1
-    
-    # cv.namedWindow( image_window, cv.WINDOW_FREERATIO )
-    # cv.namedWindow( result_window, cv.WINDOW_FREERATIO )
-    
-    # trackbar_label = 'Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED'
-    # cv.createTrackbar( trackbar_label, image_window, match_method, max_Trackbar, MatchingMethod )
     
     MatchingMethod(match_method)
     
@@ -41,8 +32,6 @@ def main(argv):
 def MatchingMethod(param):
     global match_method
     match_method = param
-    
-    # img_display = img.copy()
     
     result = cv.matchTemplate(img, templ, match_method)
     
@@ -69,10 +58,6 @@ def MatchingMethod(param):
                 break
         
         if (not hasRectangled):
-            # cv.rectangle(img_display, point, (point[0] + templ.shape[0], point[1] + templ.shape[1]), (0,0,0), 2, 8, 0 )
-            # cv.rectangle(result, point, (point[0] + templ.shape[0], point[1] + templ.shape[1]), (0,0,0), 2, 8, 0 )
-            # cv.imshow(image_window, img_display)
-            # cv.imshow(result_window, result)
             rectangleArr.append([nowX, nowY])
 
         print(rectangleArr)

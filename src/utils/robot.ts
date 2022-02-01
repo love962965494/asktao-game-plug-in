@@ -1,9 +1,8 @@
-import robotjs, { moveMouse } from 'robotjs'
+import robotjs from 'robotjs'
 import random from 'random'
 
 function getRandomNum(min: number = 5, max: number = 20) {
   const num = random.integer(min, max)
-  console.log('getRandomNum num: ', num)
 
   return num
 }

@@ -27,7 +27,12 @@ function screenCaptureToFile2(robotScreenPic: Bitmap, path: string) {
   })
 }
 
-function findImagePositions(srcImage: string, targetImage: string): Promise<Array<[number, number]>> {
+function findImagePositions(
+  srcImage: string,
+  targetImage: string,
+  minOffset: number = 0,
+  maxOffset: number = 0
+): Promise<Array<[number, number]>> {
   const filePath = path.join(pythonPath, 'findPositions.py')
 
   return new Promise((resolve, reject) => {
@@ -37,7 +42,11 @@ function findImagePositions(srcImage: string, targetImage: string): Promise<Arra
         reject(error)
       }
 
-      resolve(JSON.parse(stdout))
+      const positions: Array<[number, number]> = (JSON.parse(stdout.split('\r\n')[0]) as Array<[number, number]>).map(
+        ([x, y]) => [x + random.integer(minOffset, maxOffset), y + random.integer(minOffset, maxOffset)]
+      )
+
+      resolve(positions)
     })
 
     workerProcess.on('exit', () => {
@@ -76,13 +85,10 @@ export function registerImageTasks() {
       let targetImagePath = path.join(pythonImagesPath, 'GUIElements/gameLogo.png')
       await screenCaptureToFile2(screenCapture, srcImagePath)
 
-      const [[x, y]] = await findImagePositions(srcImagePath, targetImagePath)
+      const [[x, y]] = await findImagePositions(srcImagePath, targetImagePath, 10, 30)
 
-      robot.moveMouseSmooth(x + random.integer(10, 30), y + random.integer(10, 30))
+      robot.moveMouseSmooth(x, y)
       robot.mouseClick('left', true)
-
-      srcImagePath = path.join(pythonImagesPath, 'temp/gameWindowCapture.jpg')
-      targetImagePath = path.join(pythonImagesPath, 'GUIElements/startGame.png')
     }, 1000)
   })
 }

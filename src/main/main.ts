@@ -8,6 +8,8 @@ import { getProcessesByName } from '../utils/systemCotroll'
 import GameWindowControl from '../utils/gameWindowControll'
 import startServer from '../server'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
+import { deleteDir } from '../utils/fileOperations'
+import { pythonImagesPath } from '../paths'
 
 // 服务端端口号
 const port = 3000
@@ -128,9 +130,11 @@ app
   })
   .catch(console.log)
 
-app.on('will-quit', () => {
+app.on('before-quit', async () => {
   // 卸载全局快捷键
   unregisterGloableShortcut()
+  // 删除python下临时图片文件夹
+  await deleteDir(path.join(pythonImagesPath, 'temp'))
 })
 
 export { mainWindow }

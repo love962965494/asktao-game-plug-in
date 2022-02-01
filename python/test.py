@@ -7,7 +7,7 @@ img = None
 templ = None
 image_window = "Source Image"
 result_window = "Result window"
-match_method = 4
+match_method = 5
 max_Trackbar = 5
 
 def cv_imread(file_path):
@@ -18,9 +18,8 @@ def cv_imread(file_path):
 def main():
     global img
     global templ
-    src_path, obj_path = argv
-    src_path = os.path.join(os.getcwd() + '\python\images\temp\screenCapture.jpg')
-    obj_path = os.path.join(os.getcwd() + '\python\images\GUIElements\gameLogo.png')
+    src_path = os.path.join(os.getcwd() + '\python\images\desktop2.jpg')
+    obj_path = os.path.join(os.getcwd() + '\python\images\computer.jpg')
     img = cv_imread(src_path)
     templ = cv_imread(obj_path)
     if ((img is None) or (templ is None)):
@@ -74,9 +73,7 @@ def MatchingMethod(param):
             cv.imshow(image_window, img_display)
             cv.imshow(result_window, result)
             rectangleArr.append([nowX, nowY])
-
-        print(rectangleArr)
     pass
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
