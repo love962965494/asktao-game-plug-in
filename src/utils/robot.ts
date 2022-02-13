@@ -28,7 +28,11 @@ const robot = {
   keyTap(key: string, modifer?: string | string[]) {
     const num = getRandomNum()
 
-    robotjs.keyTap(key, modifer)
+    if (modifer) {
+      robotjs.keyTap(key, modifer)
+    } else{
+      robotjs.keyTap(key)
+    }
     robotjs.setKeyboardDelay(num)
   },
 }

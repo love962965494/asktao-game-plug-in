@@ -154,7 +154,7 @@ export default class GameWindowControl {
           devTools: false,
           preload: path.join(mainPath, 'preload.js'),
         },
-        transparent: true,
+        // transparent: true,
       })
 
       alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))

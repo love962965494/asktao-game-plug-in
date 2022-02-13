@@ -12,14 +12,14 @@ max_Trackbar = 5
 
 def cv_imread(file_path):
     cv_img = cv.imdecode(np.fromfile(file_path, dtype=np.uint8), -1)
-    cv_img=cv.cvtColor(cv_img, cv.COLOR_RGB2BGR)
+    cv_img=cv.cvtColor(cv_img, cv.COLOR_RGB2GRAY)
     return cv_img
 
 def main():
     global img
     global templ
-    src_path = os.path.join(os.getcwd() + '\python\images\desktop2.jpg')
-    obj_path = os.path.join(os.getcwd() + '\python\images\computer.jpg')
+    src_path = os.path.join(os.getcwd() + '\python\images\screenCapture.jpg')
+    obj_path = os.path.join(os.getcwd() + '\python\images\GUIElements\gameLogo_100.png')
     img = cv_imread(src_path)
     templ = cv_imread(obj_path)
     if ((img is None) or (templ is None)):

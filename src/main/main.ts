@@ -100,10 +100,6 @@ function init() {
   registerTasks()
   // 注册全局快捷键
   registerGlobalShortcut()
-
-  // TODO:
-  // new GameWindowControl(10272)
-  // new GameWindowControl(8940)
 }
 
 /**
