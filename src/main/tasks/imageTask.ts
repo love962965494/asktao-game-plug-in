@@ -1,33 +1,11 @@
-import robotjs, { Bitmap } from 'robotjs'
-import Jimp from 'jimp'
+import robotjs from 'robotjs'
 import { ipcMain } from 'electron'
 import path from 'path'
-import child_process from 'child_process'
-import { pythonImagesPath, pythonPath } from '../../paths'
+import { pythonImagesPath } from '../../paths'
 import robot from '../../utils/robot'
-import random from 'random'
 import { getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
-
-// 将截图文件转换为png图片
-function screenCaptureToFile2(robotScreenPic: Bitmap, path: string) {
-  return new Promise((resolve, reject) => {
-    try {
-      const image = new Jimp(robotScreenPic.width, robotScreenPic.height)
-      let pos = 0
-      image.scan(0, 0, image.bitmap.width, image.bitmap.height, (_x, _y, idx) => {
-        image.bitmap.data[idx + 2] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 1] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 0] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 3] = robotScreenPic.image.readUInt8(pos++)
-      })
-      image.write(path, resolve)
-    } catch (e) {
-      console.error(e)
-      reject(e)
-    }
-  })
-}
+import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 
 // 处理字符串输入
 function handleCharKeyTap(char: string) {
@@ -44,40 +22,12 @@ function handleCharKeyTap(char: string) {
   }
 }
 
-function findImagePositions(
-  srcImage: string,
-  targetImage: string,
-  minOffset: number = 0,
-  maxOffset: number = 0
-): Promise<Array<[number, number]>> {
-  const filePath = path.join(pythonPath, 'findPositions.py')
-
-  return new Promise((resolve, reject) => {
-    const workerProcess = child_process.exec(`python -u ${filePath} ${srcImage} ${targetImage}`, (error, stdout) => {
-      if (error) {
-        console.log('findImagePos error: ', error)
-        reject(error)
-      }
-
-      const positions: Array<[number, number]> = (JSON.parse(stdout.split('\r\n')[0]) as Array<[number, number]>).map(
-        ([x, y]) => [x + random.integer(minOffset, maxOffset), y + random.integer(minOffset, maxOffset)]
-      )
-
-      resolve(positions)
-    })
-
-    workerProcess.on('exit', () => {
-      console.log('执行python脚本完成')
-    })
-  })
-}
-
 export function registerImageTasks() {
   ipcMain.on('get-image', async (_event, option: { x: number; y: number; fileName: string }) => {
     const { x, y, fileName } = option
     const bitmap = robotjs.screen.capture(x, y, 1920, 40)
 
-    await screenCaptureToFile2(bitmap, path.join(__dirname, `../assets/${fileName}.png`))
+    await screenCaptureToFile(bitmap, path.join(__dirname, `../assets/${fileName}.png`))
   })
 
   // ipcMain.handle('get-image-pos', async () => {
@@ -100,7 +50,7 @@ export function registerImageTasks() {
       const screenCapture = robotjs.screen.capture()
       let srcImagePath = path.join(pythonImagesPath, 'temp/screenCapture.jpg')
       let targetImagePath = path.join(pythonImagesPath, 'GUIElements/gameLogo_100.png')
-      await screenCaptureToFile2(screenCapture, srcImagePath)
+      await screenCaptureToFile(screenCapture, srcImagePath)
 
       const [[x, y]] = await findImagePositions(srcImagePath, targetImagePath, 10, 30)
 

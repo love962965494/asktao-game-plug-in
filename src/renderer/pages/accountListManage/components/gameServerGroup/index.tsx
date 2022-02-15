@@ -1,5 +1,5 @@
 import { Input, Modal, Form, Button, Space } from 'antd'
-import { MouseEventHandler, SyntheticEvent, useEffect, useState } from 'react'
+import { MouseEventHandler, useEffect, useState } from 'react'
 import { simpleCloneKeep } from 'utils/toolkits'
 import { useGameServerGroup } from '../../hooks'
 import styles from './gameServerGroup.module.scss'

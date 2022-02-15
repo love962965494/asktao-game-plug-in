@@ -6,7 +6,6 @@ img = None
 templ = None
 image_window = "Source Image"
 result_window = "Result window"
-match_method = 4
 max_Trackbar = 5
 
 def cv_imread(file_path):
@@ -17,14 +16,14 @@ def cv_imread(file_path):
 def main(argv):
     global img
     global templ
-    src_path, obj_path = argv
+    src_path, obj_path, match_method = argv
     img = cv_imread(src_path)
     templ = cv_imread(obj_path)
     if ((img is None) or (templ is None)):
         print('Can\'t read one of the images')
         return -1
     
-    MatchingMethod(match_method)
+    MatchingMethod(int(match_method))
     
     cv.waitKey(0)
     return 0

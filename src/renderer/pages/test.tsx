@@ -34,7 +34,7 @@ export default function Test() {
   }
 
   const handleStartGameBtnClick = () => {
-    ipcRenderer.send('start-game')
+    ipcRenderer.send('test-start-game')
   }
 
   return (

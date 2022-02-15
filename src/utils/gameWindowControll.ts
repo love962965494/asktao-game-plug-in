@@ -34,7 +34,7 @@ function getBoundsAndScaleFactor(bounds: IBounds): IBounds & { scaleFactor: numb
   let direction: Directions
   let scaleFactor: number
 
-  if (left < mainWidth && top < mainHeight && left > 0 && top > 0) {
+  if (left < mainWidth && top < mainHeight && left >= 0 && top >= 0) {
     // 目标窗口在主屏上
     direction = Directions.Middle
   } else if (subX === mainWidth) {
@@ -154,6 +154,7 @@ export default class GameWindowControl {
           devTools: false,
           preload: path.join(mainPath, 'preload.js'),
         },
+        backgroundColor: '#456'
         // transparent: true,
       })
 
@@ -216,6 +217,10 @@ export default class GameWindowControl {
    */
   setPosition(x: number, y: number) {
     this.gameWindow.setPosition(HWND.NOTOPMOST, x, y, 0, 0, SWP.NOSIZE)
+  }
+
+  setSize(width: number, height: number) {
+    this.gameWindow.setPosition(HWND.NOTOPMOST, 0, 0, width, height, SWP.NOMOVE)
   }
 
   /**

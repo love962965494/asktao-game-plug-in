@@ -1,9 +1,31 @@
-import { Point } from '../../constants/types'
+import { GameAccountList, Point } from '../../constants/types'
 import { ipcMain } from 'electron'
 import robot from 'robotjs'
+import robotUtil from '../../utils/robot'
+import path from 'path'
 import GameWindowControl from '../../utils/gameWindowControll'
+import { setTimeoutPromise } from '../../utils/toolkits'
+import { constantsPath, pythonImagesPath } from '../../paths'
+import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
+import { getProcessesByName } from '../../utils/systemCotroll'
+import fs from 'fs/promises'
 
 const YouDaoPid = 10272
+
+// 处理字符串输入
+function handleCharKeyTap(char: string) {
+  if (/[A-Z]/.test(char)) {
+    robot.keyToggle('shift', 'down')
+    robotUtil.keyTap(char.toLowerCase())
+    robot.keyToggle('shift', 'up')
+  } else if (char === '*') {
+    robot.keyToggle('shift', 'down')
+    robotUtil.keyTap('8')
+    robot.keyToggle('shift', 'up')
+  } else {
+    robotUtil.keyTap(char)
+  }
+}
 
 export function registerTestTasks() {
   ipcMain.on('alternate-window-click', () => {
@@ -23,5 +45,89 @@ export function registerTestTasks() {
     const instance = new GameWindowControl(YouDaoPid)
 
     instance.showGameWindow()
+  })
+
+  ipcMain.on('test-start-game', async () => {
+    robotUtil.keyTap('d', ['command'])
+    let positions: Array<[number, number]> = []
+
+    await setTimeoutPromise(async () => {
+      const screenCapture = robot.screen.capture()
+      let srcImagePath = path.join(pythonImagesPath, 'temp/screenCapture.jpg')
+      let targetImagePath = path.join(pythonImagesPath, 'GUIElements/textnote.jpg')
+
+      await screenCaptureToFile(screenCapture, srcImagePath)
+      positions = await findImagePositions(srcImagePath, targetImagePath, 10, 30, 5)
+    }, 1000)
+
+    if (positions.length === 0) {
+      console.log('findImagePositions error')
+      throw new Error('没有找到对应坐标')
+    }
+
+    const [x, y] = positions[0]
+    const gameAccountList: GameAccountList = JSON.parse(
+      await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+    )
+    const accounts = gameAccountList.flatMap((group) => group.accountList)
+
+    // 依次登录所有账号
+    for (let i = 0; i < accounts.length; i++) {
+      const { account, password } = accounts[i]
+      // 打开应用程序
+      robotUtil.moveMouseSmooth(x, y)
+      robotUtil.mouseClick('left', true)
+
+      await setTimeoutPromise(async () => {
+        const processes = await getProcessesByName('notepad')
+        console.log('processes: ', processes)
+        const allGameWindows = GameWindowControl.getAllGameWindows()
+        console.log('allGameWindows: ', allGameWindows)
+        const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
+        const instance = new GameWindowControl(+pid)
+        const scaleFactor = instance.getScaleFactor()
+        const alternateWindow = GameWindowControl.getAlternateWindow()
+        const left = (i % 5) * 300
+        const top = Math.min(Math.max(i - 4, 0), 1) * 400
+        console.log('scaleFactor: ', scaleFactor)
+        instance.setPosition(left, top)
+        instance.setSize(1000, 800)
+        alternateWindow.setBounds({
+          x: Math.round(left / scaleFactor),
+          y: Math.round(top / scaleFactor),
+          width: Math.round(1000 / scaleFactor),
+          height: Math.round(800 / scaleFactor),
+        })
+        alternateWindow.show()
+        robotUtil.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+        await setTimeoutPromise(() => {
+          alternateWindow.hide()
+        }, 1000)
+        robotUtil.mouseClick('left', true)
+
+        // 切换输入法
+        robotUtil.keyTap('shift')
+
+        for (const char of account) {
+          handleCharKeyTap(char)
+        }
+        robotUtil.keyTap('enter')
+        for (const char of password) {
+          handleCharKeyTap(char)
+        }
+      }, 1000)
+
+      await setTimeoutPromise(() => {
+        // 输入完毕后，显示桌面，继续打开新的进程
+        robotUtil.keyTap('d', ['command'])
+      }, 1000)
+    }
+
+    const allGameWindows = GameWindowControl.getAllGameWindows()
+
+    // 显示所有窗口
+    for (const gameWindow of allGameWindows.values()) {
+      gameWindow.showGameWindow()
+    }
   })
 }

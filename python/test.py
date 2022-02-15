@@ -15,11 +15,10 @@ def cv_imread(file_path):
     cv_img=cv.cvtColor(cv_img, cv.COLOR_RGB2GRAY)
     return cv_img
 
-def main():
+def main(argv):
     global img
     global templ
-    src_path = os.path.join(os.getcwd() + '\python\images\screenCapture.jpg')
-    obj_path = os.path.join(os.getcwd() + '\python\images\GUIElements\gameLogo_100.png')
+    src_path, obj_path = argv
     img = cv_imread(src_path)
     templ = cv_imread(obj_path)
     if ((img is None) or (templ is None)):
@@ -76,4 +75,4 @@ def MatchingMethod(param):
     pass
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

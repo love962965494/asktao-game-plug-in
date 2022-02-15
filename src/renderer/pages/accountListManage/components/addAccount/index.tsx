@@ -83,6 +83,7 @@ export function AddAccount(props: IAddAccount) {
           addAccountForm.resetFields()
           hideModal()
           refreshData()
+          dispatch({ type: 'SET_HAS_ADDED_GROUP_NAME', payload: { hasAddedGroupName: false } })
         } catch (error) {
           console.log('addAccount error: ', error)
         }
