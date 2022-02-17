@@ -6,6 +6,7 @@ function getRandomNum(min: number = 5, max: number = 20) {
 
   return num
 }
+
 const robot = {
   moveMouseSmooth(x: number, y: number, speed: number = 3) {
     const num = getRandomNum()
@@ -30,10 +31,24 @@ const robot = {
 
     if (modifer) {
       robotjs.keyTap(key, modifer)
-    } else{
+    } else {
       robotjs.keyTap(key)
     }
     robotjs.setKeyboardDelay(num)
+  },
+  // 处理字符串输入
+  handleCharKeyTap(char: string) {
+    if (/[A-Z]/.test(char)) {
+      robotjs.keyToggle('shift', 'down')
+      robot.keyTap(char.toLowerCase())
+      robotjs.keyToggle('shift', 'up')
+    } else if (char === '*') {
+      robotjs.keyToggle('shift', 'down')
+      robot.keyTap('8')
+      robotjs.keyToggle('shift', 'up')
+    } else {
+      robot.keyTap(char)
+    }
   },
 }
 

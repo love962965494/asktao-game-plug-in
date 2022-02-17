@@ -12,21 +12,6 @@ import fs from 'fs/promises'
 
 const YouDaoPid = 10272
 
-// 处理字符串输入
-function handleCharKeyTap(char: string) {
-  if (/[A-Z]/.test(char)) {
-    robot.keyToggle('shift', 'down')
-    robotUtil.keyTap(char.toLowerCase())
-    robot.keyToggle('shift', 'up')
-  } else if (char === '*') {
-    robot.keyToggle('shift', 'down')
-    robotUtil.keyTap('8')
-    robot.keyToggle('shift', 'up')
-  } else {
-    robotUtil.keyTap(char)
-  }
-}
-
 export function registerTestTasks() {
   ipcMain.on('alternate-window-click', () => {
     const alternateWindow = GameWindowControl.getAlternateWindow()
@@ -109,11 +94,11 @@ export function registerTestTasks() {
         robotUtil.keyTap('shift')
 
         for (const char of account) {
-          handleCharKeyTap(char)
+          robotUtil.handleCharKeyTap(char)
         }
         robotUtil.keyTap('enter')
         for (const char of password) {
-          handleCharKeyTap(char)
+          robotUtil.handleCharKeyTap(char)
         }
       }, 1000)
 

@@ -6,15 +6,33 @@ import GameServerGroupData from './GameServerGroup.json'
 export type ILoginStatus = '已登录' | '离线'
 
 /**
+ * 账户角色状态信息
+ */
+export type RoleStatus = {
+  // 角色等级
+  rank: number
+  // 角色姓名
+  roleName: string
+  // 角色头像
+  roleAvatar: string
+  // 当前是该账户下的第几个角色
+  roleOrder: 1 | 2 | 3 | 4
+  // 当前执行任务
+  currentTask: string
+  // 登录状态
+  loginStatus: ILoginStatus
+  // 战斗方案
+  battlePlan: [number, number]
+}
+
+/**
  * 账号角色信息
  */
 export type GameAccount = {
   id: string
   account: string
   password: string
-  rank?: number
-  roleName?: string
-  loginStatus?: ILoginStatus
+  roleInfo: Partial<RoleStatus>
 }
 
 /**
@@ -63,13 +81,13 @@ export type GamePointList = Array<{
  */
 export type GameTask = {
   id: string
-  name: string
+  taskName: string
   // 任务次数
-  count?: number
+  taskCount: number
   // 活跃度
   liveness?: number
-  // 权重
-  weight?: number
+  // 组队任务或者单人任务
+  taskType?: 'group' | 'single'
 }
 
 /**
@@ -79,6 +97,18 @@ export type GameTaskList = Array<{
   tag: string
   taskList: GameTask[]
 }>
+
+/**
+ * 游戏方案
+ */
+export type GameTaskPlan = {
+  id: string
+  planName: string
+  gameTaskList: GameTaskList
+}
+
+// 游戏方案列表
+export type GameTaskPlanList = GameTaskPlan[]
 
 /**
  * 方向

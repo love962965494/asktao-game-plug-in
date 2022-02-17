@@ -2,25 +2,10 @@ import robotjs from 'robotjs'
 import { ipcMain } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import robot from '../../utils/robot'
+import robotUtil from '../../utils/robot'
 import { getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
-
-// 处理字符串输入
-function handleCharKeyTap(char: string) {
-  if (/[A-Z]/.test(char)) {
-    robotjs.keyToggle('shift', 'down')
-    robot.keyTap(char.toLowerCase())
-    robotjs.keyToggle('shift', 'up')
-  } else if (char === '*') {
-    robotjs.keyToggle('shift', 'down')
-    robot.keyTap('8')
-    robotjs.keyToggle('shift', 'up')
-  } else {
-    robot.keyTap(char)
-  }
-}
 
 export function registerImageTasks() {
   ipcMain.on('get-image', async (_event, option: { x: number; y: number; fileName: string }) => {
@@ -34,18 +19,18 @@ export function registerImageTasks() {
   //   const res = await findImagePositions('', '')
 
   //   const [x, y] = JSON.parse(res)
-  //   robot.keyTap('d', ['command'])
+  //   robotUtil.keyTap('d', ['command'])
   //   setTimeout(() => {
-  //     robot.moveMouseSmooth(x, y)
-  //     robot.mouseClick('left', true)
-  //     robot.keyTap('d', ['command'])
+  //     robotUtil.moveMouseSmooth(x, y)
+  //     robotUtil.mouseClick('left', true)
+  //     robotUtil.keyTap('d', ['command'])
   //   }, 1000)
 
   //   return res
   // })
 
   ipcMain.on('start-game', async () => {
-    robot.keyTap('d', ['command'])
+    robotUtil.keyTap('d', ['command'])
     setTimeout(async () => {
       const screenCapture = robotjs.screen.capture()
       let srcImagePath = path.join(pythonImagesPath, 'temp/screenCapture.jpg')
@@ -54,8 +39,8 @@ export function registerImageTasks() {
 
       const [[x, y]] = await findImagePositions(srcImagePath, targetImagePath, 10, 30)
 
-      robot.moveMouseSmooth(x, y, 1.5)
-      robot.mouseClick('left', true)
+      robotUtil.moveMouseSmooth(x, y, 1.5)
+      robotUtil.mouseClick('left', true)
 
       setTimeout(async () => {
         const processes = await getProcessesByName('asktao')
@@ -74,27 +59,27 @@ export function registerImageTasks() {
           const account = 'happy745266301'
           const password = 'Aa*13673390028'
           alternateWindow.show()
-          robot.moveMouseSmooth(left + 460 * scaleFactor, top + 200 * scaleFactor, 1)
+          robotUtil.moveMouseSmooth(left + 460 * scaleFactor, top + 200 * scaleFactor, 1)
           alternateWindow.hide()
-          robot.mouseClick('left', true)
-          robot.keyTap('a', 'control')
+          robotUtil.mouseClick('left', true)
+          robotUtil.keyTap('a', 'control')
           for (const char of account) {
-            handleCharKeyTap(char)
+            robotUtil.handleCharKeyTap(char)
           }
 
           alternateWindow.show()
-          robot.moveMouseSmooth(left + 650 * scaleFactor, top + 400 * scaleFactor)
+          robotUtil.moveMouseSmooth(left + 650 * scaleFactor, top + 400 * scaleFactor)
           alternateWindow.hide()
-          robot.mouseClick('left', true)
+          robotUtil.mouseClick('left', true)
 
           setTimeout(() => {
             alternateWindow.show()
-            robot.moveMouseSmooth(left + 460 * scaleFactor, top + 230 * scaleFactor)
+            robotUtil.moveMouseSmooth(left + 460 * scaleFactor, top + 230 * scaleFactor)
             alternateWindow.hide()
-            robot.mouseClick('left', true)
+            robotUtil.mouseClick('left', true)
 
             for (const char of password) {
-              handleCharKeyTap(char)
+              robotUtil.handleCharKeyTap(char)
             }
           }, 1000)
         }

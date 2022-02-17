@@ -72,7 +72,7 @@ export function AddGamePoint(props: IAddGamePoint) {
     shortcutRef.current = [...shortcutRef.current, key]
   }
 
-  const handleAddGamePointFormSubmit = () => {
+  const handleFormSubmit = () => {
     form
       .validateFields()
       .then(async (gamePoint: GamePoint & { point: Point }) => {
@@ -86,7 +86,7 @@ export function AddGamePoint(props: IAddGamePoint) {
         refreshData()
       })
       .catch((error) => {
-        console.log('handleAddGamePointFormSubmit error: ', error)
+        console.log('handleFormSubmit error: ', error)
       })
   }
 
@@ -98,15 +98,11 @@ export function AddGamePoint(props: IAddGamePoint) {
   return (
     <Modal
       visible={visible}
+      onOk={handleFormSubmit}
       onCancel={handleHideModal}
-      onOk={handleAddGamePointFormSubmit}
       title={record ? '修改坐标' : '添加坐标'}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 4 }}
-        initialValues={{ ...(record || {}), point: { x: record?.point.x, y: record?.point.y } }}
-      >
+      <Form form={form} labelCol={{ span: 4 }}>
         <FormItem label="坐标名称" name="name" rules={[{ required: true, message: '坐标名称不能为空' }]}>
           <Input />
         </FormItem>

@@ -4,7 +4,16 @@ import { HttpStatus } from '../index'
 import { FastifyInstance } from 'fastify'
 import { constantsPath } from '../../paths'
 import GameServerGroup from '../../constants/GameServerGroup.json'
-import { GameAccount, GameAccountList, GamePoint, GamePointList } from 'constants/types'
+import {
+  GameAccount,
+  GameAccountList,
+  GamePoint,
+  GamePointList,
+  GameTask,
+  GameTaskList,
+  GameTaskPlan,
+  GameTaskPlanList,
+} from 'constants/types'
 const uuid = require('uuid')
 
 /**
@@ -47,6 +56,7 @@ function addGameAccount(fastify: FastifyInstance) {
           id,
           account,
           password,
+          roleInfo: {},
         })
       } else {
         newGameAccountList.push({
@@ -57,6 +67,7 @@ function addGameAccount(fastify: FastifyInstance) {
               id,
               account,
               password,
+              roleInfo: {},
             },
           ],
         })
@@ -95,7 +106,6 @@ function addGamePoint(fastify: FastifyInstance) {
     try {
       const { tag, ...gamePoint } = request.body as GamePoint & { tag: string }
 
-      console.log('uuid: ', uuid)
       gamePoint.id = uuid.v4()
       const GamePointList = await fs.readFile(path.join(constantsPath, 'GamePointList.json'), 'utf-8')
       const newGamePointList = JSON.parse(GamePointList) as GamePointList
@@ -166,6 +176,154 @@ function editGamePoint(fastify: FastifyInstance) {
   })
 }
 
+/**
+ * 获取游戏任务
+ */
+function getGameTaskList(fastify: FastifyInstance) {
+  fastify.get('/getGameTaskList', async (_request, response) => {
+    const GameTaskList = await fs.readFile(path.resolve(constantsPath, 'GameTaskList.json'), 'utf-8')
+
+    response.send({ ...HttpStatus.Success, data: JSON.parse(GameTaskList) })
+  })
+}
+
+/**
+ * 添加游戏任务
+ */
+function addGameTask(fastify: FastifyInstance) {
+  fastify.post('/addGameTask', async (request, response) => {
+    try {
+      const { tag, ...gameTask } = request.body as GameTask & { tag: string }
+      gameTask.id = uuid.v4()
+      gameTask.taskCount = gameTask.taskCount || 1
+      const GameTaskList = await fs.readFile(path.join(constantsPath, 'GameTaskList.json'), 'utf-8')
+      const newGameTaskList = JSON.parse(GameTaskList) as GameTaskList
+      const item = newGameTaskList.find((item) => item.tag === tag)
+
+      if (item) {
+        item.taskList.push(gameTask)
+      } else {
+        newGameTaskList.push({
+          tag,
+          taskList: [gameTask],
+        })
+      }
+
+      await fs.writeFile(path.join(constantsPath, 'GameTaskList.json'), JSON.stringify(newGameTaskList, undefined, 4))
+
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('addGameTask error: ', error)
+    }
+  })
+}
+
+/**
+ * 修改游戏任务
+ */
+function editGameTask(fastify: FastifyInstance) {
+  fastify.post('/editGameTask', async (request, response) => {
+    try {
+      const { tag, ...gameTask } = request.body as GameTask & { tag: string }
+      gameTask.taskCount = gameTask.taskCount || 1
+      const GameTaskList = await fs.readFile(path.join(constantsPath, 'GameTaskList.json'), 'utf-8')
+      const newGameTaskList = JSON.parse(GameTaskList) as GameTaskList
+      let hasEdit = false
+
+      for (const item of newGameTaskList) {
+        for (const [index, point] of item.taskList.entries()) {
+          if (point.id === gameTask.id) {
+            if (tag === item.tag) {
+              item.taskList.splice(index, 1, gameTask)
+              hasEdit = true
+            } else {
+              item.taskList.splice(index, 1)
+            }
+
+            break
+          }
+        }
+      }
+
+      if (!hasEdit) {
+        const item = newGameTaskList.find((item) => item.tag === tag)
+
+        if (item) {
+          item.taskList.push(gameTask)
+        } else {
+          newGameTaskList.push({
+            tag,
+            taskList: [gameTask],
+          })
+        }
+      }
+
+      await fs.writeFile(path.join(constantsPath, 'GameTaskList.json'), JSON.stringify(newGameTaskList, undefined, 4))
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('editGameTask error: ', error)
+    }
+  })
+}
+
+/**
+ * 获取游戏任务方案
+ */
+function getGameTaskPlanList(fastify: FastifyInstance) {
+  fastify.get('/getGameTaskPlanList', async (_request, response) => {
+    const GameTaskPlanList = await fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
+
+    response.send({ ...HttpStatus.Success, data: JSON.parse(GameTaskPlanList) })
+  })
+}
+
+/**
+ * 添加游戏任务方案
+ */
+function addGameTaskPlan(fastify: FastifyInstance) {
+  fastify.post('/addGameTaskPlan', async (request, response) => {
+    try {
+      const gameTaskPlan = request.body as GameTaskPlan
+      gameTaskPlan.id = uuid.v4()
+      const GameTaskPlanList = await fs.readFile(path.join(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
+      const newGameTaskPlanList = JSON.parse(GameTaskPlanList) as GameTaskPlanList
+      newGameTaskPlanList.push(gameTaskPlan)
+
+      await fs.writeFile(
+        path.join(constantsPath, 'GameTaskPlanList.json'),
+        JSON.stringify(newGameTaskPlanList, undefined, 4)
+      )
+
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('addGameTaskPlan error: ', error)
+    }
+  })
+}
+
+/**
+ * 删除游戏任务方案
+ */
+function removeGameTaskPlan(fastify: FastifyInstance) {
+  fastify.post('/removeGameTaskPlan', async (request, response) => {
+    try {
+      const id = request.body as string
+      const GameTaskPlanList = await fs.readFile(path.join(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
+      const newGameTaskPlanList = JSON.parse(GameTaskPlanList) as GameTaskPlanList
+      const index = newGameTaskPlanList.findIndex((task) => task.id === id)
+      newGameTaskPlanList.splice(index, 1)
+
+      await fs.writeFile(
+        path.join(constantsPath, 'GameTaskPlanList.json'),
+        JSON.stringify(newGameTaskPlanList, undefined, 4)
+      )
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('editGameTask error: ', error)
+    }
+  })
+}
+
 export default function getConstantsConfig(fastify: FastifyInstance) {
   // 游戏账户管理
   getGameSeverGroup(fastify)
@@ -176,4 +334,14 @@ export default function getConstantsConfig(fastify: FastifyInstance) {
   getGamePointList(fastify)
   addGamePoint(fastify)
   editGamePoint(fastify)
+
+  // 游戏任务管理
+  getGameTaskList(fastify)
+  addGameTask(fastify)
+  editGameTask(fastify)
+
+  // 游戏任务方案管理
+  getGameTaskPlanList(fastify)
+  addGameTaskPlan(fastify)
+  removeGameTaskPlan(fastify)
 }

@@ -78,13 +78,13 @@ export default function AccountListManage() {
                           账号：<span>{item.account}</span>
                         </span>
                         <span>
-                          角色名：<span>{item.roleName}</span>
+                          角色名：<span>{item.roleInfo?.roleName}</span>
                         </span>
                         <span>
-                          等级：<span>{item.rank}</span>
+                          等级：<span>{item.roleInfo?.rank}</span>
                         </span>
                         <span>
-                          状态：<span>{item.loginStatus}</span>
+                          状态：<span>{item.roleInfo?.loginStatus}</span>
                         </span>
                       </div>
                     </div>
