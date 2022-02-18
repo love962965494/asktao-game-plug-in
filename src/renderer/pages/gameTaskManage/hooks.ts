@@ -1,4 +1,4 @@
-import { GameTask, GameTaskList, GameTaskPlanList } from 'constants/types'
+import { GameTask, GameTaskList, GameTaskPlan, GameTaskPlanList } from 'constants/types'
 import { useCallback, useEffect, useState } from 'react'
 import { requestByGet, requestByPost } from 'utils/http'
 
@@ -64,4 +64,16 @@ export function useGameTaskPlanList() {
   }, [])
 
   return { gameTaskPlanList, getGameTaskPlanList }
+}
+
+export function useAddGameTaskPlan() {
+  const addGameTaskPlan = useCallback(async (gameTaskPlan: GameTaskPlan) => {
+    try {
+      await requestByPost('/addGameTaskPlan', gameTaskPlan)
+    } catch (error) {
+      console.log('useAddGameTaskPlan error: ', error)
+    }
+  }, [])
+
+  return (gameTaskPlan: GameTaskPlan) => addGameTaskPlan(gameTaskPlan)
 }

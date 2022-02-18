@@ -2,7 +2,6 @@ import { Button, Form, Space } from 'antd'
 import { useReducer } from 'react'
 import { AddGamePoint, EditGamePoint } from './components'
 import { useAddGamePoint, useEditGamePoint, useGamePointList } from './hooks'
-import styles from './gamePointsManage.module.scss'
 import { GamePoint } from 'constants/types'
 
 const FormItem = Form.Item
@@ -78,7 +77,7 @@ export default function GamePointManage() {
             </Space>
           </h3>
 
-          <ul className={styles.list}>
+          <ul className="list">
             {item.pointList.map((pointItem) => (
               <li key={pointItem.id}>
                 <a href="#" onClick={handleGamePointClick.bind(null, pointItem, item.tag)}>

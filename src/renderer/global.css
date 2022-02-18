@@ -29,3 +29,14 @@ ul {
   list-style: none;
   padding-left: 0;
 }
+
+ul.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 10px 50px;
+  justify-self: start;
+}
+
+ul.list li a:hover {
+  border-bottom: 1px solid currentColor;
+}

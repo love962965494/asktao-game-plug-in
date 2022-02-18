@@ -88,6 +88,8 @@ export type GameTask = {
   liveness?: number
   // 组队任务或者单人任务
   taskType?: 'group' | 'single'
+  // 用于设置任务方案时，表示是否被选中
+  checked?: boolean
 }
 
 /**
