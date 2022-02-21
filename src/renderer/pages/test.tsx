@@ -30,7 +30,7 @@ export default function Test() {
   }
 
   const handleShowWindowBtnClick = () => {
-    ipcRenderer.send('show-window')
+    ipcRenderer.send('test-youdao')
   }
 
   const handleStartGameBtnClick = () => {

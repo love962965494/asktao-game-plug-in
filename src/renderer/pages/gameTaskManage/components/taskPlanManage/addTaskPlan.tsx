@@ -1,34 +1,59 @@
 import { Checkbox, Collapse, Form, Input, Modal } from 'antd'
 import { GameTaskList, GameTaskPlan } from 'constants/types'
-import { FieldData } from 'rc-field-form/lib/interface'
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { simpleCloneKeep } from 'utils/toolkits'
 
 const FormItem = Form.Item
 const CollapsePanel = Collapse.Panel
 
-interface IAddTaskPlan {
+export interface IAddTaskPlan {
   visible: boolean
+  record?: GameTaskPlan
   hideModal: () => void
   refreshData: () => void
   gameTaskList: GameTaskList
-  addGameTaskPlan: (gameTaskPlan: GameTaskPlan) => Promise<void>
+  addGameTaskPlan?: (gameTaskPlan: GameTaskPlan) => Promise<void>
+  editGameTaskPlan?: (gameTaskPlan: GameTaskPlan) => Promise<void>
 }
 
 export function AddTaskPlan(props: IAddTaskPlan) {
-  const { visible, hideModal, gameTaskList, addGameTaskPlan, refreshData } = props
+  const { record, visible, hideModal, gameTaskList, addGameTaskPlan, editGameTaskPlan, refreshData } = props
   const [form] = Form.useForm()
   const [newGameTaskList, setNewGameTaskList] = useState<GameTaskList>([])
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0)
 
   useEffect(() => {
     setNewGameTaskList(simpleCloneKeep(gameTaskList))
   }, [gameTaskList])
 
+  useEffect(() => {
+    if (record) {
+      const gameTaskList = newGameTaskList.map((item) => {
+        for (const task of item.taskList) {
+          const taskGroup = record.gameTaskList.find((taskItem) => taskItem.tag === item.tag)
+          const temp = taskGroup?.taskList?.find((item) => item.id === task.id)
+          task.checked = temp?.checked ?? false
+        }
+
+        return item
+      })
+      form.setFieldsValue({
+        planName: record.planName,
+        gameTaskList,
+      })
+      forceUpdate()
+    }
+  }, [record, newGameTaskList])
+
   const handleFormSubmit = () => {
     form
       .validateFields()
       .then(async (gameTaskPlan: GameTaskPlan) => {
-        await addGameTaskPlan(gameTaskPlan)
+        if (record) {
+          await editGameTaskPlan?.({ ...gameTaskPlan, id: record.id })
+        } else {
+          await addGameTaskPlan?.(gameTaskPlan)
+        }
         handleHideModal()
         refreshData()
       })
@@ -43,7 +68,12 @@ export function AddTaskPlan(props: IAddTaskPlan) {
   }
 
   return (
-    <Modal title="添加游戏任务方案" visible={visible} onCancel={handleHideModal} onOk={handleFormSubmit}>
+    <Modal
+      visible={visible}
+      onOk={handleFormSubmit}
+      onCancel={handleHideModal}
+      title={record ? '修改游戏任务方案' : '添加游戏任务方案'}
+    >
       <Form form={form} labelCol={{ span: 4 }}>
         <FormItem label="方案名称" name="planName" rules={[{ required: true, message: '方案名称不能为空' }]}>
           <Input />

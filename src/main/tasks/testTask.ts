@@ -65,16 +65,14 @@ export function registerTestTasks() {
 
       await setTimeoutPromise(async () => {
         const processes = await getProcessesByName('notepad')
-        console.log('processes: ', processes)
         const allGameWindows = GameWindowControl.getAllGameWindows()
-        console.log('allGameWindows: ', allGameWindows)
         const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
         const instance = new GameWindowControl(+pid)
         const scaleFactor = instance.getScaleFactor()
         const alternateWindow = GameWindowControl.getAlternateWindow()
         const left = (i % 5) * 300
         const top = Math.min(Math.max(i - 4, 0), 1) * 400
-        console.log('scaleFactor: ', scaleFactor)
+
         instance.setPosition(left, top)
         instance.setSize(1000, 800)
         alternateWindow.setBounds({
@@ -83,11 +81,13 @@ export function registerTestTasks() {
           width: Math.round(1000 / scaleFactor),
           height: Math.round(800 / scaleFactor),
         })
+
         alternateWindow.show()
         robotUtil.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
         await setTimeoutPromise(() => {
           alternateWindow.hide()
-        }, 1000)
+        }, 500)
+
         robotUtil.mouseClick('left', true)
 
         // 切换输入法
@@ -114,5 +114,14 @@ export function registerTestTasks() {
     for (const gameWindow of allGameWindows.values()) {
       gameWindow.showGameWindow()
     }
+  })
+
+  ipcMain.on('test-youdao', async () => {
+    const processes = await getProcessesByName('YoudaoDict')
+    console.log('processes: ', processes)
+    const [_, pid] = processes[0]
+    const instance = new GameWindowControl(+pid)
+    // const alternateWindow = GameWindowControl.getAlternateWindow()
+    instance.showGameWindow()
   })
 }

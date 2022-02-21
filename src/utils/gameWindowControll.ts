@@ -125,12 +125,25 @@ function getBoundsAndScaleFactor(bounds: IBounds): IBounds & { scaleFactor: numb
 
 export default class GameWindowControl {
   public gameWindow!: WinControlInstance
-  public bounds!: IBounds
+  #bounds!: IBounds
+  #scaleFactor!: number
 
   constructor(public pid: number) {
     const instance = gameWindows.get(pid)
+    const alternateWindow = GameWindowControl.getAlternateWindow()
 
     if (instance) {
+      const { left, right, top, bottom } = instance.getBounds(true)
+      // 每次访问实例后，都让alternateWindow定位并覆盖它
+      alternateWindow.setBounds({
+        x: left,
+        y: top,
+        width: right - left,
+        height: bottom - top,
+      })
+
+      alternateWindow.show()
+
       return instance
     }
 
@@ -139,27 +152,17 @@ export default class GameWindowControl {
 
     this.showGameWindow()
     const bounds = this.getDimensions()
-    const { left, top, right, bottom } = getBoundsAndScaleFactor(bounds)
-    this.bounds = { left, top, right, bottom }
+    const { left, top, right, bottom, scaleFactor } = getBoundsAndScaleFactor(bounds)
+    this.#bounds = { left, top, right, bottom }
+    this.#scaleFactor = scaleFactor
 
-    if (!alternateWindow) {
-      alternateWindow = new BrowserWindow({
-        width: right - left,
-        height: bottom - top,
-        x: left,
-        y: top,
-        show: true,
-        frame: false,
-        webPreferences: {
-          devTools: false,
-          preload: path.join(mainPath, 'preload.js'),
-        },
-        backgroundColor: '#456'
-        // transparent: true,
-      })
-
-      alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
-    }
+    // 每次新建实例后，都让alternateWindow定位并覆盖它
+    alternateWindow.setBounds({
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    })
 
     gameWindows.set(pid, this)
   }
@@ -169,6 +172,21 @@ export default class GameWindowControl {
   }
 
   static getAlternateWindow() {
+    if (!alternateWindow) {
+      alternateWindow = new BrowserWindow({
+        show: true,
+        frame: false,
+        webPreferences: {
+          devTools: false,
+          preload: path.join(mainPath, 'preload.js'),
+        },
+        backgroundColor: '#456',
+        // transparent: true,
+      })
+
+      alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
+    }
+
     return alternateWindow
   }
 
@@ -190,26 +208,29 @@ export default class GameWindowControl {
   /**
    * 获取窗口实际位置信息，考虑屏幕缩放后的位置
    */
-  getBounds() {
-    const bounds = this.getDimensions()
-    const { left, top, right, bottom } = getBoundsAndScaleFactor(bounds)
+  getBounds(reCompute?: boolean) {
+    if (reCompute) {
+      const tempBounds = this.getDimensions()
+      const { scaleFactor, ...bounds } = getBoundsAndScaleFactor(tempBounds)
 
-    return {
-      left,
-      top,
-      right,
-      bottom,
+      this.#bounds = bounds
     }
+
+    return this.#bounds
   }
 
   /**
    * 获取窗口所在屏幕的屏幕缩放比
    */
-  getScaleFactor() {
-    const bounds = this.getDimensions()
-    const { scaleFactor } = getBoundsAndScaleFactor(bounds)
+  getScaleFactor(reCompute?: boolean) {
+    if (reCompute) {
+      const bounds = this.getDimensions()
+      const { scaleFactor } = getBoundsAndScaleFactor(bounds)
 
-    return scaleFactor
+      this.#scaleFactor = scaleFactor
+    }
+
+    return this.#scaleFactor
   }
 
   /**

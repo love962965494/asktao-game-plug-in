@@ -9,7 +9,7 @@
                         "taskName": "模拟账户登录",
                         "id": "fc59a3eb-2724-4724-9147-c1bbfc6d022b",
                         "taskCount": 1,
-                        "checked": true
+                        "checked": false
                     }
                 ]
             },
@@ -20,7 +20,7 @@
                         "taskName": "有道词典输入",
                         "id": "5081644a-47ea-4f23-840d-88298b8e9e11",
                         "taskCount": 1,
-                        "checked": true
+                        "checked": false
                     }
                 ]
             },
@@ -36,7 +36,7 @@
                 ]
             }
         ],
-        "id": "2c240d6f-d1fa-435c-86b3-9d0c2cc289ed"
+        "id": "c0de5524-5a91-4916-817b-8e8e4d88f07e"
     },
     {
         "planName": "方案二",
@@ -47,7 +47,8 @@
                     {
                         "taskName": "模拟账户登录",
                         "id": "fc59a3eb-2724-4724-9147-c1bbfc6d022b",
-                        "taskCount": 1
+                        "taskCount": 1,
+                        "checked": true
                     }
                 ]
             },
@@ -68,11 +69,12 @@
                     {
                         "taskName": "网易云播放",
                         "id": "eac2f6d7-27de-4320-938c-478d5ec8ca93",
-                        "taskCount": 1
+                        "taskCount": 1,
+                        "checked": true
                     }
                 ]
             }
         ],
-        "id": "c0de5524-5a91-4916-817b-8e8e4d88f07e"
+        "id": "c1f7ed84-a107-42c2-94f9-07c26628ad2c"
     }
 ]

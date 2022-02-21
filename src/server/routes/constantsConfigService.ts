@@ -302,12 +302,37 @@ function addGameTaskPlan(fastify: FastifyInstance) {
 }
 
 /**
+ * 修改游戏任务方案
+ */
+function editGameTaskPlan(fastify: FastifyInstance) {
+  fastify.post('/editGameTaskPlan', async (request, response) => {
+    try {
+      const gameTaskPlan = request.body as GameTaskPlan
+      const GameTaskPlanList = await fs.readFile(path.join(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
+      const newGameTaskPlanList = JSON.parse(GameTaskPlanList) as GameTaskPlanList
+      const index = newGameTaskPlanList.findIndex((item) => item.id === gameTaskPlan.id)
+
+      newGameTaskPlanList.splice(index, 1, gameTaskPlan)
+
+      await fs.writeFile(
+        path.join(constantsPath, 'GameTaskPlanList.json'),
+        JSON.stringify(newGameTaskPlanList, undefined, 4)
+      )
+
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('editGameTaskPlan error: ', error)
+    }
+  })
+}
+
+/**
  * 删除游戏任务方案
  */
 function removeGameTaskPlan(fastify: FastifyInstance) {
   fastify.post('/removeGameTaskPlan', async (request, response) => {
     try {
-      const id = request.body as string
+      const { id } = request.body as { id: string }
       const GameTaskPlanList = await fs.readFile(path.join(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
       const newGameTaskPlanList = JSON.parse(GameTaskPlanList) as GameTaskPlanList
       const index = newGameTaskPlanList.findIndex((task) => task.id === id)
@@ -343,5 +368,6 @@ export default function getConstantsConfig(fastify: FastifyInstance) {
   // 游戏任务方案管理
   getGameTaskPlanList(fastify)
   addGameTaskPlan(fastify)
+  editGameTaskPlan(fastify)
   removeGameTaskPlan(fastify)
 }

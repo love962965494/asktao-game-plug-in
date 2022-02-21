@@ -2,7 +2,15 @@ import { Button, Form, Space, Select } from 'antd'
 import { GameTask } from 'constants/types'
 import { useReducer } from 'react'
 import { AddGameTask, EditGameTask, TaskPlanManage } from './components'
-import { useAddGameTask, useAddGameTaskPlan, useEditGameTask, useGameTaskList, useGameTaskPlanList } from './hooks'
+import {
+  useAddGameTask,
+  useAddGameTaskPlan,
+  useEditGameTask,
+  useEditGameTaskPlan,
+  useGameTaskList,
+  useGameTaskPlanList,
+  useRemoveGameTaskPlan,
+} from './hooks'
 
 const FormItem = Form.Item
 const SelectOption = Select.Option
@@ -45,6 +53,8 @@ export default function TaskManage() {
   const addGameTask = useAddGameTask()
   const editGameTask = useEditGameTask()
   const addGameTaskPlan = useAddGameTaskPlan()
+  const editGameTaskPlan = useEditGameTaskPlan()
+  const removeGameTaskPlan = useRemoveGameTaskPlan()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { tag, record, pageType, addModalVisible, editModalVisible } = state
 
@@ -69,6 +79,8 @@ export default function TaskManage() {
       type: 'SET_PAGE_TYPE',
       payload: { pageType: pageType === 'taskManage' ? 'taskPlanManage' : 'taskManage' },
     })
+
+  console.log('gameTaskList: ', gameTaskList)
 
   return (
     <>
@@ -147,7 +159,9 @@ export default function TaskManage() {
           gameTaskList={gameTaskList}
           changePageType={changePageType}
           addGameTaskPlan={addGameTaskPlan}
+          editGameTaskPlan={editGameTaskPlan}
           gameTaskPlanList={gameTaskPlanList}
+          removeGameTaskPlan={removeGameTaskPlan}
           getGameTaskPlanList={getGameTaskPlanList}
         />
       )}

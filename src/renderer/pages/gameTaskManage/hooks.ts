@@ -77,3 +77,27 @@ export function useAddGameTaskPlan() {
 
   return (gameTaskPlan: GameTaskPlan) => addGameTaskPlan(gameTaskPlan)
 }
+
+export function useEditGameTaskPlan() {
+  const editGameTaskPlan = useCallback(async (gameTaskPlan: GameTaskPlan) => {
+    try {
+      await requestByPost('/editGameTaskPlan', gameTaskPlan)
+    } catch (error) {
+      console.log('useEditGameTaskPlan error: ', error)
+    }
+  }, [])
+
+  return (gameTaskPlan: GameTaskPlan) => editGameTaskPlan(gameTaskPlan)
+}
+
+export function useRemoveGameTaskPlan() {
+  const remoceGameTaskPlan = useCallback(async ({ id }: { id: string }) => {
+    try {
+      await requestByPost('/removeGameTaskPlan', { id })
+    } catch (error) {
+      console.log('useRemoveGameTaskPlan error: ', error)
+    }
+  }, [])
+
+  return (id: string) => remoceGameTaskPlan({ id })
+}
