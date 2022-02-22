@@ -18,7 +18,7 @@ declare module 'win-control' {
      * @param cy {number}: new height in pixels.
      * @param uFlags: the window sizing and positioning flags. See SWP
      */
-    setPosition(hwnd: HWNDTypeEnum, x?: number, y?: number, cx?: number, cy?: number, uFlags?: number): boolean
+    setPosition(hwnd: HWNDTypeEnum, x?: number, y?: number, cx?: number, cy?: number, uFlags?: SWPTypeEnum): boolean
     getDimensions(): { left: number; right: number; top: number; bottom: number }
   }
 

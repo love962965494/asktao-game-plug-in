@@ -191,7 +191,8 @@ export default class GameWindowControl {
   }
 
   showGameWindow() {
-    this.gameWindow.setShowStatus(WindowStates.SHOWDEFAULT)
+    this.gameWindow.setShowStatus(WindowStates.SHOWNORMAL)
+    this.gameWindow.setPosition(HWND.TOP, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
   }
 
   hideGameWindow() {
