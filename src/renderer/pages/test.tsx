@@ -29,12 +29,20 @@ export default function Test() {
     ipcRenderer.send('set-position', { x: 2200, y: 100 })
   }
 
-  const handleShowWindowBtnClick = () => {
+  const handleYouDaoBtnClick = () => {
     ipcRenderer.send('test-youdao')
   }
 
   const handleStartGameBtnClick = () => {
     ipcRenderer.send('test-start-game')
+  }
+
+  const handleWangYiBtnClick = () => {
+    ipcRenderer.send('test-wangyi')
+  }
+
+  const handleStartAllBtnClick = () => {
+    ipcRenderer.send('test-start-all')
   }
 
   return (
@@ -45,11 +53,17 @@ export default function Test() {
       <Button type="primary" onClick={handleSetPositionBtnClick}>
         设置窗口位置
       </Button>
-      <Button type="primary" onClick={handleShowWindowBtnClick}>
-        显示窗口
+      <Button type="primary" onClick={handleYouDaoBtnClick}>
+        有道词典
       </Button>
       <Button type="primary" onClick={handleStartGameBtnClick}>
         启动游戏
+      </Button>
+      <Button type="primary" onClick={handleWangYiBtnClick}>
+        网易云音乐
+      </Button>
+      <Button type="primary" onClick={handleStartAllBtnClick}>
+        一键执行
       </Button>
     </Space>
   )

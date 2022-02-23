@@ -1,26 +1,24 @@
-import { GameAccount, GameAccountList, Point } from '../../constants/types'
-import { ipcMain } from 'electron'
-import robot from 'robotjs'
-import robotUtil from '../../utils/robot'
 import path from 'path'
+import robot from 'robotjs'
+import fs from 'fs/promises'
+import { ipcMain } from 'electron'
+import { GameAccount, GameAccountList, Point } from '../../constants/types'
+import robotUtil from '../../utils/robot'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { setTimeoutPromise } from '../../utils/toolkits'
 import { constantsPath, pythonImagesPath } from '../../paths'
-import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 import { getProcessesByName } from '../../utils/systemCotroll'
-import fs from 'fs/promises'
-
-const YouDaoPid = 10272
+import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 
 async function* youdaoTask() {
   const processes = await getProcessesByName('YoudaoDict')
   const [_, pid] = processes[0]
   const instance = new GameWindowControl(+pid)
-  const alternateWindow = GameWindowControl.getAlternateWindow()
-  const { left, top, right, bottom } = instance.getBounds()
-  const scaleFactor = instance.getScaleFactor()
-
   instance.showGameWindow()
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+  const { left, top, right, bottom } = instance.getBounds(true)
+  const scaleFactor = instance.getScaleFactor(true)
+
   alternateWindow.setBounds({
     x: left,
     y: top,
@@ -32,6 +30,7 @@ async function* youdaoTask() {
   await setTimeoutPromise(() => alternateWindow.hide(), 500)
   robotUtil.mouseClick('left')
   robot.typeString('youdao ')
+  instance.hideGameWindow()
   yield
 
   instance.showGameWindow()
@@ -42,10 +41,11 @@ async function* youdaoTask() {
     height: bottom - top,
   })
   alternateWindow.show()
-  robotUtil.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
+  robotUtil.moveMouseSmooth(left + 600 * scaleFactor, top + 90 * scaleFactor)
   await setTimeoutPromise(() => alternateWindow.hide(), 500)
   robotUtil.mouseClick('left', true)
   robot.typeString('task ')
+  instance.hideGameWindow()
   yield
 
   instance.showGameWindow()
@@ -56,10 +56,11 @@ async function* youdaoTask() {
     height: bottom - top,
   })
   alternateWindow.show()
-  robotUtil.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
+  robotUtil.moveMouseSmooth(left + 600 * scaleFactor, top + 90 * scaleFactor)
   await setTimeoutPromise(() => alternateWindow.hide(), 500)
   robotUtil.mouseClick('left', true)
   robot.typeString('has ')
+  instance.hideGameWindow()
   yield
 
   instance.showGameWindow()
@@ -70,10 +71,11 @@ async function* youdaoTask() {
     height: bottom - top,
   })
   alternateWindow.show()
-  robotUtil.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
+  robotUtil.moveMouseSmooth(left + 600 * scaleFactor, top + 90 * scaleFactor)
   await setTimeoutPromise(() => alternateWindow.hide(), 500)
   robotUtil.mouseClick('left', true)
   robot.typeString('finished!')
+  instance.hideGameWindow()
   yield
 }
 
@@ -163,6 +165,75 @@ async function* startGameTask() {
   }
 }
 
+async function* wangyiTask() {
+  const pid = 5032
+  const instance = new GameWindowControl(+pid)
+  instance.showGameWindow()
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+  const { left, top, right, bottom } = instance.getBounds(true)
+  const scaleFactor = instance.getScaleFactor(true)
+
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtil.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtil.mouseClick('left')
+  robotUtil.keyTap('a', ['control'])
+  robot.typeString('wang ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtil.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtil.mouseClick('left')
+  robot.typeString('yi ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtil.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtil.mouseClick('left')
+  robot.typeString('cloud ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtil.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtil.mouseClick('left')
+  robot.typeString('music')
+  instance.hideGameWindow()
+  yield
+}
+
 export function registerTestTasks() {
   ipcMain.on('alternate-window-click', () => {
     const alternateWindow = GameWindowControl.getAlternateWindow()
@@ -177,14 +248,20 @@ export function registerTestTasks() {
     instance.setPosition(pos.x, pos.y)
   })
 
-  ipcMain.on('show-window', () => {
-    const instance = new GameWindowControl(YouDaoPid)
-
-    instance.showGameWindow()
-  })
-
   ipcMain.on('test-youdao', async () => {
     const iterator = youdaoTask()
+
+    do {
+      const value = await iterator.next()
+
+      if (value.done) {
+        break
+      }
+    } while (true)
+  })
+
+  ipcMain.on('test-wangyi', async () => {
+    const iterator = wangyiTask()
 
     do {
       const value = await iterator.next()
@@ -205,5 +282,20 @@ export function registerTestTasks() {
         break
       }
     } while (true)
+  })
+
+  ipcMain.on('test-start-all', async () => {
+    const iterators = [youdaoTask(), wangyiTask(), startGameTask()]
+    const allFinished = [false, false, false]
+
+    do {
+      for await (const [index, iterator] of iterators.entries()) {
+        const value = await iterator.next()
+
+        if (value.done) {
+          allFinished[index] = true
+        }
+      }
+    } while (allFinished.filter(Boolean).length !== 3)
   })
 }

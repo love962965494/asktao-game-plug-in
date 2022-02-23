@@ -7,7 +7,7 @@ function getRandomNum(min: number = 5, max: number = 20) {
   return num
 }
 
-const robot = {
+const robotUtils = {
   moveMouseSmooth(x: number, y: number, speed: number = 3) {
     const num = getRandomNum()
 
@@ -40,16 +40,16 @@ const robot = {
   handleCharKeyTap(char: string) {
     if (/[A-Z]/.test(char)) {
       robotjs.keyToggle('shift', 'down')
-      robot.keyTap(char.toLowerCase())
+      robotUtils.keyTap(char.toLowerCase())
       robotjs.keyToggle('shift', 'up')
     } else if (char === '*') {
       robotjs.keyToggle('shift', 'down')
-      robot.keyTap('8')
+      robotUtils.keyTap('8')
       robotjs.keyToggle('shift', 'up')
     } else {
-      robot.keyTap(char)
+      robotUtils.keyTap(char)
     }
   },
 }
 
-export default robot
+export default robotUtils

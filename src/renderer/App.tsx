@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext } from 'react'
 import './App.css'
 import Pages from './pages'
-import { requestByGet } from '../utils/http'
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 

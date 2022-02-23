@@ -21,7 +21,6 @@ function sponsorRequest<T>(method: 'get' | 'post', requestConfig?: AxiosRequestC
 
 async function requestByGet<T>(url: string) {
   const sponsorRequestByGet = sponsorRequest<T>('get')
-
   const {
     data: { code, data, error },
   } = await sponsorRequestByGet(url)
@@ -35,14 +34,14 @@ async function requestByGet<T>(url: string) {
 
 async function requestByPost(url: string, params: any) {
   const sponsorRequestByPost = sponsorRequest('post')
+  const {
+    data: { code, data, error },
+  } = await sponsorRequestByPost(url, params)
 
-  try {
-    const { data } = await sponsorRequestByPost(url, params)
-
-    return data
-  } catch (error) {
-    console.log('requestByPost error: ', error)
+  if (code === 500) {
+    throw error
   }
+  return data
 }
 
 export { requestByGet, requestByPost }

@@ -6,7 +6,10 @@ import child_process from 'child_process'
 import { pythonPath } from '../paths'
 import random from 'random'
 
-export async function deleteDir(path: string) {
+/**
+ * 删除目录和下边所有文件
+ */
+async function deleteDir(path: string) {
   try {
     await fs.access(path)
     const files = await fs.readdir(path)
@@ -29,7 +32,7 @@ export async function deleteDir(path: string) {
 }
 
 // 将截图文件转换为png图片
-export function screenCaptureToFile(robotScreenPic: Bitmap, path: string) {
+function screenCaptureToFile(robotScreenPic: Bitmap, path: string) {
   return new Promise((resolve, reject) => {
     try {
       const image = new Jimp(robotScreenPic.width, robotScreenPic.height)
@@ -48,7 +51,7 @@ export function screenCaptureToFile(robotScreenPic: Bitmap, path: string) {
   })
 }
 
-export function findImagePositions(
+function findImagePositions(
   srcImage: string,
   targetImage: string,
   minOffset: number = 0,
@@ -58,21 +61,26 @@ export function findImagePositions(
   const filePath = path.join(pythonPath, 'findPositions.py')
 
   return new Promise((resolve, reject) => {
-    const workerProcess = child_process.exec(`python -u ${filePath} ${srcImage} ${targetImage} ${match_method}`, (error, stdout) => {
-      if (error) {
-        console.log('findImagePos error: ', error)
-        reject(error)
+    const workerProcess = child_process.exec(
+      `python -u ${filePath} ${srcImage} ${targetImage} ${match_method}`,
+      (error, stdout) => {
+        if (error) {
+          console.log('findImagePos error: ', error)
+          reject(error)
+        }
+
+        const positions: Array<[number, number]> = (JSON.parse(stdout.split('\r\n')[0]) as Array<[number, number]>).map(
+          ([x, y]) => [x + random.integer(minOffset, maxOffset), y + random.integer(minOffset, maxOffset)]
+        )
+
+        resolve(positions)
       }
-
-      const positions: Array<[number, number]> = (JSON.parse(stdout.split('\r\n')[0]) as Array<[number, number]>).map(
-        ([x, y]) => [x + random.integer(minOffset, maxOffset), y + random.integer(minOffset, maxOffset)]
-      )
-
-      resolve(positions)
-    })
+    )
 
     workerProcess.on('exit', () => {
       console.log('执行python脚本完成')
     })
   })
 }
+
+export { deleteDir, screenCaptureToFile, findImagePositions }
