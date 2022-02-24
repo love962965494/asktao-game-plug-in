@@ -20,6 +20,7 @@ declare module 'win-control' {
      */
     setPosition(hwnd: HWNDTypeEnum, x?: number, y?: number, cx?: number, cy?: number, uFlags?: SWPTypeEnum): boolean
     getDimensions(): { left: number; right: number; top: number; bottom: number }
+    close() : void
   }
 
   export enum WindowStatesTypeEnum {

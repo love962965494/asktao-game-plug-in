@@ -1,15 +1,15 @@
-import robotUtils from '../../../utils/robot'
-import { setTimeoutPromise } from '../../../utils/toolkits'
-import GameWindowControl from '../../../utils/gameWindowControll'
-import { getProcessesByName } from '../../../utils/systemCotroll'
+import robotUtils from '../../../../utils/robot'
+import { setTimeoutPromise } from '../../../../utils/toolkits'
+import GameWindowControl from '../../../../utils/gameWindowControll'
+import { getProcessesByName } from '../../../../utils/systemCotroll'
 import robotjs from 'robotjs'
 import path from 'path'
-import { pythonImagesPath, constantsPath } from '../../../paths'
-import { screenCaptureToFile, findImagePositions } from '../../../utils'
-import { GameAccountList, GameAccount } from '../../../constants/types'
+import { pythonImagesPath, constantsPath } from '../../../../paths'
+import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
+import { GameAccountList, GameAccount } from '../../../../constants/types'
 import fs from 'fs/promises'
 
-async function* youdaoTask() {
+export async function* youdaoTask() {
   const processes = await getProcessesByName('YoudaoDict')
   const [_, pid] = processes[0]
   const instance = new GameWindowControl(+pid)
@@ -78,7 +78,7 @@ async function* youdaoTask() {
   yield
 }
 
-async function* startGameTask() {
+export async function* startGameTask() {
   robotUtils.keyTap('d', ['command'])
   let positions: Array<[number, number]> = []
 
@@ -162,4 +162,73 @@ async function* startGameTask() {
   for (const gameWindow of allGameWindows.values()) {
     gameWindow.showGameWindow()
   }
+}
+
+export async function* wangyiTask() {
+  const pid = 5032
+  const instance = new GameWindowControl(+pid)
+  instance.showGameWindow()
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+  const { left, top, right, bottom } = instance.getBounds(true)
+  const scaleFactor = instance.getScaleFactor(true)
+
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtils.mouseClick('left')
+  robotUtils.keyTap('a', ['control'])
+  robotjs.typeString('wang ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtils.mouseClick('left')
+  robotjs.typeString('yi ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtils.mouseClick('left')
+  robotjs.typeString('cloud ')
+  instance.hideGameWindow()
+  yield
+
+  instance.showGameWindow()
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
+  await setTimeoutPromise(() => alternateWindow.hide(), 500)
+  robotUtils.mouseClick('left')
+  robotjs.typeString('music')
+  instance.hideGameWindow()
+  yield
 }

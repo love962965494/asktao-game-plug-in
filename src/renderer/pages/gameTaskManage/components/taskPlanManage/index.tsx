@@ -75,8 +75,6 @@ export function TaskPlanManage(props: ITaskPlanManage) {
       },
     })
   }
-
-  console.log('TaskPlanManage gameTaskList: ', gameTaskList)
   
   return (
     <Form>

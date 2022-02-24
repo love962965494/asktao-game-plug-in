@@ -199,6 +199,10 @@ export default class GameWindowControl {
     this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
   }
 
+  closeGameWindow() {
+    process.kill(this.pid)
+  }
+
   /**
    * 获取窗口鼠标位置信息
    */

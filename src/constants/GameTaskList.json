@@ -28,5 +28,15 @@
                 "taskCount": 1
             }
         ]
+    },
+    {
+        "tag": "限时任务",
+        "taskList": [
+            {
+                "taskName": "限时执行任务",
+                "id": "815d20dd-b55e-4f9b-921c-1fda6a40fdfb",
+                "taskCount": 1
+            }
+        ]
     }
 ]

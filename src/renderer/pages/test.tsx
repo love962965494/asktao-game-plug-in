@@ -25,10 +25,6 @@ export default function Test() {
     setIsTimerStarted(!isTimerStarted)
   }
 
-  const handleSetPositionBtnClick = () => {
-    ipcRenderer.send('set-position', { x: 2200, y: 100 })
-  }
-
   const handleYouDaoBtnClick = () => {
     ipcRenderer.send('test-youdao')
   }
@@ -45,13 +41,14 @@ export default function Test() {
     ipcRenderer.send('test-start-all')
   }
 
+  const handleCloseBtnClick = () => {
+    ipcRenderer.send('test-close-window')
+  }
+
   return (
     <Space>
       <Button type="primary" onClick={handleToggleTimerBtnClick}>
         切换定时器
-      </Button>
-      <Button type="primary" onClick={handleSetPositionBtnClick}>
-        设置窗口位置
       </Button>
       <Button type="primary" onClick={handleYouDaoBtnClick}>
         有道词典
@@ -64,6 +61,9 @@ export default function Test() {
       </Button>
       <Button type="primary" onClick={handleStartAllBtnClick}>
         一键执行
+      </Button>
+      <Button type="ghost" danger onClick={handleCloseBtnClick}>
+        关闭所有窗口
       </Button>
     </Space>
   )

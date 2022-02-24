@@ -1,6 +1,7 @@
 import { Button, Form, Space, Select } from 'antd'
 import { GameTask } from 'constants/types'
-import { useReducer } from 'react'
+import { useContext, useReducer } from 'react'
+import { AppContext } from 'renderer/App'
 import { AddGameTask, EditGameTask, TaskPlanManage } from './components'
 import {
   useAddGameTask,
@@ -48,6 +49,8 @@ const initialState: IState = {
 }
 
 export default function TaskManage() {
+  const [form] = Form.useForm()
+  const { ipcRenderer } = useContext(AppContext)
   const { gameTaskList, getGameTaskList } = useGameTaskList()
   const { gameTaskPlanList, getGameTaskPlanList } = useGameTaskPlanList()
   const addGameTask = useAddGameTask()
@@ -80,22 +83,33 @@ export default function TaskManage() {
       payload: { pageType: pageType === 'taskManage' ? 'taskPlanManage' : 'taskManage' },
     })
 
-  console.log('gameTaskList: ', gameTaskList)
+  const handleExecuteBtnClick = () => {
+    form
+      .validateFields()
+      .then(({ taskPlan }: { taskPlan: string }) => {
+        ipcRenderer.send('test-execute-plan', taskPlan)
+      })
+      .catch((error) => {
+        console.log('handleExecuteBtnClick error: ', error)
+      })
+  }
 
   return (
     <>
       {pageType === 'taskManage' && (
-        <Form>
+        <Form form={form}>
           <FormItem label="方案选择">
             <Space>
-              <Select style={{ width: 200 }}>
-                {gameTaskPlanList.map((gameTaskPlan) => (
-                  <SelectOption key={gameTaskPlan.id}>
-                    <span>{gameTaskPlan.planName}</span>
-                  </SelectOption>
-                ))}
-              </Select>
-              <Button type="ghost" danger>
+              <FormItem noStyle name="taskPlan" rules={[{ required: true, message: '方案不能为空' }]}>
+                <Select style={{ width: 200 }}>
+                  {gameTaskPlanList.map((gameTaskPlan) => (
+                    <SelectOption key={gameTaskPlan.id}>
+                      <span>{gameTaskPlan.planName}</span>
+                    </SelectOption>
+                  ))}
+                </Select>
+              </FormItem>
+              <Button type="ghost" danger onClick={handleExecuteBtnClick}>
                 一键执行
               </Button>
               <Button type="link" onClick={changePageType}>
