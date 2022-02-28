@@ -1,4 +1,7 @@
+import { ScrollNumberProps } from 'antd/lib/badge'
 import GameServerGroupData from './GameServerGroup.json'
+
+/************************************* 游戏账户管理 *******************************/
 
 /**
  * 登录状态
@@ -41,6 +44,8 @@ export type GameAccount = {
 export type GameAccountList = Array<{
   thread?: number
   groupName: string
+  // 队长账号
+  captainAccount: string
   accountList: GameAccount[]
   serverGroup: [string, string]
 }>
@@ -49,6 +54,8 @@ export type GameAccountList = Array<{
  * 游戏区组
  */
 export type GameServerGroup = typeof GameServerGroupData
+
+/************************************* 游戏坐标管理 *******************************/
 
 /**
  * 坐标
@@ -76,21 +83,45 @@ export type GamePointList = Array<{
   pointList: GamePoint[]
 }>
 
+/************************************* 游戏任务管理 *******************************/
+
+/**
+ * 任务基本信息
+ */
+type GameTaskBasicInfo = {
+  id: string
+  taskName: string
+  // 组队任务或者单人任务
+  taskType: 'group' | 'single'
+}
+
+export enum GameTaskLimitType {
+  '日常任务' = 1,
+  '限时活动' = 2,
+}
+
+/**
+ * 任务额外信息，针对不同任务做的特殊处理
+ */
+type GameTaskExtraInfo = {
+  // 任务次数
+  taskCount: ScrollNumberProps
+  // 活跃度
+  liveness: number
+  /**
+   * 限时任务类型
+   */
+  taskLimitType: GameTaskLimitType
+  /**
+   * 任务时间，[[开始日期，结束日期]，[开始时间，结束时间]]
+   */
+  taskTime: [[string, string], [string, string]]
+}
+
 /**
  * 游戏任务
  */
-export type GameTask = {
-  id: string
-  taskName: string
-  // 任务次数
-  taskCount: number
-  // 活跃度
-  liveness?: number
-  // 组队任务或者单人任务
-  taskType?: 'group' | 'single'
-  // 用于设置任务方案时，表示是否被选中
-  checked?: boolean
-}
+export type GameTask = GameTaskBasicInfo & Partial<GameTaskExtraInfo>
 
 /**
  * 游戏任务分组
@@ -99,6 +130,8 @@ export type GameTaskList = Array<{
   tag: string
   taskList: GameTask[]
 }>
+
+/************************************* 游戏任务方案管理 *******************************/
 
 /**
  * 游戏方案
@@ -111,6 +144,8 @@ export type GameTaskPlan = {
 
 // 游戏方案列表
 export type GameTaskPlanList = GameTaskPlan[]
+
+/************************************* 其他类型管理 *******************************/
 
 /**
  * 方向

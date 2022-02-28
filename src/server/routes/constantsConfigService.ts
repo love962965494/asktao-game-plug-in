@@ -61,6 +61,7 @@ function addGameAccount(fastify: FastifyInstance) {
       } else {
         newGameAccountList.push({
           groupName,
+          captainAccount: '',
           serverGroup: serverGroup.split('/') as [string, string],
           accountList: [
             {
@@ -81,6 +82,32 @@ function addGameAccount(fastify: FastifyInstance) {
       response.send({ ...HttpStatus.Success })
     } catch (error) {
       console.log('addGameAccount error: ', error)
+
+      response.send({ ...HttpStatus.Failure })
+    }
+  })
+}
+
+/**
+ * 改变游戏队长账号
+ */
+function changeCaptainAccount(fastify: FastifyInstance) {
+  fastify.post('/changeCaptainAccount', async (request, response) => {
+    try {
+      const { captainAccount, groupName } = request.body as { groupName: string; captainAccount: string }
+      const GameAccountList = await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+      const newGameAccountList = JSON.parse(GameAccountList) as GameAccountList
+      const item = newGameAccountList.find((item) => item.groupName === groupName)!
+
+      item.captainAccount = captainAccount
+      await fs.writeFile(
+        path.resolve(constantsPath, 'GameAccountList.json'),
+        JSON.stringify(newGameAccountList, undefined, 4)
+      )
+
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('changeCaptainAccount error: ', error)
 
       response.send({ ...HttpStatus.Failure })
     }
@@ -354,6 +381,7 @@ export default function getConstantsConfig(fastify: FastifyInstance) {
   getGameSeverGroup(fastify)
   getGameAccountList(fastify)
   addGameAccount(fastify)
+  changeCaptainAccount(fastify)
 
   // 游戏坐标管理
   getGamePointList(fastify)

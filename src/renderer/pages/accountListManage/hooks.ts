@@ -48,3 +48,16 @@ export function useAddAccount() {
 
   return (account: GameAccount) => addAccount(account)
 }
+
+type CaptainAccountInfo = { groupName: string; captainAccount: string }
+export function useChangeCaptainAccount() {
+  const changeCaptainAccount = useCallback(async (accountInfo: CaptainAccountInfo) => {
+    try {
+      await requestByPost('/changeCaptainAccount', accountInfo)
+    } catch (error) {
+      console.log('useChangeCaptainAccount error: ', error)
+    }
+  }, [])
+
+  return (accountInfo: CaptainAccountInfo) => changeCaptainAccount(accountInfo)
+}

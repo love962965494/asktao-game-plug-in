@@ -151,6 +151,7 @@ export default function TaskManage() {
             visible={addModalVisible}
             addGameTask={addGameTask}
             refreshData={getGameTaskList}
+            key={addModalVisible.toString()}
             tagList={gameTaskList.map((item) => item.tag)}
           />
 
