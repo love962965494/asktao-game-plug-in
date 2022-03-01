@@ -1,19 +1,19 @@
 import {
-  Modal,
   Form,
+  Modal,
   Input,
-  InputNumber,
-  Button,
   Space,
   Radio,
-  RadioChangeEvent,
   Select,
+  Button,
+  InputNumber,
+  RadioChangeEvent,
   DatePicker,
   TimePicker,
 } from 'antd'
-import { RuleObject } from 'antd/lib/form'
 import { useForm } from 'antd/lib/form/Form'
 import { GameTask } from 'constants/types'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { SelectWithAdd } from 'renderer/components'
 
@@ -36,8 +36,8 @@ export interface IAddGameTask {
 export function AddGameTask(props: IAddGameTask) {
   const { tag, visible, hideModal, tagList, record, refreshData, addGameTask, editGameTask } = props
   const [form] = useForm()
-  const [showSetTime, setShowSetTime] = useState(false)
-  const [taskLimitType, setTaskLimitType] = useState<number>()
+  const [showSetTime, setShowSetTime] = useState(tag === '限时任务')
+  const [taskLimitType, setTaskLimitType] = useState<number>(record?.taskLimitType || 1)
 
   useEffect(() => {
     if (record) {
@@ -45,21 +45,37 @@ export function AddGameTask(props: IAddGameTask) {
         ...record,
         tag,
       })
+      if (tag === '限时任务') {
+        form.setFieldsValue({
+          taskDate: record.taskLimitType === 2 ? record.taskDate!.map((date) => moment(date)) : record.taskDate,
+          taskTime: record.taskTime!.map((time) => moment(moment().format('YYYY-MM-DD') + ' ' + time)),
+        })
+      }
     }
-  }, [record])
+  }, [record, tag])
 
   const handleFormSubmit = () => {
     form
       .validateFields()
-      .then(async (gameTask: GameTask) => {
-        console.log('gameTask: ', gameTask)
-        // if (record) {
-        //   await editGameTask?.({ ...gameTask, id: record.id })
-        // } else {
-        //   await addGameTask?.(gameTask)
-        // }
-        // handleHideModal()
-        // refreshData()
+      .then(async (gameTask: GameTask & { tag: string }) => {
+        if (gameTask.tag === '限时任务') {
+          if (gameTask.taskLimitType === 2) {
+            gameTask.taskDate = gameTask.taskDate!.map((date) =>
+              (date as unknown as moment.Moment).format('YYYY-MM-DD')
+            ) as [string, string]
+          }
+          gameTask.taskTime = gameTask.taskTime!.map((time) =>
+            (time as unknown as moment.Moment).format('HH:mm:ss')
+          ) as [string, string]
+        }
+
+        if (record) {
+          await editGameTask?.({ ...gameTask, id: record.id })
+        } else {
+          await addGameTask?.(gameTask)
+        }
+        handleHideModal()
+        refreshData()
       })
       .catch((error) => {
         console.log('handleFormSubmit error: ', error)
@@ -82,6 +98,7 @@ export function AddGameTask(props: IAddGameTask) {
   const handleTaskLimitTypeChange = ($ev: RadioChangeEvent) => {
     const { value: taskLimitType } = $ev.target
 
+    form.setFieldsValue({ taskDate: [] })
     setTaskLimitType(taskLimitType)
   }
 
@@ -105,12 +122,19 @@ export function AddGameTask(props: IAddGameTask) {
         <FormItem name="taskCount" label="任务个数">
           <InputNumber min={0} />
         </FormItem>
-        <FormItem label="任务分组" name="tag">
+        <FormItem name="taskType" label="任务类型" rules={[{ required: true, message: '任务类型不能为空' }]}>
+          <RadioGroup>
+            <Radio value="group">组队任务</Radio>
+            <Radio value="single">单人任务</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="任务分组" name="tag" rules={[{ required: true, message: '任务分组不能为空' }]}>
           <SelectWithAdd list={tagList} onChange={handleTagChange} />
         </FormItem>
         {showSetTime && [
           <FormItem
             label="限时类型"
+            initialValue={1}
             key="taskLimitType"
             name="taskLimitType"
             rules={[{ required: true, message: '限时类型不能为空' }]}

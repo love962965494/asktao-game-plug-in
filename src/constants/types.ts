@@ -105,7 +105,7 @@ export enum GameTaskLimitType {
  */
 type GameTaskExtraInfo = {
   // 任务次数
-  taskCount: ScrollNumberProps
+  taskCount: number
   // 活跃度
   liveness: number
   /**
@@ -113,9 +113,15 @@ type GameTaskExtraInfo = {
    */
   taskLimitType: GameTaskLimitType
   /**
-   * 任务时间，[[开始日期，结束日期]，[开始时间，结束时间]]
+   * 任务日期，[开始日期，结束日期]
    */
-  taskTime: [[string, string], [string, string]]
+  taskDate: [string, string]
+  /**
+   * 任务时间，[开始时间，结束时间]
+   */
+  taskTime: [string, string]
+  // 用于表示任务方案中当前任务是否选中
+  checked: boolean
 }
 
 /**

@@ -8,6 +8,8 @@ import { pythonImagesPath, constantsPath } from '../../../../paths'
 import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
 import { GameAccountList, GameAccount } from '../../../../constants/types'
 import fs from 'fs/promises'
+import random from 'random'
+import { clipboard } from 'electron'
 
 export async function* youdaoTask() {
   const processes = await getProcessesByName('YoudaoDict')
@@ -231,4 +233,85 @@ export async function* wangyiTask() {
   robotjs.typeString('music')
   instance.hideGameWindow()
   yield
+}
+
+// 单人限时任务
+export async function* testTimeLimitSingleTask() {
+  const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+
+  async function* executeTask(gameWindow: GameWindowControl) {
+    const { left, top, right, bottom } = gameWindow.getBounds(true)
+    const scaleFactor = gameWindow.getScaleFactor(true)
+
+    alternateWindow.setBounds({
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    })
+    alternateWindow.show()
+    robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+    await setTimeoutPromise(() => alternateWindow.hide(), 500)
+    gameWindow.showGameWindow()
+    robotUtils.mouseClick('left')
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    await clipboard.writeText('开始执行单人限时任务')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    await clipboard.writeText('接收到任务')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    yield
+
+    alternateWindow.setBounds({
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    })
+    alternateWindow.show()
+    robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+    await setTimeoutPromise(() => alternateWindow.hide(), 500)
+    gameWindow.showGameWindow()
+    robotUtils.mouseClick('left')
+    await clipboard.writeText('执行任务中。。。')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    yield
+
+    alternateWindow.setBounds({
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    })
+    alternateWindow.show()
+    robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+    await setTimeoutPromise(() => alternateWindow.hide(), 500)
+    gameWindow.showGameWindow()
+    robotUtils.mouseClick('left')
+    const executeTime = random.integer(500, 1000)
+    await setTimeoutPromise(async () => {
+      await clipboard.writeText(`任务执行完成，用时${executeTime}ms`)
+      robotUtils.keyTap('v', ['control'])
+    }, executeTime)
+    yield
+  }
+
+  const iterators = allGameWindows.map((gameWindow) => executeTask(gameWindow))
+  const allFinished = allGameWindows.map(() => false)
+
+  do {
+    for await (const [index, iterator] of iterators.entries()) {
+      const value = await iterator.next()
+
+      if (value.done) {
+        allFinished[index] = true
+      }
+    }
+  } while (allFinished.filter(Boolean).length !== allGameWindows.length)
 }
