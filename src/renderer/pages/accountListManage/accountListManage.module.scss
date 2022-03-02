@@ -6,7 +6,8 @@
 .listItem {
   > div {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+    gap: 15px;
+    // grid-template-rows: 1fr 1fr;
     margin-bottom: 5px;
   }
 }

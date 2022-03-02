@@ -64,7 +64,25 @@ export function registerTestTasks() {
       await fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
     ) as GameTaskPlanList
     const gameTaskPlan = GameTaskPlanList.find((taskPlan) => taskPlan.id === taskPlanId)!
-
+    /**
+     * 任务堆栈
+     * 
+     *     . x x x x x x x x x .
+     *     y   limitTimeTask   y 
+     *     y     groupTask     y  顶层放置限时任务，限时任务优先执行，限时组队任务优先于限时单人任务执行
+     *     y     singleTask    y
+     *     . x x x x x x x x x .
+     *     y                   y
+     *     y     groupTask     y  第二层放置组队任务
+     *     y                   y
+     *     . x x x x x x x x x .
+     *     y                   y
+     *     y    singleTask     y  第三层放置单人任务
+     *     y                   y
+     *     . x x x x x x x x x .
+     */
+    const taskStack = []
+    
     const taskFunctions = gameTaskPlan.gameTaskList.reduce<Function[]>((arr, taskGroup) => {
       const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
       const functions = taskGroup.taskList

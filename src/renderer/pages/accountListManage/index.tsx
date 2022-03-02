@@ -1,8 +1,9 @@
-import { Form, Button, List, Avatar, Space, Select } from 'antd'
+import { Form, Button, List, Avatar, Space, Select, Table } from 'antd'
 import { useReducer } from 'react'
-import { AddAccount } from './components'
+import { AddAccount, BattlePlan } from './components'
 import { useAddAccount, useChangeCaptainAccount, useGameAccountList } from './hooks'
 import styles from './accountListManage.module.scss'
+import { GameAccount } from 'constants/types'
 
 const FormItem = Form.Item
 const ListItem = List.Item
@@ -10,27 +11,46 @@ const ListItemMeta = ListItem.Meta
 const SelectOption = Select.Option
 
 interface IState {
+  groupName: string
   addModalVisible: boolean
+  battlePlanVisible: boolean
+  record?: GameAccount['roleList'][0]
   captainAccountMap: Map<string, boolean>
 }
 
-type IActionTypes = 'SET_ADD_MODAL_VISIBLE' | 'SET_CAPTAIN_ACCOUNT_MAP'
+type IActionTypes =
+  | 'SET_RECORD'
+  | 'SET_GROUP_NAME'
+  | 'SET_ADD_MODAL_VISIBLE'
+  | 'SET_CAPTAIN_ACCOUNT_MAP'
+  | 'SET_BATTLE_PLAN_VISIBLE'
 
 function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
   switch (action.type) {
+    case 'SET_RECORD':
+    case 'SET_GROUP_NAME':
     case 'SET_ADD_MODAL_VISIBLE':
     case 'SET_CAPTAIN_ACCOUNT_MAP':
+    case 'SET_BATTLE_PLAN_VISIBLE':
       return { ...state, ...action.payload }
     default:
+      const actionType: never = action.type
+
+      console.log('actionType: ', actionType)
       return state
   }
 }
 
-const initialState: IState = { addModalVisible: false, captainAccountMap: new Map() }
+const initialState: IState = {
+  groupName: '',
+  addModalVisible: false,
+  battlePlanVisible: false,
+  captainAccountMap: new Map(),
+}
 
 export default function AccountListManage() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { addModalVisible, captainAccountMap } = state
+  const { addModalVisible, captainAccountMap, battlePlanVisible, groupName, record } = state
 
   const { gameAccountList, getGameAccountList } = useGameAccountList()
   const changeCaptainAccount = useChangeCaptainAccount()
@@ -52,6 +72,15 @@ export default function AccountListManage() {
       payload: { captainAccountMap: new Map(captainAccountMap).set(groupName, false) },
     })
     getGameAccountList()
+  }
+
+  const showBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: true } })
+  const hideBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: false } })
+
+  const handleChangeBattlePlanClick = (record: GameAccount['roleList'][0], groupName: string) => {
+    showBattlePlan()
+    dispatch({ type: 'SET_RECORD', payload: { record } })
+    dispatch({ type: 'SET_GROUP_NAME', payload: { groupName } })
   }
 
   return (
@@ -109,15 +138,38 @@ export default function AccountListManage() {
                         <span>
                           账号：<span>{item.account}</span>
                         </span>
-                        <span>
-                          角色名：<span>{item.roleInfo?.roleName}</span>
-                        </span>
-                        <span>
-                          等级：<span>{item.roleInfo?.rank}</span>
-                        </span>
-                        <span>
-                          状态：<span>{item.roleInfo?.loginStatus}</span>
-                        </span>
+                        <Table
+                          pagination={false}
+                          dataSource={item.roleList}
+                          columns={[
+                            {
+                              title: '角色头像',
+                              dataIndex: 'roleAvatar',
+                              width: 120,
+                              align: 'center',
+                            },
+                            {
+                              title: '角色名',
+                              dataIndex: 'roleName',
+                              align: 'center',
+                            },
+                            {
+                              title: '角色等级',
+                              dataIndex: 'rank',
+                              align: 'center',
+                            },
+                            {
+                              title: '战斗方案',
+                              dataIndex: 'battlePlan',
+                              align: 'center',
+                              render: (battlePlan, record) => (
+                                <a href="#" onClick={handleChangeBattlePlanClick.bind(null, record, group.groupName)}>
+                                  {JSON.stringify(battlePlan)}
+                                </a>
+                              ),
+                            },
+                          ]}
+                        />
                       </div>
                     </div>
                   }
@@ -139,6 +191,16 @@ export default function AccountListManage() {
           accountsNum: item.accountList.length,
         }))}
       />
+
+      {record && (
+        <BattlePlan
+          record={record}
+          key={record.roleName}
+          groupName={groupName}
+          visibel={battlePlanVisible}
+          hideModal={hideBattlePlan}
+        />
+      )}
     </Form>
   )
 }

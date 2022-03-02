@@ -237,6 +237,10 @@ export async function* wangyiTask() {
 
 // 单人限时任务
 export async function* testTimeLimitSingleTask() {
+  const processes = await getProcessesByName('notepad')
+  for (const [_, pId] of processes) {
+    new GameWindowControl(+pId)
+  }
   const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
   const alternateWindow = GameWindowControl.getAlternateWindow()
 

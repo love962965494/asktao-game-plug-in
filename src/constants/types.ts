@@ -1,4 +1,3 @@
-import { ScrollNumberProps } from 'antd/lib/badge'
 import GameServerGroupData from './GameServerGroup.json'
 
 /************************************* 游戏账户管理 *******************************/
@@ -18,14 +17,8 @@ export type RoleStatus = {
   roleName: string
   // 角色头像
   roleAvatar: string
-  // 当前是该账户下的第几个角色
-  roleOrder: 1 | 2 | 3 | 4
-  // 当前执行任务
-  currentTask: string
-  // 登录状态
-  loginStatus: ILoginStatus
   // 战斗方案
-  battlePlan: [number, number]
+  battlePlan: number[]
 }
 
 /**
@@ -35,7 +28,7 @@ export type GameAccount = {
   id: string
   account: string
   password: string
-  roleInfo: Partial<RoleStatus>
+  roleList: Partial<RoleStatus>[]
 }
 
 /**
