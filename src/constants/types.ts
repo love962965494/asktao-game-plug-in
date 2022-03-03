@@ -138,7 +138,7 @@ export type GameTaskList = Array<{
 export type GameTaskPlan = {
   id: string
   planName: string
-  gameTaskList: GameTaskList
+  gameTaskList: Array<{ tag: string; taskList: Array<{ id: GameTask['id']; checked: boolean }> }>
 }
 
 // 游戏方案列表

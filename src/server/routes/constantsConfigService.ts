@@ -116,6 +116,42 @@ function changeCaptainAccount(fastify: FastifyInstance) {
   })
 }
 
+/**
+ * 修改账号角色战斗策略
+ */
+function changeRoleBattlePlan(fastify: FastifyInstance) {
+  fastify.post('/changeRoleBattlePlan', async (request, response) => {
+    try {
+      const { account, groupName, roleName, battlePlan } = request.body as GameAccount['roleList'][0] & {
+        account: string
+        groupName: string
+      }
+      const GameAccountList = await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+      const newGameAccountList = JSON.parse(GameAccountList) as GameAccountList
+      const group = newGameAccountList.find((item) => item.groupName === groupName)!
+      const accountInfo = group.accountList.find((item) => item.account === account)
+      const roleInfo = accountInfo?.roleList.find((item) => item.roleName === roleName)
+
+      if (roleInfo) {
+        roleInfo.battlePlan = battlePlan
+      } else {
+        throw new Error('未找到对应角色信息')
+      }
+
+      await fs.writeFile(
+        path.resolve(constantsPath, 'GameAccountList.json'),
+        JSON.stringify(newGameAccountList, undefined, 4)
+      )
+
+      response.send({ ...HttpStatus.Success })
+    } catch (error) {
+      console.log('changeRoleBattlePlan error: ', error)
+
+      response.send({ ...HttpStatus.Failure })
+    }
+  })
+}
+
 /************************************* 游戏坐标管理 *******************************/
 
 /**
@@ -390,6 +426,7 @@ export default function getConstantsConfig(fastify: FastifyInstance) {
   getGameAccountList(fastify)
   addGameAccount(fastify)
   changeCaptainAccount(fastify)
+  changeRoleBattlePlan(fastify)
 
   // 游戏坐标管理
   getGamePointList(fastify)

@@ -1,6 +1,6 @@
-import { Form, Button, Space, Checkbox, Collapse, Input, Modal } from 'antd'
+import { Form, Button, Space, Checkbox, Collapse, Modal } from 'antd'
 import { GameTaskList, GameTaskPlan, GameTaskPlanList } from 'constants/types'
-import { useReducer, useState } from 'react'
+import { useReducer } from 'react'
 import { AddTaskPlan } from './addTaskPlan'
 import { EditTaskPlan } from './editTaskPlan'
 
@@ -75,7 +75,7 @@ export function TaskPlanManage(props: ITaskPlanManage) {
       },
     })
   }
-  
+
   return (
     <Form>
       <FormItem>
@@ -105,14 +105,21 @@ export function TaskPlanManage(props: ITaskPlanManage) {
             </Space>
           </h3>
 
-          <Collapse defaultActiveKey={taskPlan.gameTaskList.map((gameTask) => gameTask.tag)}>
-            {taskPlan.gameTaskList.map((gameTask) => (
+          <Collapse defaultActiveKey={gameTaskList.map((gameTask) => gameTask.tag)}>
+            {gameTaskList.map((gameTask) => (
               <CollapsePanel header={gameTask.tag} key={gameTask.tag}>
-                <ul className="item">
-                  {gameTask.taskList.map((task) => (
-                    <li key={task.id}>
-                      <Checkbox checked={task.checked} disabled>
-                        {task.taskName}
+                <ul>
+                  {gameTask.taskList.map((taskInfo) => (
+                    <li key={taskInfo.id}>
+                      <Checkbox
+                        disabled
+                        checked={
+                          taskPlan.gameTaskList
+                            .find((item) => item.tag === gameTask.tag)
+                            ?.taskList.find((item) => item.id === taskInfo.id)?.checked
+                        }
+                      >
+                        {taskInfo.taskName}
                       </Checkbox>
                     </li>
                   ))}

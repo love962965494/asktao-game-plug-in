@@ -90,8 +90,8 @@ export function AddTaskPlan(props: IAddTaskPlan) {
                     <li key={task.id}>
                       <FormItem
                         noStyle
-                        initialValue={task}
-                        name={['gameTaskList', gameTaskIndex, 'taskList', taskListIndex]}
+                        initialValue={task.id}
+                        name={['gameTaskList', gameTaskIndex, 'taskList', taskListIndex, 'id']}
                       >
                         <Input style={{ display: 'none' }} />
                       </FormItem>

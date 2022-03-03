@@ -1,6 +1,7 @@
 import { GameAccount, GameAccountList, GameServerGroup } from 'constants/types'
 import { useCallback, useEffect, useState } from 'react'
 import { requestByGet, requestByPost } from 'utils/http'
+import { IRecord } from './components'
 
 export function useGameServerGroup() {
   const [gameServerGroup, setGameServerGroup] = useState<GameServerGroup>([])
@@ -60,4 +61,16 @@ export function useChangeCaptainAccount() {
   }, [])
 
   return (accountInfo: CaptainAccountInfo) => changeCaptainAccount(accountInfo)
+}
+
+export function useChangeRoleBattlePlan() {
+  const changeRoleBattlePlan = useCallback(async (record: IRecord) => {
+    try {
+      await requestByPost('/changeRoleBattlePlan', record)
+    } catch (error) {
+      console.log('changeRoleBattlePlan error: ', error)
+    }
+  }, [])
+
+  return (record: IRecord) => changeRoleBattlePlan(record)
 }

@@ -1,9 +1,8 @@
 import { Form, Button, List, Avatar, Space, Select, Table } from 'antd'
 import { useReducer } from 'react'
-import { AddAccount, BattlePlan } from './components'
-import { useAddAccount, useChangeCaptainAccount, useGameAccountList } from './hooks'
+import { AddAccount, BattlePlan, IRecord } from './components'
+import { useAddAccount, useChangeCaptainAccount, useChangeRoleBattlePlan, useGameAccountList } from './hooks'
 import styles from './accountListManage.module.scss'
-import { GameAccount } from 'constants/types'
 
 const FormItem = Form.Item
 const ListItem = List.Item
@@ -11,24 +10,17 @@ const ListItemMeta = ListItem.Meta
 const SelectOption = Select.Option
 
 interface IState {
-  groupName: string
   addModalVisible: boolean
   battlePlanVisible: boolean
-  record?: GameAccount['roleList'][0]
+  record?: IRecord
   captainAccountMap: Map<string, boolean>
 }
 
-type IActionTypes =
-  | 'SET_RECORD'
-  | 'SET_GROUP_NAME'
-  | 'SET_ADD_MODAL_VISIBLE'
-  | 'SET_CAPTAIN_ACCOUNT_MAP'
-  | 'SET_BATTLE_PLAN_VISIBLE'
+type IActionTypes = 'SET_RECORD' | 'SET_ADD_MODAL_VISIBLE' | 'SET_CAPTAIN_ACCOUNT_MAP' | 'SET_BATTLE_PLAN_VISIBLE'
 
 function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
   switch (action.type) {
     case 'SET_RECORD':
-    case 'SET_GROUP_NAME':
     case 'SET_ADD_MODAL_VISIBLE':
     case 'SET_CAPTAIN_ACCOUNT_MAP':
     case 'SET_BATTLE_PLAN_VISIBLE':
@@ -42,7 +34,6 @@ function reducer(state: IState, action: { type: IActionTypes; payload: Partial<I
 }
 
 const initialState: IState = {
-  groupName: '',
   addModalVisible: false,
   battlePlanVisible: false,
   captainAccountMap: new Map(),
@@ -50,11 +41,12 @@ const initialState: IState = {
 
 export default function AccountListManage() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { addModalVisible, captainAccountMap, battlePlanVisible, groupName, record } = state
+  const { addModalVisible, captainAccountMap, battlePlanVisible, record } = state
 
-  const { gameAccountList, getGameAccountList } = useGameAccountList()
-  const changeCaptainAccount = useChangeCaptainAccount()
   const addAccount = useAddAccount()
+  const changeCaptainAccount = useChangeCaptainAccount()
+  const changeRoleBattlePlan = useChangeRoleBattlePlan()
+  const { gameAccountList, getGameAccountList } = useGameAccountList()
 
   const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
   const hideAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: false } })
@@ -77,10 +69,9 @@ export default function AccountListManage() {
   const showBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: true } })
   const hideBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: false } })
 
-  const handleChangeBattlePlanClick = (record: GameAccount['roleList'][0], groupName: string) => {
+  const handleChangeBattlePlanClick = (record: IRecord) => {
     showBattlePlan()
     dispatch({ type: 'SET_RECORD', payload: { record } })
-    dispatch({ type: 'SET_GROUP_NAME', payload: { groupName } })
   }
 
   return (
@@ -161,9 +152,17 @@ export default function AccountListManage() {
                             {
                               title: '战斗方案',
                               dataIndex: 'battlePlan',
+                              width: 300,
                               align: 'center',
                               render: (battlePlan, record) => (
-                                <a href="#" onClick={handleChangeBattlePlanClick.bind(null, record, group.groupName)}>
+                                <a
+                                  href="#"
+                                  onClick={handleChangeBattlePlanClick.bind(null, {
+                                    ...record,
+                                    account: item.account,
+                                    groupName: group.groupName,
+                                  })}
+                                >
                                   {JSON.stringify(battlePlan)}
                                 </a>
                               ),
@@ -191,14 +190,14 @@ export default function AccountListManage() {
           accountsNum: item.accountList.length,
         }))}
       />
-
       {record && (
         <BattlePlan
           record={record}
           key={record.roleName}
-          groupName={groupName}
-          visibel={battlePlanVisible}
           hideModal={hideBattlePlan}
+          visibel={battlePlanVisible}
+          refreshData={getGameAccountList}
+          changeRoleBattlePlan={changeRoleBattlePlan}
         />
       )}
     </Form>
