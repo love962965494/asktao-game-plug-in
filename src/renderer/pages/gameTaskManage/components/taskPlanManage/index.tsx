@@ -1,5 +1,5 @@
 import { Form, Button, Space, Checkbox, Collapse, Modal } from 'antd'
-import { GameTaskList, GameTaskPlan, GameTaskPlanList } from 'constants/types'
+import { GameAccountList, GameTaskList, GameTaskPlan, GameTaskPlanList } from 'constants/types'
 import { useReducer } from 'react'
 import { AddTaskPlan } from './addTaskPlan'
 import { EditTaskPlan } from './editTaskPlan'
@@ -8,9 +8,10 @@ const FormItem = Form.Item
 const CollapsePanel = Collapse.Panel
 
 interface ITaskPlanManage {
-  gameTaskList: GameTaskList
-  gameTaskPlanList: GameTaskPlanList
   changePageType: () => void
+  gameTaskList: GameTaskList
+  gameAccountList: GameAccountList
+  gameTaskPlanList: GameTaskPlanList
   getGameTaskPlanList: () => Promise<void>
   removeGameTaskPlan: (id: string) => Promise<void>
   addGameTaskPlan: (gameTaskPlan: GameTaskPlan) => Promise<void>
@@ -45,6 +46,7 @@ export function TaskPlanManage(props: ITaskPlanManage) {
   const {
     gameTaskList,
     changePageType,
+    gameAccountList,
     addGameTaskPlan,
     gameTaskPlanList,
     editGameTaskPlan,
@@ -96,6 +98,9 @@ export function TaskPlanManage(props: ITaskPlanManage) {
               <span>
                 任务方案：<span>{taskPlan.planName}</span>
               </span>
+              <span>
+                账户分组：<span>{taskPlan.accountGroups.join('、')}</span>
+              </span>
               <Button type="ghost" danger onClick={handleEditPlanBtnClick.bind(null, taskPlan)}>
                 修改方案
               </Button>
@@ -131,18 +136,20 @@ export function TaskPlanManage(props: ITaskPlanManage) {
       ))}
 
       <AddTaskPlan
-        visible={addModalVisible}
         hideModal={hideAddModal}
+        visible={addModalVisible}
         gameTaskList={gameTaskList}
+        gameAccountList={gameAccountList}
         refreshData={getGameTaskPlanList}
         addGameTaskPlan={addGameTaskPlan}
       />
 
       <EditTaskPlan
         record={record}
-        visible={editModalVisible}
         hideModal={hideEditModal}
+        visible={editModalVisible}
         gameTaskList={gameTaskList}
+        gameAccountList={gameAccountList}
         refreshData={getGameTaskPlanList}
         editGameTaskPlan={editGameTaskPlan}
       />

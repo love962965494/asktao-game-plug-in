@@ -4,8 +4,10 @@ import { startGameTask, wangyiTask, youdaoTask } from './taskConfigs/testTasks'
 import fs from 'fs/promises'
 import path from 'path'
 import { constantsPath } from '../../paths'
-import { GameTaskPlanList } from 'constants/types'
+import { GameAccount, GameAccountList, GameTaskPlanList, RoleStatus } from 'constants/types'
 import GameWindowControl from '../../utils/gameWindowControll'
+
+export type ExecuteTaskRoleInfo = Partial<RoleStatus & Omit<GameAccount, 'roleList'>>
 
 export function registerTestTasks() {
   ipcMain.on('test-youdao', async () => {
@@ -63,12 +65,29 @@ export function registerTestTasks() {
     const GameTaskPlanList = JSON.parse(
       await fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
     ) as GameTaskPlanList
+    const gameAccountList: GameAccountList = JSON.parse(
+      await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+    )
     const gameTaskPlan = GameTaskPlanList.find((taskPlan) => taskPlan.id === taskPlanId)!
+
+    const taskFunctions = gameTaskPlan.gameTaskList.reduce<Function[]>((arr, taskGroup) => {
+      const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
+      const functions = taskGroup.taskList
+        .filter((taskItem) => taskItem.checked)
+        .map((taskItem) => {
+          const { taskFunction } = taskConfig.taskList.find(({ id }) => id === taskItem.id)!
+
+          return taskFunction
+        })
+
+      return [...arr, ...functions]
+    }, [])
+
     /**
      * 任务堆栈
-     * 
+     *
      *     . x x x x x x x x x .
-     *     y   limitTimeTask   y 
+     *     y   limitTimeTask   y
      *     y     groupTask     y  顶层放置限时任务，限时任务优先执行，限时组队任务优先于限时单人任务执行
      *     y     singleTask    y
      *     . x x x x x x x x x .
@@ -82,32 +101,65 @@ export function registerTestTasks() {
      *     . x x x x x x x x x .
      */
     const taskStack = []
-    
-    const taskFunctions = gameTaskPlan.gameTaskList.reduce<Function[]>((arr, taskGroup) => {
-      const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
-      const functions = taskGroup.taskList
-        .filter((taskItem) => taskItem.checked)
-        .map((taskItem) => {
-          const { taskFunction } = taskConfig.taskList.find(({ taskName }) => taskName === taskItem.taskName)!
 
-          return taskFunction
-        })
+    const accountGroups = gameTaskPlan.accountGroups
+    /**
+     * 一组账号下可以有多个角色，每个角色遍历执行任务，一次执行两组账号，所以有十个角色同时执行任务
+     * x代表角色不存在
+     * [
+     *    [角色1, 角色2, 角色3, 角色4, 角色5, 角色6, 角色7, 角色8, 角色9, 角色10],
+     *    [角色1, 角色2, 角色3, 角色4, 角色5, 角色6, 角色7, 角色8, 角色9, 角色10],
+     *    [角色1, 角色2, 角色3, 角色4, 角色5, x, x, x, x, x],
+     *    ...
+     * ]
+     */
+    const allToExecuteTaskRoles = accountGroups.reduce<(ExecuteTaskRoleInfo | null)[][]>((arr, groupName, index) => {
+      // 每次处理两组账号，奇数时直接返回arr
+      if (index % 2 === 0) {
+        const account1 = gameAccountList.find((item) => item.groupName === groupName)
+        const account2 = gameAccountList.find((item) => item.groupName === accountGroups[index + 1])
+        const tenAccounts = Array.from({ length: 5 }, (_, index) => account1?.accountList[index] || null).concat(
+          Array.from({ length: 5 }, (_, index) => account2?.accountList[index] || null)
+        )
 
-      return [...arr, ...functions]
-    }, [])
+        for (let i = 0; i < 4; i++) {
+          // 每个账号下最多4个角色
+          const roles = tenAccounts.map((account) => {
+            if (account && account.roleList?.[i]) {
+              const { roleList, ...others } = account
+              const role = { ...account.roleList[i], ...others }
 
-    const iterators = taskFunctions.map(func => func())
-    const allFinished = new Array(taskFunctions.length).fill(false)
+              return role
+            }
 
-    do {
-      for await (const [index, iterator] of iterators.entries()) {
-        const value = await iterator.next()
+            return null
+          })
 
-        if (value.done) {
-          allFinished[index] = true
+          if (roles.every((item) => Boolean(item) === false)) {
+            break
+          }
+
+          arr.push(roles)
         }
       }
-    } while (allFinished.filter(Boolean).length !== allFinished.length)
+
+      return arr
+    }, [])
+
+    for (const roles of allToExecuteTaskRoles) {
+      const iterators = taskFunctions.map((func) => func(roles))
+      const allFinished = new Array(taskFunctions.length).fill(false)
+
+      do {
+        for await (const [index, iterator] of iterators.entries()) {
+          const value = await iterator.next()
+
+          if (value.done) {
+            allFinished[index] = true
+          }
+        }
+      } while (allFinished.filter(Boolean).length !== allFinished.length)
+    }
   })
 
   ipcMain.on('test-close-window', async () => {

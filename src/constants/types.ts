@@ -138,6 +138,8 @@ export type GameTaskList = Array<{
 export type GameTaskPlan = {
   id: string
   planName: string
+  // 执行该方案的账号分组
+  accountGroups: Array<GameAccountList[0]['groupName']>
   gameTaskList: Array<{ tag: string; taskList: Array<{ id: GameTask['id']; checked: boolean }> }>
 }
 

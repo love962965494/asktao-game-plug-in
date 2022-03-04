@@ -1,9 +1,10 @@
-import { Checkbox, Collapse, Form, Input, Modal } from 'antd'
-import { GameTaskList, GameTaskPlan } from 'constants/types'
+import { Checkbox, Collapse, Form, Input, Modal, Select } from 'antd'
+import { GameAccountList, GameTaskList, GameTaskPlan } from 'constants/types'
 import { useEffect, useReducer, useState } from 'react'
 import { simpleCloneKeep } from 'utils/toolkits'
 
 const FormItem = Form.Item
+const SelectOption = Select.Option
 const CollapsePanel = Collapse.Panel
 
 export interface IAddTaskPlan {
@@ -12,12 +13,14 @@ export interface IAddTaskPlan {
   hideModal: () => void
   refreshData: () => void
   gameTaskList: GameTaskList
+  gameAccountList: GameAccountList
   addGameTaskPlan?: (gameTaskPlan: GameTaskPlan) => Promise<void>
   editGameTaskPlan?: (gameTaskPlan: GameTaskPlan) => Promise<void>
 }
 
 export function AddTaskPlan(props: IAddTaskPlan) {
-  const { record, visible, hideModal, gameTaskList, addGameTaskPlan, editGameTaskPlan, refreshData } = props
+  const { record, visible, hideModal, gameTaskList, gameAccountList, addGameTaskPlan, editGameTaskPlan, refreshData } =
+    props
   const [form] = Form.useForm()
   const [newGameTaskList, setNewGameTaskList] = useState<GameTaskList>([])
   const [_, forceUpdate] = useReducer((x) => x + 1, 0)
@@ -39,6 +42,7 @@ export function AddTaskPlan(props: IAddTaskPlan) {
       })
       form.setFieldsValue({
         planName: record.planName,
+        accountGroups: record.accountGroups,
         gameTaskList,
       })
       forceUpdate()
@@ -77,6 +81,13 @@ export function AddTaskPlan(props: IAddTaskPlan) {
       <Form form={form} labelCol={{ span: 4 }}>
         <FormItem label="方案名称" name="planName" rules={[{ required: true, message: '方案名称不能为空' }]}>
           <Input />
+        </FormItem>
+        <FormItem label="账号分组" name="accountGroups" rules={[{ required: true, message: '账户分组不能为空' }]}>
+          <Select mode="multiple">
+            {gameAccountList.map((item) => (
+              <SelectOption key={item.groupName}>{item.groupName}</SelectOption>
+            ))}
+          </Select>
         </FormItem>
         <FormItem label="任务列表">
           <Collapse defaultActiveKey={newGameTaskList.map((gameTask) => gameTask.tag)}>

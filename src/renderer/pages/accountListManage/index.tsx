@@ -130,6 +130,7 @@ export default function AccountListManage() {
                           账号：<span>{item.account}</span>
                         </span>
                         <Table
+                          rowKey="roleName"
                           pagination={false}
                           dataSource={item.roleList}
                           columns={[

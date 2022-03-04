@@ -2,6 +2,7 @@ import { Button, Form, Space, Select } from 'antd'
 import { GameTask } from 'constants/types'
 import { useContext, useReducer } from 'react'
 import { AppContext } from 'renderer/App'
+import { useGameAccountList } from '../accountListManage/hooks'
 import { AddGameTask, EditGameTask, TaskPlanManage } from './components'
 import {
   useAddGameTask,
@@ -51,6 +52,7 @@ const initialState: IState = {
 export default function TaskManage() {
   const [form] = Form.useForm()
   const { ipcRenderer } = useContext(AppContext)
+  const { gameAccountList } = useGameAccountList()
   const { gameTaskList, getGameTaskList } = useGameTaskList()
   const { gameTaskPlanList, getGameTaskPlanList } = useGameTaskPlanList()
   const addGameTask = useAddGameTask()
@@ -173,6 +175,7 @@ export default function TaskManage() {
         <TaskPlanManage
           gameTaskList={gameTaskList}
           changePageType={changePageType}
+          gameAccountList={gameAccountList}
           addGameTaskPlan={addGameTaskPlan}
           editGameTaskPlan={editGameTaskPlan}
           gameTaskPlanList={gameTaskPlanList}

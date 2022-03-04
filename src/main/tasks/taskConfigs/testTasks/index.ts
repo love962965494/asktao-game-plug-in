@@ -4,12 +4,11 @@ import GameWindowControl from '../../../../utils/gameWindowControll'
 import { getProcessesByName } from '../../../../utils/systemCotroll'
 import robotjs from 'robotjs'
 import path from 'path'
-import { pythonImagesPath, constantsPath } from '../../../../paths'
+import { pythonImagesPath } from '../../../../paths'
 import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
-import { GameAccountList, GameAccount } from '../../../../constants/types'
-import fs from 'fs/promises'
 import random from 'random'
 import { clipboard } from 'electron'
+import { ExecuteTaskRoleInfo } from 'main/tasks/testTask'
 
 export async function* youdaoTask() {
   const processes = await getProcessesByName('YoudaoDict')
@@ -80,7 +79,11 @@ export async function* youdaoTask() {
   yield
 }
 
-export async function* startGameTask() {
+export async function* startGameTask(roles?: ExecuteTaskRoleInfo[]) {
+  if (!roles) {
+    return
+  }
+
   robotUtils.keyTap('d', ['command'])
   let positions: Array<[number, number]> = []
 
@@ -99,59 +102,96 @@ export async function* startGameTask() {
   }
 
   const [x, y] = positions[0]
-  const gameAccountList: GameAccountList = JSON.parse(
-    await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
-  )
-  const accounts = gameAccountList.flatMap((group) => group.accountList)
 
-  async function _login({ account, password }: GameAccount, i: number) {
-    // 打开应用程序
-    robotUtils.moveMouseSmooth(x, y)
-    robotUtils.mouseClick('left', true)
+  async function _login(role: ExecuteTaskRoleInfo, i: number) {
+    const allGameWindows = GameWindowControl.getAllGameWindows()
+    let gameWindow = GameWindowControl.getGameWindowByAccount(role.account || '')
+    const left = (i % 5) * 300
+    const top = Math.min(Math.max(i - 4, 0), 1) * 400
+    let type = 'changeRole'
 
-    await setTimeoutPromise(async () => {
-      const processes = await getProcessesByName('notepad')
-      const allGameWindows = GameWindowControl.getAllGameWindows()
-      const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
-      const instance = new GameWindowControl(+pid)
-      const scaleFactor = instance.getScaleFactor()
-      const alternateWindow = GameWindowControl.getAlternateWindow()
-      const left = (i % 5) * 300
-      const top = Math.min(Math.max(i - 4, 0), 1) * 400
+    if (!gameWindow) {
+      type = 'loginRole'
 
-      instance.setPosition(left, top)
-      instance.setSize(1000, 800)
-      alternateWindow.setBounds({
-        x: Math.round(left / scaleFactor),
-        y: Math.round(top / scaleFactor),
-        width: Math.round(1000 / scaleFactor),
-        height: Math.round(800 / scaleFactor),
-      })
-
-      alternateWindow.show()
-      robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
       await setTimeoutPromise(() => {
-        alternateWindow.hide()
-      }, 500)
+        // 打开应用程序
+        robotUtils.moveMouseSmooth(x, y)
+        robotUtils.mouseClick('left', true)
+      }, 1000)
 
-      robotUtils.mouseClick('left', true)
+      const processes = await getProcessesByName('notepad')
+      const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
 
-      for (const char of account) {
+      gameWindow = new GameWindowControl(+pid)
+      gameWindow.setRoleInfo(role)
+      gameWindow.setPosition(left, top)
+      gameWindow.setSize(1000, 800)
+    }
+
+    const scaleFactor = gameWindow.getScaleFactor()
+    const alternateWindow = GameWindowControl.getAlternateWindow()
+
+    alternateWindow.setBounds({
+      x: Math.round(left / scaleFactor),
+      y: Math.round(top / scaleFactor),
+      width: Math.round(1000 / scaleFactor),
+      height: Math.round(800 / scaleFactor),
+    })
+
+    alternateWindow.show()
+    robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+    await setTimeoutPromise(() => {
+      alternateWindow.hide()
+    }, 500)
+
+    gameWindow.showGameWindow()
+    robotUtils.mouseClick('left', true)
+    robotUtils.keyTap('enter')
+
+    if (type === 'changeRole') {
+      // 切换角色操作
+      clipboard.writeText('切换角色')
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+
+      clipboard.writeText(`角色姓名: ${role.roleName || ''}`)
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+
+      clipboard.writeText(`角色等级: ${role.rank || ''}`)
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+    } else {
+      // 登录操作
+      clipboard.writeText('登录账号')
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+
+      for (const char of role.account!) {
         robotUtils.handleCharKeyTap(char)
       }
       robotUtils.keyTap('enter')
-      for (const char of password) {
+      for (const char of role.password!) {
         robotUtils.handleCharKeyTap(char)
       }
-    }, 1000)
+      robotUtils.keyTap('enter')
+
+      clipboard.writeText(`角色姓名: ${role.roleName || ''}`)
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+
+      clipboard.writeText(`角色等级: ${role.rank || ''}`)
+      robotUtils.keyTap('v', ['control'])
+      robotUtils.keyTap('enter')
+    }
 
     await setTimeoutPromise(() => {
-      // 输入完毕后，显示桌面，继续打开新的进程
+      // 显示桌面
       robotUtils.keyTap('d', ['command'])
     }, 1000)
   }
 
-  const promises = accounts.map((account, index) => async () => await _login(account, index))
+  const promises = roles.filter(Boolean).map((role, index) => async () => await _login(role, index))
 
   // 依次登录所有账号
   for await (const promise of promises) {

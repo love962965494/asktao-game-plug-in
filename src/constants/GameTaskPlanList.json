@@ -1,6 +1,10 @@
 [
     {
         "planName": "一键登录",
+        "accountGroups": [
+            "主账号",
+            "副账号"
+        ],
         "gameTaskList": [
             {
                 "tag": "测试任务",

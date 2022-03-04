@@ -4,6 +4,7 @@ import { BrowserWindow, screen } from 'electron'
 import path from 'path'
 import { mainPath, rendererPath } from '../paths'
 import { Directions } from '../constants/types'
+import { ExecuteTaskRoleInfo } from 'main/tasks/testTask'
 
 const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow
@@ -125,6 +126,10 @@ function getBoundsAndScaleFactor(bounds: IBounds): IBounds & { scaleFactor: numb
 
 export default class GameWindowControl {
   public gameWindow!: WinControlInstance
+  /**
+   * 记录当前窗口对应的角色信息
+   */
+  public roleInfo?: ExecuteTaskRoleInfo
   #bounds!: IBounds
   #scaleFactor!: number
 
@@ -169,6 +174,19 @@ export default class GameWindowControl {
 
   static getAllGameWindows() {
     return gameWindows
+  }
+
+  /**
+   * 根据游戏账号查找对应的游戏窗口
+   */
+  static getGameWindowByAccount(account: string) {
+    if (!account) {
+      return null
+    }
+    const windows = [...gameWindows.values()]
+    const window = windows.find((item) => item.roleInfo?.account === account)
+
+    return window
   }
 
   static getAlternateWindow() {
@@ -261,5 +279,13 @@ export default class GameWindowControl {
     const density = img.width / width
 
     return { img, density }
+  }
+
+  getRoleInfo() {
+    return this.roleInfo
+  }
+
+  setRoleInfo(roleInfo: ExecuteTaskRoleInfo) {
+    this.roleInfo = roleInfo
   }
 }
