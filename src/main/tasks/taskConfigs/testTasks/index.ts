@@ -8,93 +8,24 @@ import { pythonImagesPath } from '../../../../paths'
 import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
 import random from 'random'
 import { clipboard } from 'electron'
-import { ExecuteTaskRoleInfo } from 'main/tasks/testTask'
+import { ExecuteTaskRoleInfo } from '../../testTask'
 
-export async function* youdaoTask() {
-  const processes = await getProcessesByName('YoudaoDict')
-  const [_, pid] = processes[0]
-  const instance = new GameWindowControl(+pid)
-  instance.showGameWindow()
-  const alternateWindow = GameWindowControl.getAlternateWindow()
-  const { left, top, right, bottom } = instance.getBounds(true)
-  const scaleFactor = instance.getScaleFactor(true)
+let positions: Array<[number, number]>
 
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left')
-  robotjs.typeString('youdao ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left', true)
-  robotjs.typeString('task ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left', true)
-  robotjs.typeString('has ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800 * scaleFactor, top + 90 * scaleFactor)
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left', true)
-  robotjs.typeString('finished!')
-  instance.hideGameWindow()
-  yield
-}
-
-export async function* startGameTask(roles?: ExecuteTaskRoleInfo[]) {
-  if (!roles) {
-    return
-  }
-
+export async function* startGameTask(role: Required<ExecuteTaskRoleInfo>, index: number) {
   robotUtils.keyTap('d', ['command'])
-  let positions: Array<[number, number]> = []
 
-  await setTimeoutPromise(async () => {
-    const screenCapture = robotjs.screen.capture()
-    let srcImagePath = path.join(pythonImagesPath, 'temp/screenCapture.jpg')
-    let targetImagePath = path.join(pythonImagesPath, 'GUIElements/textnote.jpg')
+  if (!positions) {
+    // TODO: 优化，改到程序启动时，执行，避免每次执行登录要重新获取坐标信息
+    await setTimeoutPromise(async () => {
+      const screenCapture = robotjs.screen.capture()
+      let srcImagePath = path.join(pythonImagesPath, 'temp/screenCapture.jpg')
+      let targetImagePath = path.join(pythonImagesPath, 'GUIElements/textnote.jpg')
 
-    await screenCaptureToFile(screenCapture, srcImagePath)
-    positions = await findImagePositions(srcImagePath, targetImagePath, 10, 30, 5)
-  }, 1000)
+      await screenCaptureToFile(screenCapture, srcImagePath)
+      positions = await findImagePositions(srcImagePath, targetImagePath, 10, 30, 5)
+    }, 1000)
+  }
 
   if (positions.length === 0) {
     console.log('findImagePositions error')
@@ -103,16 +34,17 @@ export async function* startGameTask(roles?: ExecuteTaskRoleInfo[]) {
 
   const [x, y] = positions[0]
 
-  async function _login(role: ExecuteTaskRoleInfo, i: number) {
+  async function _login(role: Required<ExecuteTaskRoleInfo>, i: number) {
     const allGameWindows = GameWindowControl.getAllGameWindows()
-    let gameWindow = GameWindowControl.getGameWindowByAccount(role.account || '')
-    const left = (i % 5) * 300
-    const top = Math.min(Math.max(i - 4, 0), 1) * 400
+    let gameWindow = GameWindowControl.getGameWindowByAccount(role.account)
+
     let type = 'changeRole'
 
     if (!gameWindow) {
-      type = 'loginRole'
+      let left = (i % 5) * 300
+      let top = Math.min(Math.max(i - 4, 0), 1) * 400
 
+      type = 'loginRole'
       await setTimeoutPromise(() => {
         // 打开应用程序
         robotUtils.moveMouseSmooth(x, y)
@@ -126,26 +58,30 @@ export async function* startGameTask(roles?: ExecuteTaskRoleInfo[]) {
       gameWindow.setRoleInfo(role)
       gameWindow.setPosition(left, top)
       gameWindow.setSize(1000, 800)
+      // 刷新位置信息
+      gameWindow.getBounds(true)
     }
 
+    gameWindow.showGameWindow()
+    const { left, top } = gameWindow.getBounds()
     const scaleFactor = gameWindow.getScaleFactor()
     const alternateWindow = GameWindowControl.getAlternateWindow()
 
     alternateWindow.setBounds({
-      x: Math.round(left / scaleFactor),
-      y: Math.round(top / scaleFactor),
+      x: left,
+      y: top,
       width: Math.round(1000 / scaleFactor),
       height: Math.round(800 / scaleFactor),
     })
 
     alternateWindow.show()
-    robotUtils.moveMouseSmooth(left + 600 * scaleFactor, top + 400 * scaleFactor)
+    robotUtils.moveMouseSmooth(left + 800, top + 40)
     await setTimeoutPromise(() => {
       alternateWindow.hide()
     }, 500)
 
     gameWindow.showGameWindow()
-    robotUtils.mouseClick('left', true)
+    robotUtils.mouseClick('left')
     robotUtils.keyTap('enter')
 
     if (type === 'changeRole') {
@@ -184,95 +120,9 @@ export async function* startGameTask(roles?: ExecuteTaskRoleInfo[]) {
       robotUtils.keyTap('v', ['control'])
       robotUtils.keyTap('enter')
     }
-
-    await setTimeoutPromise(() => {
-      // 显示桌面
-      robotUtils.keyTap('d', ['command'])
-    }, 1000)
   }
 
-  const promises = roles.filter(Boolean).map((role, index) => async () => await _login(role, index))
-
-  // 依次登录所有账号
-  for await (const promise of promises) {
-    yield promise()
-  }
-
-  const allGameWindows = GameWindowControl.getAllGameWindows()
-
-  // 显示所有窗口
-  for (const gameWindow of allGameWindows.values()) {
-    gameWindow.showGameWindow()
-  }
-}
-
-export async function* wangyiTask() {
-  const pid = 5032
-  const instance = new GameWindowControl(+pid)
-  instance.showGameWindow()
-  const alternateWindow = GameWindowControl.getAlternateWindow()
-  const { left, top, right, bottom } = instance.getBounds(true)
-  const scaleFactor = instance.getScaleFactor(true)
-
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left')
-  robotUtils.keyTap('a', ['control'])
-  robotjs.typeString('wang ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left')
-  robotjs.typeString('yi ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left')
-  robotjs.typeString('cloud ')
-  instance.hideGameWindow()
-  yield
-
-  instance.showGameWindow()
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 440 * scaleFactor, top + Math.round(35 * scaleFactor))
-  await setTimeoutPromise(() => alternateWindow.hide(), 500)
-  robotUtils.mouseClick('left')
-  robotjs.typeString('music')
-  instance.hideGameWindow()
-  yield
+  await _login(role, index)
 }
 
 // 单人限时任务
@@ -358,4 +208,111 @@ export async function* testTimeLimitSingleTask() {
       }
     }
   } while (allFinished.filter(Boolean).length !== allGameWindows.length)
+}
+
+const shimenTaskType = ['师门任务之入世修行', '师门任务之修山巡逻', '师门任务之寻亲访友', '师门任务之师门物资']
+
+// 师门任务
+export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number, taskNo: number) {
+  const gameWindow = GameWindowControl.getGameWindowByAccount(role.account)!
+  const alternateWindow = GameWindowControl.getAlternateWindow()
+
+  gameWindow.showGameWindow()
+  const { left, top } = gameWindow.getBounds()
+
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 800, top + 40)
+  await setTimeoutPromise(() => {
+    alternateWindow.hide()
+  }, 500)
+  robotUtils.mouseClick('left')
+  gameWindow.showGameWindow()
+
+  let task
+  // 接受师门任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText('判断当前组队状态，如果组队则执行离队操作')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    clipboard.writeText(`开始第${taskNo}个师门任务，回到师门`)
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    clipboard.writeText('找到师尊，接受师门任务')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    clipboard.writeText('判断当前师门任务类型。。。')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    task = shimenTaskType[random.integer(0, 3)]
+
+    clipboard.writeText('当前师门任务为：' + task)
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+  }, 500)
+
+  // 执行师门任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText('师门任务第一步，前往目标位置。。。')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    gameWindow.hideGameWindow()
+  }, 500)
+  yield
+
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 800, top + 40)
+  await setTimeoutPromise(() => {
+    alternateWindow.hide()
+  }, 500)
+  gameWindow.showGameWindow()
+  robotUtils.mouseClick('left')
+
+  // 执行师门任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText('师门任务第二步，找到npc进行对话，进行任务')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    gameWindow.hideGameWindow()
+  }, 500)
+  yield
+
+  alternateWindow.setBounds({
+    x: left,
+    y: top,
+  })
+  alternateWindow.show()
+  robotUtils.moveMouseSmooth(left + 800, top + 40)
+  await setTimeoutPromise(() => {
+    alternateWindow.hide()
+  }, 500)
+  gameWindow.showGameWindow()
+  robotUtils.mouseClick('left')
+
+  // 执行师门任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText('师门任务第三步，师门任务完成')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    gameWindow.hideGameWindow()
+  }, 500)
+  yield
 }

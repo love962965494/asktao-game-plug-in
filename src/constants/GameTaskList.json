@@ -7,18 +7,6 @@
                 "taskCount": 1,
                 "taskType": "single",
                 "id": "fc59a3eb-2724-4724-9147-c1bbfc6d022b"
-            },
-            {
-                "taskName": "有道词典输入",
-                "taskCount": 1,
-                "taskType": "single",
-                "id": "5081644a-47ea-4f23-840d-88298b8e9e11"
-            },
-            {
-                "taskName": "网易云播放",
-                "taskCount": 1,
-                "taskType": "single",
-                "id": "eac2f6d7-27de-4320-938c-478d5ec8ca93"
             }
         ]
     },
@@ -58,17 +46,6 @@
         ]
     },
     {
-        "tag": "组队任务",
-        "taskList": [
-            {
-                "taskName": "刷道任务",
-                "taskCount": 20,
-                "taskType": "group",
-                "id": "bd3528c7-34b3-43b1-8ec6-66fd10ef29b2"
-            }
-        ]
-    },
-    {
         "tag": "日常活动",
         "taskList": [
             {
@@ -76,6 +53,18 @@
                 "taskCount": 10,
                 "taskType": "single",
                 "id": "3c30adde-7a16-4f18-8d88-2d102ef346d6"
+            },
+            {
+                "taskName": "刷道任务",
+                "taskCount": 20,
+                "taskType": "group",
+                "id": "ac49f344-37a4-4fcd-823d-805cff0baf63"
+            },
+            {
+                "taskName": "修山任务",
+                "taskCount": 30,
+                "taskType": "group",
+                "id": "23c161c3-1592-4b98-b50e-fd76ef8ea07f"
             }
         ]
     }

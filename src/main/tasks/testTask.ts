@@ -1,39 +1,16 @@
 import { ipcMain } from 'electron'
 import taskConfigs from './taskConfigs'
-import { startGameTask, wangyiTask, youdaoTask } from './taskConfigs/testTasks'
+import { startGameTask } from './taskConfigs/testTasks'
 import fs from 'fs/promises'
 import path from 'path'
 import { constantsPath } from '../../paths'
-import { GameAccount, GameAccountList, GameTaskPlanList, RoleStatus } from 'constants/types'
+import { GameAccount, GameAccountList, GameTaskList, GameTaskPlanList, RoleStatus } from 'constants/types'
 import GameWindowControl from '../../utils/gameWindowControll'
+import { simpleCloneKeep } from '../../utils/toolkits'
 
 export type ExecuteTaskRoleInfo = Partial<RoleStatus & Omit<GameAccount, 'roleList'>>
 
 export function registerTestTasks() {
-  ipcMain.on('test-youdao', async () => {
-    const iterator = youdaoTask()
-
-    do {
-      const value = await iterator.next()
-
-      if (value.done) {
-        break
-      }
-    } while (true)
-  })
-
-  ipcMain.on('test-wangyi', async () => {
-    const iterator = wangyiTask()
-
-    do {
-      const value = await iterator.next()
-
-      if (value.done) {
-        break
-      }
-    } while (true)
-  })
-
   ipcMain.on('test-start-game', async () => {
     const iterator = startGameTask()
 
@@ -46,21 +23,6 @@ export function registerTestTasks() {
     } while (true)
   })
 
-  ipcMain.on('test-start-all', async () => {
-    const iterators = [youdaoTask(), wangyiTask(), startGameTask()]
-    const allFinished = [false, false, false]
-
-    do {
-      for await (const [index, iterator] of iterators.entries()) {
-        const value = await iterator.next()
-
-        if (value.done) {
-          allFinished[index] = true
-        }
-      }
-    } while (allFinished.filter(Boolean).length !== 3)
-  })
-
   ipcMain.on('test-execute-plan', async (_, taskPlanId: string) => {
     const GameTaskPlanList = JSON.parse(
       await fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
@@ -68,24 +30,18 @@ export function registerTestTasks() {
     const gameAccountList: GameAccountList = JSON.parse(
       await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
     )
+    const gameTaskList: GameTaskList = JSON.parse(
+      await fs.readFile(path.resolve(constantsPath, 'GameTaskList.json'), 'utf-8')
+    )
     const gameTaskPlan = GameTaskPlanList.find((taskPlan) => taskPlan.id === taskPlanId)!
-
-    const taskFunctions = gameTaskPlan.gameTaskList.reduce<Function[]>((arr, taskGroup) => {
-      const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
-      const functions = taskGroup.taskList
-        .filter((taskItem) => taskItem.checked)
-        .map((taskItem) => {
-          const { taskFunction } = taskConfig.taskList.find(({ id }) => id === taskItem.id)!
-
-          return taskFunction
-        })
-
-      return [...arr, ...functions]
-    }, [])
 
     /**
      * 任务堆栈
      *
+     *     . x x x x x x x x x .
+     *     y                   y
+     *     y      login        y  第一个任务永远是登录角色或者切换角色
+     *     y                   y
      *     . x x x x x x x x x .
      *     y   limitTimeTask   y
      *     y     groupTask     y  顶层放置限时任务，限时任务优先执行，限时组队任务优先于限时单人任务执行
@@ -100,7 +56,27 @@ export function registerTestTasks() {
      *     y                   y
      *     . x x x x x x x x x .
      */
-    const taskStack = []
+    const taskStack: { taskCount: number; taskFunction: Function }[] = []
+    gameTaskPlan.gameTaskList.forEach((taskGroup) => {
+      const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
+      taskGroup.taskList
+        .filter((taskItem) => taskItem.checked)
+        .forEach((taskItem) => {
+          const { taskType, taskCount = 1 } = gameTaskList
+            .find((item) => item.tag === taskGroup.tag)
+            ?.taskList?.find((item) => item.id === taskItem.id)!
+          const { taskFunction } = taskConfig.taskList.find(({ id }) => id === taskItem.id)!
+
+          if (taskType === 'group') {
+            taskStack.push({ taskCount, taskFunction })
+          } else {
+            taskStack.unshift({ taskCount, taskFunction })
+          }
+        })
+    })
+
+    // 栈顶放入登录任务
+    taskStack.push({ taskCount: 1, taskFunction: startGameTask })
 
     const accountGroups = gameTaskPlan.accountGroups
     /**
@@ -147,18 +123,25 @@ export function registerTestTasks() {
     }, [])
 
     for (const roles of allToExecuteTaskRoles) {
-      const iterators = taskFunctions.map((func) => func(roles))
-      const allFinished = new Array(taskFunctions.length).fill(false)
+      let len = taskStack.length
 
       do {
-        for await (const [index, iterator] of iterators.entries()) {
-          const value = await iterator.next()
+        const { taskCount, taskFunction } = taskStack[len - 1]
+        for (let i = 0; i < taskCount; i++) {
+          const iterators = roles.filter(Boolean).map((role, index) => taskFunction(role, index, i))
+          const allFinished = Array.from({ length: iterators.length }, () => false)
 
-          if (value.done) {
-            allFinished[index] = true
-          }
+          do {
+            for await (const [index, iterator] of iterators.entries()) {
+              const value = await iterator.next()
+
+              if (value.done) {
+                allFinished[index] = true
+              }
+            }
+          } while (allFinished.filter(Boolean).length !== allFinished.length)
         }
-      } while (allFinished.filter(Boolean).length !== allFinished.length)
+      } while (--len > 0)
     }
   })
 
