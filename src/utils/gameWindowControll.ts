@@ -5,6 +5,8 @@ import path from 'path'
 import { mainPath, rendererPath } from '../paths'
 import { Directions } from '../constants/types'
 import { ExecuteTaskRoleInfo } from 'main/tasks/testTask'
+import robotUtils from './robot'
+import { setTimeoutPromise } from './toolkits'
 
 const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow
@@ -219,6 +221,26 @@ export default class GameWindowControl {
 
   closeGameWindow() {
     process.kill(this.pid)
+  }
+
+  /**
+   * 切换游戏窗口，移动鼠标到对应位置
+   */
+  async toggleGameWindowAndAlternateWindow(x: number, y: number) {
+    const { left, top } = this.#bounds
+
+    this.showGameWindow()
+    alternateWindow.setBounds({
+      x: left,
+      y: top,
+    })
+    alternateWindow.show()
+    robotUtils.moveMouseSmooth(left + x, top + y)
+    await setTimeoutPromise(() => {
+      alternateWindow.hide()
+    }, 500)
+    robotUtils.mouseClick('left')
+    this.showGameWindow()
   }
 
   /**

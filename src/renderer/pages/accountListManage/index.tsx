@@ -1,8 +1,10 @@
-import { Form, Button, List, Avatar, Space, Select, Table } from 'antd'
 import { useReducer } from 'react'
-import { AddAccount, BattlePlan, IRecord } from './components'
-import { useAddAccount, useChangeCaptainAccount, useChangeRoleBattlePlan, useGameAccountList } from './hooks'
 import styles from './accountListManage.module.scss'
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
+import { AddAccount, BattlePlan, IRecord } from './components'
+import { Form, Button, List, Avatar, Space, Select, Table } from 'antd'
+import { useAddAccount, useChangeCaptainAccount, useChangeRoleBattlePlan, useGameAccountList } from './hooks'
+import { simpleCloneKeep } from 'utils/toolkits'
 
 const FormItem = Form.Item
 const ListItem = List.Item
@@ -10,17 +12,24 @@ const ListItemMeta = ListItem.Meta
 const SelectOption = Select.Option
 
 interface IState {
+  expandMap: { [key: string]: boolean }
+  record?: IRecord
   addModalVisible: boolean
   battlePlanVisible: boolean
-  record?: IRecord
   captainAccountMap: Map<string, boolean>
 }
 
-type IActionTypes = 'SET_RECORD' | 'SET_ADD_MODAL_VISIBLE' | 'SET_CAPTAIN_ACCOUNT_MAP' | 'SET_BATTLE_PLAN_VISIBLE'
+type IActionTypes =
+  | 'SET_RECORD'
+  | 'SET_EXPAND_MAP'
+  | 'SET_ADD_MODAL_VISIBLE'
+  | 'SET_CAPTAIN_ACCOUNT_MAP'
+  | 'SET_BATTLE_PLAN_VISIBLE'
 
 function reducer(state: IState, action: { type: IActionTypes; payload: Partial<IState> }) {
   switch (action.type) {
     case 'SET_RECORD':
+    case 'SET_EXPAND_MAP':
     case 'SET_ADD_MODAL_VISIBLE':
     case 'SET_CAPTAIN_ACCOUNT_MAP':
     case 'SET_BATTLE_PLAN_VISIBLE':
@@ -34,6 +43,7 @@ function reducer(state: IState, action: { type: IActionTypes; payload: Partial<I
 }
 
 const initialState: IState = {
+  expandMap: {},
   addModalVisible: false,
   battlePlanVisible: false,
   captainAccountMap: new Map(),
@@ -41,7 +51,7 @@ const initialState: IState = {
 
 export default function AccountListManage() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { addModalVisible, captainAccountMap, battlePlanVisible, record } = state
+  const { expandMap, addModalVisible, captainAccountMap, battlePlanVisible, record } = state
 
   const addAccount = useAddAccount()
   const changeCaptainAccount = useChangeCaptainAccount()
@@ -74,6 +84,13 @@ export default function AccountListManage() {
     dispatch({ type: 'SET_RECORD', payload: { record } })
   }
 
+  const handleToggleExpandBtnClick = (groupName: string) => {
+    const newExpandMap = simpleCloneKeep(expandMap)
+    newExpandMap[groupName] = !newExpandMap[groupName]
+
+    dispatch({ type: 'SET_EXPAND_MAP', payload: { expandMap: newExpandMap } })
+  }
+
   return (
     <Form>
       <FormItem>
@@ -102,21 +119,27 @@ export default function AccountListManage() {
                   onClick={handleCaptianAccountSelectClick.bind(null, group.groupName)}
                 >
                   {group.accountList.map((account) => (
-                    <SelectOption key={account.id} value={account.id}>
+                    <SelectOption key={account.id} value={account.account}>
                       {account.account}
                     </SelectOption>
                   ))}
                 </Select>
               </span>
-              <Button type="ghost" danger>
-                一键登录
-              </Button>
-              <Button type="ghost" danger>
-                一键换人
-              </Button>
             </Space>
+            <Button type="link" className="right" onClick={handleToggleExpandBtnClick.bind(null, group.groupName)}>
+              {!expandMap[group.groupName] ? (
+                <span>
+                  展开 <DownOutlined />
+                </span>
+              ) : (
+                <span>
+                  收缩 <UpOutlined />
+                </span>
+              )}
+            </Button>
           </h3>
           <List
+            className={styles.accountList + ' ' + (expandMap[group.groupName] ? '' : styles.shrink)}
             itemLayout="vertical"
             dataSource={group.accountList}
             renderItem={(item) => (

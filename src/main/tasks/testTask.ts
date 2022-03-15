@@ -6,7 +6,6 @@ import path from 'path'
 import { constantsPath } from '../../paths'
 import { GameAccount, GameAccountList, GameTaskList, GameTaskPlanList, RoleStatus } from 'constants/types'
 import GameWindowControl from '../../utils/gameWindowControll'
-import { simpleCloneKeep } from '../../utils/toolkits'
 
 export type ExecuteTaskRoleInfo = Partial<RoleStatus & Omit<GameAccount, 'roleList'>>
 
@@ -122,6 +121,7 @@ export function registerTestTasks() {
       return arr
     }, [])
 
+
     for (const roles of allToExecuteTaskRoles) {
       let len = taskStack.length
 
@@ -153,3 +153,5 @@ export function registerTestTasks() {
     }
   })
 }
+
+

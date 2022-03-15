@@ -3,11 +3,21 @@
   border-bottom: 1px solid #ccc;
 }
 
+.accountList {
+  overflow: hidden;
+  max-height: 2000px;
+  transition: max-height .5s;
+
+  &.shrink {
+    max-height: 0;
+  }
+}
+
+
 .listItem {
   > div {
     display: grid;
     gap: 15px;
-    // grid-template-rows: 1fr 1fr;
     margin-bottom: 5px;
   }
 }

@@ -28,6 +28,8 @@ export type GameAccount = {
   id: string
   account: string
   password: string
+  // 是否是队长
+  isCaptain: boolean
   roleList: Partial<RoleStatus>[]
 }
 

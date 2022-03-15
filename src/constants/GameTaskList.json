@@ -50,7 +50,7 @@
         "taskList": [
             {
                 "taskName": "师门任务",
-                "taskCount": 10,
+                "taskCount": 5,
                 "taskType": "single",
                 "id": "3c30adde-7a16-4f18-8d88-2d102ef346d6"
             },

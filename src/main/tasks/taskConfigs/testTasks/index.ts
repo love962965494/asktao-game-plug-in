@@ -4,11 +4,13 @@ import GameWindowControl from '../../../../utils/gameWindowControll'
 import { getProcessesByName } from '../../../../utils/systemCotroll'
 import robotjs from 'robotjs'
 import path from 'path'
-import { pythonImagesPath } from '../../../../paths'
+import { constantsPath, pythonImagesPath } from '../../../../paths'
 import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
 import random from 'random'
 import { clipboard } from 'electron'
 import { ExecuteTaskRoleInfo } from '../../testTask'
+import fs from 'fs/promises'
+import { GameAccountList } from '../../../../constants/types'
 
 let positions: Array<[number, number]>
 
@@ -215,32 +217,20 @@ const shimenTaskType = ['师门任务之入世修行', '师门任务之修山巡
 // 师门任务
 export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number, taskNo: number) {
   const gameWindow = GameWindowControl.getGameWindowByAccount(role.account)!
-  const alternateWindow = GameWindowControl.getAlternateWindow()
 
-  gameWindow.showGameWindow()
-  const { left, top } = gameWindow.getBounds()
+  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800, top + 40)
-  await setTimeoutPromise(() => {
-    alternateWindow.hide()
-  }, 500)
-  robotUtils.mouseClick('left')
-  gameWindow.showGameWindow()
-
-  let task
-  // 接受师门任务
-  await setTimeoutPromise(() => {
+  if (taskNo === 0) {
     clipboard.writeText('判断当前组队状态，如果组队则执行离队操作')
     robotUtils.keyTap('v', ['control'])
     robotUtils.keyTap('enter')
     robotUtils.keyTap('enter')
+  }
 
-    clipboard.writeText(`开始第${taskNo}个师门任务，回到师门`)
+  let task
+  // 接受师门任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText(`开始第${taskNo + 1}个师门任务，回到师门`)
     robotUtils.keyTap('v', ['control'])
     robotUtils.keyTap('enter')
     robotUtils.keyTap('enter')
@@ -270,17 +260,7 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
   }, 500)
   yield
 
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800, top + 40)
-  await setTimeoutPromise(() => {
-    alternateWindow.hide()
-  }, 500)
-  gameWindow.showGameWindow()
-  robotUtils.mouseClick('left')
+  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
   // 执行师门任务
   await setTimeoutPromise(() => {
@@ -293,17 +273,7 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
   }, 500)
   yield
 
-  alternateWindow.setBounds({
-    x: left,
-    y: top,
-  })
-  alternateWindow.show()
-  robotUtils.moveMouseSmooth(left + 800, top + 40)
-  await setTimeoutPromise(() => {
-    alternateWindow.hide()
-  }, 500)
-  gameWindow.showGameWindow()
-  robotUtils.mouseClick('left')
+  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
   // 执行师门任务
   await setTimeoutPromise(() => {
@@ -313,6 +283,62 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
     robotUtils.keyTap('enter')
 
     gameWindow.hideGameWindow()
+  }, 500)
+  yield
+}
+
+async function getTeamMemberAccounts() {
+  const GameAccountList = JSON.parse(
+    await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
+  ) as GameAccountList
+
+  return (captainAccount: string) => {
+    const teamMemberAccounts = GameAccountList.find((item) => item.captainAccount === captainAccount)?.accountList.map(
+      (item) => item.account
+    )!
+
+    return teamMemberAccounts.filter((item) => item !== captainAccount)
+  }
+}
+let useTeamMemberAccounts: (captainAccount: string) => string[]
+
+// 刷道任务
+export async function* shuadaoTask(role: Required<ExecuteTaskRoleInfo>, _: number, taskNo: number) {
+  const gameWindow = GameWindowControl.getGameWindowByAccount(role.account)!
+
+  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+  if (taskNo === 0) {
+    useTeamMemberAccounts = await getTeamMemberAccounts()
+    clipboard.writeText('判断当前组队状态，如果离队则执行组队操作')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+  }
+  yield
+
+  if (!role.isCaptain) {
+    // 不是队长，则什么都不需要操作
+
+    return
+  }
+
+  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+  const teamMemberAccounts = useTeamMemberAccounts(role.account)
+  const teamMemberGameWindows = teamMemberAccounts.map((account) => GameWindowControl.getGameWindowByAccount(account)!)
+
+  // 接受刷道任务
+  await setTimeoutPromise(() => {
+    clipboard.writeText(`开始第${taskNo + 1}个刷道任务，前往伏魔真人`)
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
+
+    clipboard.writeText('接受任务，前往目的地，开始寻路。。。')
+    robotUtils.keyTap('v', ['control'])
+    robotUtils.keyTap('enter')
+    robotUtils.keyTap('enter')
   }, 500)
   yield
 }

@@ -102,6 +102,10 @@ function changeCaptainAccount(fastify: FastifyInstance) {
       const item = newGameAccountList.find((item) => item.groupName === groupName)!
 
       item.captainAccount = captainAccount
+      item.accountList.forEach((account) => {
+        account.isCaptain = account.account === captainAccount
+      })
+
       await fs.writeFile(
         path.resolve(constantsPath, 'GameAccountList.json'),
         JSON.stringify(newGameAccountList, undefined, 4)
