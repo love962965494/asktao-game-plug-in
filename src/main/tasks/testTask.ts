@@ -55,7 +55,7 @@ export function registerTestTasks() {
      *     y                   y
      *     . x x x x x x x x x .
      */
-    const taskStack: { taskCount: number; taskFunction: Function }[] = []
+    const taskStack: { taskType: 'group' | 'single', taskCount: number; taskFunction: Function }[] = []
     gameTaskPlan.gameTaskList.forEach((taskGroup) => {
       const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
       taskGroup.taskList
@@ -67,15 +67,15 @@ export function registerTestTasks() {
           const { taskFunction } = taskConfig.taskList.find(({ id }) => id === taskItem.id)!
 
           if (taskType === 'group') {
-            taskStack.push({ taskCount, taskFunction })
+            taskStack.push({ taskType, taskCount, taskFunction })
           } else {
-            taskStack.unshift({ taskCount, taskFunction })
+            taskStack.unshift({ taskType, taskCount, taskFunction })
           }
         })
     })
 
     // 栈顶放入登录任务
-    taskStack.push({ taskCount: 1, taskFunction: startGameTask })
+    taskStack.push({ taskType: 'single', taskCount: 1, taskFunction: startGameTask })
 
     const accountGroups = gameTaskPlan.accountGroups
     /**
@@ -126,9 +126,14 @@ export function registerTestTasks() {
       let len = taskStack.length
 
       do {
-        const { taskCount, taskFunction } = taskStack[len - 1]
+        const { taskType, taskCount, taskFunction } = taskStack[len - 1]
         for (let i = 0; i < taskCount; i++) {
-          const iterators = roles.filter(Boolean).map((role, index) => taskFunction(role, index, i))
+          let iterators
+          if (taskType === 'single') {
+            iterators = roles.filter(Boolean).map((role, index) => taskFunction(role, index, i))
+          } else {
+            iterators = [taskFunction(roles.filter(Boolean), i)]
+          }
           const allFinished = Array.from({ length: iterators.length }, () => false)
 
           do {

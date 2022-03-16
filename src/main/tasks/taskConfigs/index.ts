@@ -1,5 +1,5 @@
 import { GameTask } from '../../../constants/types'
-import { shimenTask, startGameTask, testTimeLimitSingleTask } from './testTasks'
+import { shimenTask, shuadaoTask, startGameTask, testTimeLimitSingleTask } from './testTasks'
 
 type IGameTask = Pick<GameTask, 'taskName' | 'id'> & { taskFunction: Function }
 type ITaskConfig = Array<{ tag: string; taskList: IGameTask[] }>
@@ -35,7 +35,7 @@ const taskConfigs: ITaskConfig = [
       },
       {
         taskName: '刷道任务',
-        taskFunction: () => {},
+        taskFunction: shuadaoTask,
         id: 'ac49f344-37a4-4fcd-823d-805cff0baf63',
       },
       {

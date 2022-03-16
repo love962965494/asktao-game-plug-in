@@ -218,7 +218,7 @@ const shimenTaskType = ['师门任务之入世修行', '师门任务之修山巡
 export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number, taskNo: number) {
   const gameWindow = GameWindowControl.getGameWindowByAccount(role.account)!
 
-  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+  await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
   if (taskNo === 0) {
     clipboard.writeText('判断当前组队状态，如果组队则执行离队操作')
@@ -260,7 +260,7 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
   }, 500)
   yield
 
-  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+  await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
   // 执行师门任务
   await setTimeoutPromise(() => {
@@ -273,7 +273,7 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
   }, 500)
   yield
 
-  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+  await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
 
   // 执行师门任务
   await setTimeoutPromise(() => {
@@ -287,58 +287,194 @@ export async function* shimenTask(role: Required<ExecuteTaskRoleInfo>, _: number
   yield
 }
 
-async function getTeamMemberAccounts() {
-  const GameAccountList = JSON.parse(
-    await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
-  ) as GameAccountList
-
-  return (captainAccount: string) => {
-    const teamMemberAccounts = GameAccountList.find((item) => item.captainAccount === captainAccount)?.accountList.map(
-      (item) => item.account
-    )!
-
-    return teamMemberAccounts.filter((item) => item !== captainAccount)
-  }
-}
-let useTeamMemberAccounts: (captainAccount: string) => string[]
-
 // 刷道任务
-export async function* shuadaoTask(role: Required<ExecuteTaskRoleInfo>, _: number, taskNo: number) {
-  const gameWindow = GameWindowControl.getGameWindowByAccount(role.account)!
-
-  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskNo: number) {
+  const captainRoles = roles.filter((role) => role.isCaptain)
+  const teamRoles = roles.filter((role) => !role.isCaptain)
+  const captainGameWindows = captainRoles.map((role) => GameWindowControl.getGameWindowByAccount(role.account)!)
+  const teamGameWindows = teamRoles.map((role) => GameWindowControl.getGameWindowByAccount(role.account)!)
 
   if (taskNo === 0) {
-    useTeamMemberAccounts = await getTeamMemberAccounts()
-    clipboard.writeText('判断当前组队状态，如果离队则执行组队操作')
-    robotUtils.keyTap('v', ['control'])
-    robotUtils.keyTap('enter')
-    robotUtils.keyTap('enter')
+    let promise = Promise.resolve()
+    for (const gameWindow of captainGameWindows) {
+      promise = promise.then(
+        () =>
+          new Promise(async (resolve) => {
+            await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+            clipboard.writeText('判断当前组队状态，如果离队则执行组队操作')
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            resolve()
+          })
+      )
+    }
   }
   yield
-
-  if (!role.isCaptain) {
-    // 不是队长，则什么都不需要操作
-
-    return
-  }
-
-  gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
-
-  const teamMemberAccounts = useTeamMemberAccounts(role.account)
-  const teamMemberGameWindows = teamMemberAccounts.map((account) => GameWindowControl.getGameWindowByAccount(account)!)
 
   // 接受刷道任务
   await setTimeoutPromise(() => {
-    clipboard.writeText(`开始第${taskNo + 1}个刷道任务，前往伏魔真人`)
-    robotUtils.keyTap('v', ['control'])
-    robotUtils.keyTap('enter')
-    robotUtils.keyTap('enter')
+    let promise = Promise.resolve()
 
-    clipboard.writeText('接受任务，前往目的地，开始寻路。。。')
-    robotUtils.keyTap('v', ['control'])
-    robotUtils.keyTap('enter')
-    robotUtils.keyTap('enter')
+    for (const gameWindow of captainGameWindows) {
+      promise = promise.then(
+        () =>
+          new Promise(async (resolve) => {
+            await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+            clipboard.writeText(`开始第${taskNo + 1}个刷道任务，前往伏魔真人`)
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            clipboard.writeText('接受任务，前往目的地，开始寻路。。。')
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            gameWindow.hideGameWindow()
+
+            resolve()
+          })
+      )
+    }
   }, 500)
   yield
+
+  // 进行战斗
+  await setTimeoutPromise(async () => {
+    let promise = Promise.resolve()
+    let currentNo = 0
+    let hasFinishBattle = false
+
+    for (const gameWindow of captainGameWindows) {
+      promise = promise.then(
+        () =>
+          new Promise(async (resolve) => {
+            await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+            clipboard.writeText('到达目的地')
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            gameWindow.hideGameWindow()
+            resolve()
+          })
+      )
+    }
+
+    // 战斗前设置好战斗策略
+    for (const gameWindow of [...captainGameWindows, ...teamGameWindows]) {
+      promise = promise.then(
+        () =>
+          new Promise(async (resolve) => {
+            await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+            clipboard.writeText('战斗即将开始，设置战斗策略')
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            clipboard.writeText(
+              `点击自动，补充自动回合，当前战斗方案是方案${gameWindow.roleInfo?.battlePlan?.[currentNo]}`
+            )
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            gameWindow.hideGameWindow()
+
+            resolve()
+          })
+      )
+    }
+
+    // 进入战斗
+    for (const gameWindow of captainGameWindows) {
+      promise = promise.then(
+        () =>
+          new Promise(async (resolve) => {
+            await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+            clipboard.writeText('点击对话，进入战斗')
+            robotUtils.keyTap('v', ['control'])
+            robotUtils.keyTap('enter')
+            robotUtils.keyTap('enter')
+
+            gameWindow.hideGameWindow()
+            resolve()
+          })
+      )
+    }
+
+    let interval: NodeJS.Timer
+    while (!hasFinishBattle) {
+      // 战斗进行中
+      for (const gameWindow of [...captainGameWindows, ...teamGameWindows]) {
+        promise = promise.then(
+          () =>
+            new Promise(async (resolve) => {
+              await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+              clipboard.writeText(`当前第${currentNo + 1}回合`)
+              robotUtils.keyTap('v', ['control'])
+              robotUtils.keyTap('enter')
+              robotUtils.keyTap('enter')
+
+              gameWindow.hideGameWindow()
+
+              resolve()
+            })
+        )
+      }
+
+      promise.then(async () => {
+        await new Promise<void>(resolve => {
+          interval = setInterval(() => {
+            // 每2秒检测一次当前回合是否结束
+            if (random.integer(0, 1) === 1) {
+              currentNo++
+              resolve()
+              clearInterval(interval)
+            }
+          }, 2000)
+        })
+      })
+
+      await promise.then(() => {
+        if (currentNo > 5) {
+          hasFinishBattle = true
+        }
+      })
+
+      // timeout = setTimeout(() => {
+      //   // 设置下一回合的战斗策略
+      //   for (const gameWindow of [...captainGameWindows, ...teamGameWindows]) {
+      //     promise = promise.then(
+      //       () =>
+      //         new Promise(async (resolve) => {
+      //           await gameWindow.toggleGameWindowAndAlternateWindow(800, 40)
+
+      //           clipboard.writeText(
+      //             `点击自动，补充自动回合，当前战斗方案是方案${gameWindow.roleInfo?.battlePlan?.[currentNo + 1]}`
+      //           )
+      //           robotUtils.keyTap('v', ['control'])
+      //           robotUtils.keyTap('enter')
+      //           robotUtils.keyTap('enter')
+
+      //           gameWindow.hideGameWindow()
+      //           resolve()
+      //         })
+      //     )
+      //   }
+      // }, 4000)
+    }
+  }, 500)
+  yield
+
+  // // 记录当前回合数
+  // let count = 0
 }

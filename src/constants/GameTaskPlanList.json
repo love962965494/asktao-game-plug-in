@@ -69,14 +69,6 @@
                     {
                         "id": "fc59a3eb-2724-4724-9147-c1bbfc6d022b",
                         "checked": false
-                    },
-                    {
-                        "id": "5081644a-47ea-4f23-840d-88298b8e9e11",
-                        "checked": false
-                    },
-                    {
-                        "id": "eac2f6d7-27de-4320-938c-478d5ec8ca93",
-                        "checked": false
                     }
                 ]
             },
@@ -98,11 +90,11 @@
                 "taskList": [
                     {
                         "id": "3c30adde-7a16-4f18-8d88-2d102ef346d6",
-                        "checked": true
+                        "checked": false
                     },
                     {
                         "id": "ac49f344-37a4-4fcd-823d-805cff0baf63",
-                        "checked": false
+                        "checked": true
                     },
                     {
                         "id": "23c161c3-1592-4b98-b50e-fd76ef8ea07f",
