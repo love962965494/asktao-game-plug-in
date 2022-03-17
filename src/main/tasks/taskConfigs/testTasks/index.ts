@@ -315,7 +315,7 @@ export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskN
   yield
 
   // 接受刷道任务
-  await setTimeoutPromise(() => {
+  await setTimeoutPromise(async () => {
     let promise = Promise.resolve()
 
     for (const gameWindow of captainGameWindows) {
@@ -340,6 +340,8 @@ export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskN
           })
       )
     }
+
+    await promise
   }, 500)
   yield
 
@@ -431,7 +433,7 @@ export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskN
         )
       }
 
-      promise.then(async () => {
+      promise = promise.then(async () => {
         await new Promise<void>(resolve => {
           interval = setInterval(() => {
             // 每2秒检测一次当前回合是否结束
@@ -444,11 +446,13 @@ export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskN
         })
       })
 
-      await promise.then(() => {
+      promise.then(() => {
         if (currentNo > 5) {
           hasFinishBattle = true
         }
       })
+
+      await promise
 
       // timeout = setTimeout(() => {
       //   // 设置下一回合的战斗策略
@@ -474,7 +478,4 @@ export async function* shuadaoTask(roles: Required<ExecuteTaskRoleInfo>[], taskN
     }
   }, 500)
   yield
-
-  // // 记录当前回合数
-  // let count = 0
 }
