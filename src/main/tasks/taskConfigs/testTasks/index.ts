@@ -4,13 +4,11 @@ import GameWindowControl from '../../../../utils/gameWindowControll'
 import { getProcessesByName } from '../../../../utils/systemCotroll'
 import robotjs from 'robotjs'
 import path from 'path'
-import { constantsPath, pythonImagesPath } from '../../../../paths'
+import { pythonImagesPath } from '../../../../paths'
 import { screenCaptureToFile, findImagePositions } from '../../../../utils/fileOperations'
 import random from 'random'
 import { clipboard } from 'electron'
 import { ExecuteTaskRoleInfo } from '../../testTask'
-import fs from 'fs/promises'
-import { GameAccountList } from '../../../../constants/types'
 
 let positions: Array<[number, number]>
 

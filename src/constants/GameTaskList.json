@@ -56,7 +56,7 @@
             },
             {
                 "taskName": "刷道任务",
-                "taskCount": 5,
+                "taskCount": 3,
                 "taskType": "group",
                 "id": "ac49f344-37a4-4fcd-823d-805cff0baf63"
             },

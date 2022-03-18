@@ -10,28 +10,29 @@ import GameWindowControl from '../../utils/gameWindowControll'
 export type ExecuteTaskRoleInfo = Partial<RoleStatus & Omit<GameAccount, 'roleList'>>
 
 export function registerTestTasks() {
-  ipcMain.on('test-start-game', async () => {
-    const iterator = startGameTask()
+  // ipcMain.on('test-start-game', async () => {
+  //   const iterator = startGameTask()
 
-    do {
-      const value = await iterator.next()
+  //   do {
+  //     const value = await iterator.next()
 
-      if (value.done) {
-        break
-      }
-    } while (true)
-  })
+  //     if (value.done) {
+  //       break
+  //     }
+  //   } while (true)
+  // })
 
   ipcMain.on('test-execute-plan', async (_, taskPlanId: string) => {
-    const GameTaskPlanList = JSON.parse(
-      await fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8')
-    ) as GameTaskPlanList
-    const gameAccountList: GameAccountList = JSON.parse(
-      await fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8')
-    )
-    const gameTaskList: GameTaskList = JSON.parse(
-      await fs.readFile(path.resolve(constantsPath, 'GameTaskList.json'), 'utf-8')
-    )
+    const fileContents = await Promise.all([
+      fs.readFile(path.resolve(constantsPath, 'GameTaskPlanList.json'), 'utf-8'),
+      fs.readFile(path.resolve(constantsPath, 'GameAccountList.json'), 'utf-8'),
+      fs.readFile(path.resolve(constantsPath, 'GameTaskList.json'), 'utf-8'),
+    ])
+    const [GameTaskPlanList, gameAccountList, gameTaskList] = fileContents.map((content) => JSON.parse(content)) as [
+      GameTaskPlanList,
+      GameAccountList,
+      GameTaskList
+    ]
     const gameTaskPlan = GameTaskPlanList.find((taskPlan) => taskPlan.id === taskPlanId)!
 
     /**
@@ -55,7 +56,7 @@ export function registerTestTasks() {
      *     y                   y
      *     . x x x x x x x x x .
      */
-    const taskStack: { taskType: 'group' | 'single', taskCount: number; taskFunction: Function }[] = []
+    const taskStack: { taskType: 'group' | 'single'; taskCount: number; taskFunction: Function }[] = []
     gameTaskPlan.gameTaskList.forEach((taskGroup) => {
       const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
       taskGroup.taskList
@@ -121,12 +122,12 @@ export function registerTestTasks() {
       return arr
     }, [])
 
-
     for (const roles of allToExecuteTaskRoles) {
       let len = taskStack.length
 
       do {
         const { taskType, taskCount, taskFunction } = taskStack[len - 1]
+
         for (let i = 0; i < taskCount; i++) {
           let iterators
           if (taskType === 'single') {
@@ -158,5 +159,3 @@ export function registerTestTasks() {
     }
   })
 }
-
-
