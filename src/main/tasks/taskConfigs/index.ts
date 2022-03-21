@@ -17,13 +17,7 @@ const taskConfigs: ITaskConfig = [
   },
   {
     tag: '限时任务',
-    taskList: [
-      {
-        taskName: '测试单人限时任务',
-        taskFunction: testTimeLimitSingleTask,
-        id: 'eeb8269e-6df8-4c2f-8107-8a2b3d64d720',
-      },
-    ],
+    taskList: [],
   },
   {
     tag: '日常活动',

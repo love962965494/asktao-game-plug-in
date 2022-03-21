@@ -43,10 +43,6 @@ export function registerTestTasks() {
      *     y      login        y  第一个任务永远是登录角色或者切换角色
      *     y                   y
      *     . x x x x x x x x x .
-     *     y   limitTimeTask   y
-     *     y     groupTask     y  顶层放置限时任务，限时任务优先执行，限时组队任务优先于限时单人任务执行
-     *     y     singleTask    y
-     *     . x x x x x x x x x .
      *     y                   y
      *     y     groupTask     y  第二层放置组队任务
      *     y                   y
@@ -56,7 +52,16 @@ export function registerTestTasks() {
      *     y                   y
      *     . x x x x x x x x x .
      */
-    const taskStack: { taskType: 'group' | 'single'; taskCount: number; taskFunction: Function }[] = []
+    type TaskStackItem = { taskType: 'group' | 'single'; taskCount: number; taskFunction: Function }
+    const taskStack: TaskStackItem[] = []
+    // 每当executeLimitTask变为true的时候，则说明有一个限时任务需要被执行，就从limitTaskStack中取出栈顶任务执行
+    let executeLimitTask = false
+    /**
+     * 限时任务堆栈，结构和任务堆栈一样，只是这个堆栈只存储限时任务
+     * 任务顺序按照执行时间排序
+     */
+    const limitTaskStack: TaskStackItem[] = []
+
     gameTaskPlan.gameTaskList.forEach((taskGroup) => {
       const taskConfig = taskConfigs.find((config) => config.tag === taskGroup.tag)!
       taskGroup.taskList
@@ -67,10 +72,12 @@ export function registerTestTasks() {
             ?.taskList?.find((item) => item.id === taskItem.id)!
           const { taskFunction } = taskConfig.taskList.find(({ id }) => id === taskItem.id)!
 
+          const stack = taskConfig.tag === '限时任务' ? limitTaskStack : taskStack
+
           if (taskType === 'group') {
-            taskStack.push({ taskType, taskCount, taskFunction })
+            stack.push({ taskType, taskCount, taskFunction })
           } else {
-            taskStack.unshift({ taskType, taskCount, taskFunction })
+            stack.unshift({ taskType, taskCount, taskFunction })
           }
         })
     })

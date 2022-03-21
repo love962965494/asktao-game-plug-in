@@ -14,34 +14,27 @@
         "tag": "限时任务",
         "taskList": [
             {
-                "taskName": "测试单人限时任务",
-                "taskCount": 5,
-                "taskType": "single",
+                "taskName": "海盗任务",
+                "taskCount": 1,
+                "taskType": "group",
                 "taskLimitType": 1,
                 "taskDate": [
-                    "星期二",
-                    "星期二"
+                    [
+                        "星期一",
+                        "星期日"
+                    ]
                 ],
                 "taskTime": [
-                    "17:00:00",
-                    "18:00:00"
+                    [
+                        "12:30:00",
+                        "12:40:00"
+                    ],
+                    [
+                        "20:30:00",
+                        "20:40:00"
+                    ]
                 ],
-                "id": "eeb8269e-6df8-4c2f-8107-8a2b3d64d720"
-            },
-            {
-                "taskName": "测试组队限时任务",
-                "taskCount": 3,
-                "taskType": "group",
-                "taskLimitType": 2,
-                "taskDate": [
-                    "2022-03-01",
-                    "2022-03-02"
-                ],
-                "taskTime": [
-                    "00:00:00",
-                    "23:59:59"
-                ],
-                "id": "b65858b0-bdd4-4c2a-b377-cc3edd01f980"
+                "id": "7b24c175-c24c-45ff-81fa-a5d2ac10e522"
             }
         ]
     },

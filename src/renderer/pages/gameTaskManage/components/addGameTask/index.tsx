@@ -6,18 +6,20 @@ import {
   Radio,
   Select,
   Button,
-  InputNumber,
-  RadioChangeEvent,
   DatePicker,
   TimePicker,
+  InputNumber,
+  RadioChangeEvent,
 } from 'antd'
-import { useForm } from 'antd/lib/form/Form'
-import { GameTask } from 'constants/types'
 import moment from 'moment'
+import { GameTask } from 'constants/types'
 import { useEffect, useState } from 'react'
+import { useForm } from 'antd/lib/form/Form'
 import { SelectWithAdd } from 'renderer/components'
+import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
 const FormItem = Form.Item
+const FormList = Form.List
 const RadioGroup = Radio.Group
 const SelectOption = Select.Option
 
@@ -47,8 +49,14 @@ export function AddGameTask(props: IAddGameTask) {
       })
       if (tag === '限时任务') {
         form.setFieldsValue({
-          taskDate: record.taskLimitType === 2 ? record.taskDate!.map((date) => moment(date)) : record.taskDate,
-          taskTime: record.taskTime!.map((time) => moment(moment().format('YYYY-MM-DD') + ' ' + time)),
+          taskDate:
+            record.taskLimitType === 2
+              ? record.taskDate!.map(([startDate, endDate]) => [moment(startDate), moment(endDate)])
+              : record.taskDate,
+          taskTime: record.taskTime!.map(([startTime, endTime]) => [
+            moment(moment().format('YYYY-MM-DD') + ' ' + startTime),
+            moment(moment().format('YYYY-MM-DD') + ' ' + endTime),
+          ]),
         })
       }
     }
@@ -58,15 +66,18 @@ export function AddGameTask(props: IAddGameTask) {
     form
       .validateFields()
       .then(async (gameTask: GameTask & { tag: string }) => {
+        console.log('gameTask: ', gameTask)
         if (gameTask.tag === '限时任务') {
           if (gameTask.taskLimitType === 2) {
-            gameTask.taskDate = gameTask.taskDate!.map((date) =>
-              (date as unknown as moment.Moment).format('YYYY-MM-DD')
-            ) as [string, string]
+            gameTask.taskDate = gameTask.taskDate!.map(([startDate, endDate]) => [
+              (startDate as unknown as moment.Moment).format('YYYY-MM-DD'),
+              (endDate as unknown as moment.Moment).format('YYYY-MM-DD'),
+            ]) as [string, string][]
           }
-          gameTask.taskTime = gameTask.taskTime!.map((time) =>
-            (time as unknown as moment.Moment).format('HH:mm:ss')
-          ) as [string, string]
+          gameTask.taskTime = gameTask.taskTime!.map(([startTime, endTime]) => [
+            (startTime as unknown as moment.Moment).format('HH:mm:ss'),
+            (endTime as unknown as moment.Moment).format('HH:mm:ss'),
+          ]) as [string, string][]
         }
 
         if (record) {
@@ -144,40 +155,106 @@ export function AddGameTask(props: IAddGameTask) {
               <Radio value={2}>限时活动</Radio>
             </RadioGroup>
           </FormItem>,
-          <FormItem label="任务日期" key="taskDate" required>
-            <FormItem noStyle name={['taskDate', 0]} rules={[{ required: true, message: '开始日期不能为空' }]}>
-              {taskLimitType === 1 ? (
-                <Select style={{ width: 150 }} placeholder="开始日期">
-                  {weekdays.map((day) => (
-                    <SelectOption key={day}>{day}</SelectOption>
-                  ))}
-                </Select>
-              ) : (
-                <DatePicker placeholder="开始日期" />
-              )}
-            </FormItem>
-            <span style={{ margin: '0 10px' }}>-</span>
-            <FormItem noStyle name={['taskDate', 1]} rules={[{ required: true, message: '结束日期不能为空' }]}>
-              {taskLimitType === 1 ? (
-                <Select style={{ width: 150 }} placeholder="结束日期">
-                  {weekdays.map((day) => (
-                    <SelectOption key={day}>{day}</SelectOption>
-                  ))}
-                </Select>
-              ) : (
-                <DatePicker placeholder="结束日期" />
-              )}
-            </FormItem>
-          </FormItem>,
-          <FormItem label="任务时间" key="taskTime" required>
-            <FormItem noStyle name={['taskTime', 0]} rules={[{ required: true, message: '开始时间不能为空' }]}>
-              <TimePicker style={{ width: 150 }} placeholder="开始时间" />
-            </FormItem>
-            <span style={{ margin: '0 10px' }}>-</span>
-            <FormItem noStyle name={['taskTime', 1]} rules={[{ required: true, message: '结束时间不能为空' }]}>
-              <TimePicker style={{ width: 150 }} placeholder="结束时间" />
-            </FormItem>
-          </FormItem>,
+          <FormList name="taskDate" key="taskDate" initialValue={[[]]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <FormItem
+                    label={index === 0 ? ' 任务日期' : ''}
+                    wrapperCol={{ offset: index !== 0 ? 4 : 0 }}
+                    required
+                    key={field.key}
+                  >
+                    <Space>
+                      <FormItem
+                        noStyle
+                        name={[field.name, 0]}
+                        rules={[{ required: true, message: '开始日期不能为空' }]}
+                      >
+                        {taskLimitType === 1 ? (
+                          <Select style={{ width: 150 }} placeholder="开始日期">
+                            {weekdays.map((day) => (
+                              <SelectOption key={day}>{day}</SelectOption>
+                            ))}
+                          </Select>
+                        ) : (
+                          <DatePicker placeholder="开始日期" />
+                        )}
+                      </FormItem>
+                      <span>-</span>
+                      <FormItem
+                        noStyle
+                        name={[field.name, 1]}
+                        rules={[{ required: true, message: '结束日期不能为空' }]}
+                      >
+                        {taskLimitType === 1 ? (
+                          <Select style={{ width: 150 }} placeholder="结束日期">
+                            {weekdays.map((day) => (
+                              <SelectOption key={day}>{day}</SelectOption>
+                            ))}
+                          </Select>
+                        ) : (
+                          <DatePicker placeholder="结束日期" />
+                        )}
+                      </FormItem>
+                      {index === 0 && (
+                        <a href="#" onClick={() => add()}>
+                          <PlusCircleOutlined />
+                        </a>
+                      )}
+                      {fields.length > 1 && (
+                        <a href="#" onClick={() => remove(index)}>
+                          <MinusCircleOutlined />
+                        </a>
+                      )}
+                    </Space>
+                  </FormItem>
+                ))}
+              </>
+            )}
+          </FormList>,
+          <FormList name="taskTime" key="taskTime" initialValue={[[]]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <FormItem
+                    required
+                    key={field.key}
+                    label={index === 0 ? ' 任务时间' : ''}
+                    wrapperCol={{ offset: index !== 0 ? 4 : 0 }}
+                  >
+                    <Space>
+                      <FormItem
+                        noStyle
+                        name={[field.name, 0]}
+                        rules={[{ required: true, message: '开始时间不能为空' }]}
+                      >
+                        <TimePicker style={{ width: 150 }} placeholder="开始时间" />
+                      </FormItem>
+                      <span>-</span>
+                      <FormItem
+                        noStyle
+                        name={[field.name, 1]}
+                        rules={[{ required: true, message: '结束时间不能为空' }]}
+                      >
+                        <TimePicker style={{ width: 150 }} placeholder="结束时间" />
+                      </FormItem>
+                      {index === 0 && (
+                        <a href="#" onClick={() => add()}>
+                          <PlusCircleOutlined />
+                        </a>
+                      )}
+                      {fields.length > 1 && (
+                        <a href="#" onClick={() => remove(index)}>
+                          <MinusCircleOutlined />
+                        </a>
+                      )}
+                    </Space>
+                  </FormItem>
+                ))}
+              </>
+            )}
+          </FormList>,
         ]}
       </Form>
     </Modal>
