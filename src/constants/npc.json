@@ -1,0 +1,269 @@
+{
+  "天墉城": {
+    "cheFu": {
+      "zh": "车夫",
+      "search": {
+        "abstract": "cf",
+        "steps": ["up", "up", "enter"]
+      },
+      "conversitions": {
+        "songWoQuLanXianZhen": {
+          "zh": "送我去揽仙镇（100文游戏币）",
+          "position": [527, 552],
+          "size": [420, 34]
+        },
+        "songWoQuHuanWuLin": {
+          "zh": "送我去幻雾林（100文游戏币）",
+          "position": [527, 586],
+          "size": [420, 34]
+        },
+        "songWoQuXuanYuanMiao": {
+          "zh": "送我去轩辕庙（150文游戏币）",
+          "position": [527, 620],
+          "size": [420, 34]
+        },
+        "songWoQuDongHaiYuCun": {
+          "zh": "送我去东海渔村（250文游戏币）",
+          "position": [527, 654],
+          "size": [450, 34]
+        },
+        "songWoQuWuMingXizoZhen": {
+          "zh": "送我去无名小镇（1，000文游戏币）",
+          "position": [527, 690],
+          "size": [485, 34]
+        },
+        "songWoQuNanTianMen": {
+          "zh": "送我去南天门（900文游戏币）",
+          "position": [527, 726],
+          "size": [420, 34]
+        },
+        "songWoQuXiYuGuCheng": {
+          "zh": "送我去西域古城（1，000文游戏币）",
+          "position": [527, 762],
+          "size": [485, 34]
+        },
+        "naErYeBuQu": {
+          "zh": "哪儿也不去",
+          "position": [527, 796],
+          "size": [170, 34]
+        }
+      }
+    },
+    "tongLingDaoRen": {
+      "zh": "通灵道人",
+      "search": {
+        "abstract": "tldr",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYuanXieZhuDaoZhangXiangNaYaoGuai": {
+          "zh": "我愿协助道长降拿妖怪",
+          "position": [526, 648],
+          "size": [341, 34]
+        }
+      }
+    }
+  },
+  "东海渔村": {
+    "liuRuYan": {
+      "zh": "柳如烟",
+      "search": {
+        "abstract": "lry",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "[quanMinShengJi]ZiDongChuanSong": {
+          "zh": "【全民升级】自动传送",
+          "position": [536, 614],
+          "size": [330, 34]
+        },
+        "[xianRenZhiLu]WoZhengXiangQuBaiHuiXianRenQingQiuZhiDianNe": {
+          "zh": "【仙人指路】我正想去拜会仙人请求指点呢",
+          "position": [536, 650],
+          "size": [636, 34]
+        },
+        "[lingQu]WoZheJiuQu": {
+          "zh": "【领取】我这就去",
+          "position": [536, 579],
+          "size": [260, 34]
+        }
+      }
+    }
+  },
+  "万妖岭": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "乾元山": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "五龙山": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "终南山": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "凤凰山": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "骷髅山": {
+    "jieYinDaoTong": {
+      "zh": "接引道童",
+      "search": {
+        "abstract": "jydt",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woYaoHuiTianYongChengBanXieShi" : {
+          "zh": "我要回天墉城办些事",
+          "position": [528, 551],
+          "size": [308, 34]
+        }
+      }
+    }
+  },
+  "官道北": {
+    "piLiXian": {
+      "zh": "霹雳仙",
+      "search": {
+        "abstract": "plx",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingXianRenCiJiao": {
+          "zh": "请仙人赐教",
+          "position": [528, 551],
+          "size": [168, 34]
+        }
+      }
+    }
+  },
+  "官道南": {
+    "yeHuaXian": {
+      "zh": "叶猾仙",
+      "search": {
+        "abstract": "yhx",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingXianRenCiJiao": {
+          "zh": "请仙人赐教",
+          "position": [528, 551],
+          "size": [168, 34]
+        }
+      }
+    }
+  },
+  "揽仙镇外": {
+    "huJingXian": {
+      "zh": "湖镜仙",
+      "search": {
+        "abstract": "hjx",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingXianRenCiJiao": {
+          "zh": "请仙人赐教",
+          "position": [528, 551],
+          "size": [168, 34]
+        }
+      }
+    }
+  },
+  "轩辕庙": {
+    "shanChiXian": {
+      "zh": "煽赤仙",
+      "search": {
+        "abstract": "scx",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingXianRenCiJiao": {
+          "zh": "请仙人赐教",
+          "position": [528, 551],
+          "size": [168, 34]
+        }
+      }
+    }
+  },
+  "桃柳林": {
+    "diTengXian": {
+      "zh": "地藤仙",
+      "search": {
+        "abstract": "dtx",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingXianRenCiJiao": {
+          "zh": "请仙人赐教",
+          "position": [528, 551],
+          "size": [168, 34]
+        }
+      }
+    }
+  }
+}

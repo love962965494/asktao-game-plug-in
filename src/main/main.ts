@@ -4,15 +4,24 @@ import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import registerTasks from './tasks'
 import { registerGlobalShortcut, unregisterGloableShortcut } from './shortcut'
-import { getProcessesByName } from '../utils/systemCotroll'
-import GameWindowControl from '../utils/gameWindowControll'
 import startServer from '../server'
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import { deleteDir } from '../utils/fileOperations'
 import { pythonImagesPath } from '../paths'
+import registerWorkers from './workers'
+import { IGamePoints, IGameTask, INPC } from 'constants/types'
 
 // 服务端端口号
 const port = 3000
+
+global.appContext = {
+  isInterrupted: false,
+  accounts: [],
+  npc: {} as INPC,
+  gameTask: {} as IGameTask,
+  gamePoints: {} as IGamePoints,
+  mousePositions: [[1760, 80]],
+}
 
 let mainWindow: BrowserWindow | null = null
 
@@ -77,25 +86,15 @@ const createWindow = async () => {
   })
 }
 
-/**
- * 获取游戏进程，创建对应实例和伴生的控制窗口
- */
-async function createGameInstances() {
-  const processes = await getProcessesByName('asktao')
-
-  processes.map(([_pName, pId], index) => {
-    const instance = new GameWindowControl(+pId)
-
-    instance.setPosition(1920 + (index % 5) * 300, Math.min(Math.max(index - 4, 0), 1) * 400)
-  })
-}
-
 function init() {
   createWindow()
+
   // 启动服务端服务
   startServer(port)
   // 创建游戏实例
   // createGameInstances()
+  // 注册workers
+  registerWorkers()
   // 启动ipc通信，注册各种任务
   registerTasks()
   // 注册全局快捷键
@@ -126,11 +125,20 @@ app
   })
   .catch(console.log)
 
-app.on('before-quit', async () => {
+app.on('before-quit', async (event) => {
+  event.preventDefault()
   // 卸载全局快捷键
   unregisterGloableShortcut()
   // 删除python下临时图片文件夹
   await deleteDir(path.join(pythonImagesPath, 'temp'))
+
+  app.quit()
 })
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // 在这里添加处理逻辑，如记录错误、向用户显示错误信息等
+  // 注意：在此处发生的错误可能导致应用程序不稳定，建议在此处仅记录错误信息，并尽快修复应用程序
+});
 
 export { mainWindow }

@@ -1,5 +1,16 @@
-import { globalShortcut } from 'electron'
+import { globalShortcut, screen } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
+import { getGameWindows } from '../utils/systemCotroll'
+import path from 'path'
+import { pythonImagesPath } from '../paths'
+import { findImagePositions, prePorcessingImage, screenCaptureToFile } from '../utils/fileOperations'
+import robotjs from 'robotjs'
+import { goToNPCAndTalk } from './tasks/npcTasks'
+import { randomName } from '../utils/toolkits'
+import { searchGameTask } from './tasks/gameTask'
+import { waitFinishZhanDou } from './tasks/zhanDouTasks'
+import { getTaskProgress, lingQuRenWu } from './tasks/xianRenZhiLu'
+import { writeLog } from '../utils/common'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -19,6 +30,76 @@ export function registerGlobalShortcut() {
     const alternateWindow = GameWindowControl.getAlternateWindow()
 
     alternateWindow.hide()
+  })
+
+  globalShortcut.register('CommandOrControl+Alt+Q', () => {
+    global.appContext.isInterrupted = true
+  })
+
+  // TODO: 截图
+  globalShortcut.register('CommandOrControl+Shift+S', async () => {
+    await getGameWindows()
+    
+    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+
+    for (const gameWindow of allGameWindows) {
+      gameWindow.restoreGameWindow()
+    }
+
+    const gameWindow = GameWindowControl.getGameWindowByRoleName('KeyのLovely')
+    const { left, top } = gameWindow?.getDimensions()!
+    const randomName1 = 'testScreenCapture'
+    let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
+    await screenCaptureToFile(srcImagePath, [left + 360, top + 304], [325, 56])
+    // await screenCaptureToFile(srcImagePath, [540, 650], [170, 30])
+    // const colors = await extractThemeColors(srcImagePath, 10)
+    // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
+    //   console.log('color: ', color)
+    // }
+  })
+
+  // TODO: 获取坐标
+  globalShortcut.register('CommandOrControl+Shift+A', async () => {
+    const alternateWindow = GameWindowControl.getAlternateWindow()
+    alternateWindow.show()
+    const { x, y } = robotjs.getMousePos()
+
+    console.log('x: ', x)
+    console.log('y: ', y)
+  })
+
+  // TODO: 放大
+  globalShortcut.register('CommandOrControl+Shift+D', async () => {
+    await getGameWindows()
+  })
+
+  // TODO: 缩小
+  globalShortcut.register('CommandOrControl+Shift+G', async () => {
+    await getGameWindows()
+    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+
+    for (const gameWindow of allGameWindows) {
+      gameWindow.restoreGameWindow()
+    }
+  })
+
+  // TODO: 测试用
+  // 543 580
+  // 543 616
+  globalShortcut.register('CommandOrControl+Shift+F', async () => {
+    await getGameWindows()
+    const gameWindows = await GameWindowControl.getTeamWindowsWithSequence(2)
+    const { npcs } = global.appContext.gameTask['仙人指路']
+    const allTask = npcs.reduce((tasks, npc) => {
+      tasks = [...tasks, ...gameWindows.map(gameWindow => `${gameWindow?.roleInfo.roleName}_${npc.pinYin}`)]
+
+      return tasks
+    }, [] as string[])
+  
+    await getTaskProgress(
+      gameWindows,
+      allTask
+    )
   })
 }
 

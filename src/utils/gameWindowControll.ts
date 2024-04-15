@@ -2,11 +2,12 @@ import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates } fro
 import robot from 'robotjs'
 import { BrowserWindow, screen } from 'electron'
 import path from 'path'
-import { mainPath, rendererPath } from '../paths'
-import { Directions } from '../constants/types'
-import { ExecuteTaskRoleInfo } from 'main/tasks/testTask'
+import { mainPath, pythonImagesPath, rendererPath } from '../paths'
 import robotUtils from './robot'
-import { setTimeoutPromise } from './toolkits'
+import { randomName, sleep } from './toolkits'
+import { findImagePositions, findMostSimilarImage, paddleOcr, screenCaptureToFile } from './fileOperations'
+import { matchStrings, moveMouseTo, moveMouseToBlank } from './common'
+import { IGamePoints } from 'constants/types'
 
 const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow
@@ -18,112 +19,11 @@ type IBounds = {
   bottom: number
 }
 
-/**
- * 获取真正的坐标信息
- */
-function getBoundsAndScaleFactor(bounds: IBounds): IBounds & { scaleFactor: number } {
-  let { left, top, right, bottom } = bounds
-  // TODO: 目前只处理只有最多两块显示器的情形，因为没有更多显示器用于测试，暂不考虑
-  const [screen1, screen2] = screen.getAllDisplays()
-  const subScreen = screen1.bounds.x === 0 && screen1.bounds.y === 0 ? screen2 : screen1
-  const {
-    scaleFactor: mainScaleFactor,
-    bounds: { width: mainWidth, height: mainHeight },
-  } = screen.getPrimaryDisplay()
-  const {
-    scaleFactor: subScaleFactor,
-    bounds: { width: subWidth, height: subHeight, x: subX, y: subY },
-  } = subScreen
-  let direction: Directions
-  let scaleFactor: number
-
-  if (left < mainWidth && top < mainHeight && left >= 0 && top >= 0) {
-    // 目标窗口在主屏上
-    direction = Directions.Middle
-  } else if (subX === mainWidth) {
-    direction = Directions.Right
-  } else if (subX === -subWidth) {
-    direction = Directions.Left
-  } else if (subY === mainHeight) {
-    direction = Directions.Bottom
-  } else {
-    direction = Directions.Top
-  }
-
-  /**
-   *  (0, 0)                                   (1536, -216)
-   *       . x x x x x x x x x x x x x x x x . . x x x x x x x x x x x x x x x .
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       y         main: 1920, 1080        y y          sub: 1920, 1080      y
-   *       y        scale: 125%              y y        scale: 100%            y
-   *       y  actual size: 1536, 864         y y  actual size: 1920, 1080      y
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       y                                 y y                               y
-   *       . x x x x x x x x x x x x x x x x . . x x x x x x x x x x x x x x x .
-   *                               (1536, 864)
-   *
-   *       以副屏在主屏右边为例
-   *       通过screen.getAllDisplays()得到的副屏左上角坐标为(1536, -216)[(mainActualWidth, mainActualHeight - subActualHeight)]
-   *       通过getDimensions得到的副屏左上角坐标为(1920, 0)[(mainWidth, 0)]
-   *       所以计算视口在副屏实际的位置公式就是：
-   *       left = mainActualWidth + (left - mainWidth) / subScaleFactor
-   *       top = (mainActualHeight - subActualHeight + top) / subScaleFactor
-   */
-  switch (direction) {
-    case Directions.Middle: {
-      scaleFactor = mainScaleFactor
-      left = left / mainScaleFactor
-      top = top / mainScaleFactor
-      right = right / mainScaleFactor
-      bottom = bottom / mainScaleFactor
-      break
-    }
-    case Directions.Right: {
-      scaleFactor = subScaleFactor
-      left = subX + (left - mainWidth * mainScaleFactor) / subScaleFactor
-      top = subY + top / subScaleFactor
-      right = subX + (right - mainWidth * mainScaleFactor) / subScaleFactor
-      bottom = subY + bottom / subScaleFactor
-      break
-    }
-    case Directions.Left: {
-      scaleFactor = subScaleFactor
-      left = subX + (left + subWidth * subScaleFactor) / subScaleFactor
-      top = subY + top / subScaleFactor
-      right = subX + (right + subWidth * subScaleFactor) / subScaleFactor
-      bottom = subY + bottom / subScaleFactor
-      break
-    }
-    case Directions.Top: {
-      scaleFactor = subScaleFactor
-      left = subX + left / subScaleFactor
-      top = subY + (top + subHeight * subScaleFactor) / subScaleFactor
-      right = subX + right / subScaleFactor
-      bottom = subY + (bottom + subHeight * subScaleFactor) / subScaleFactor
-      break
-    }
-    case Directions.Bottom: {
-      scaleFactor = subScaleFactor
-      left = subX + left / subScaleFactor
-      top = subY + (top - mainHeight * mainScaleFactor) / subScaleFactor
-      right = subX + right / subScaleFactor
-      bottom = subY + (bottom - mainHeight * mainScaleFactor) / subScaleFactor
-      break
-    }
-  }
-
-  return {
-    left: Math.round(left),
-    top: Math.round(top),
-    right: Math.round(right),
-    bottom: Math.round(bottom),
-    scaleFactor,
-  }
+interface RoleInfo {
+  roleName: string
+  teamIndex: number
+  accountNum: string
+  lang: 'ch' | 'en'
 }
 
 export default class GameWindowControl {
@@ -131,45 +31,50 @@ export default class GameWindowControl {
   /**
    * 记录当前窗口对应的角色信息
    */
-  public roleInfo?: ExecuteTaskRoleInfo
+  public roleInfo!: RoleInfo
   #bounds!: IBounds
   #scaleFactor!: number
+  #ziDongZhanDou!: number[]
 
-  constructor(public pid: number) {
+  constructor(public pid: number, public isLeader: boolean = false) {
     const instance = gameWindows.get(pid)
-    const alternateWindow = GameWindowControl.getAlternateWindow()
+    const { scaleFactor } = screen.getPrimaryDisplay()
 
     if (instance) {
-      const { left, right, top, bottom } = instance.getBounds(true)
-      // 每次访问实例后，都让alternateWindow定位并覆盖它
-      alternateWindow.setBounds({
-        x: left,
-        y: top,
-        width: right - left,
-        height: bottom - top,
-      })
-
-      alternateWindow.show()
-
       return instance
     }
 
     this.pid = pid
     this.gameWindow = WinControl.getByPid(pid)
+    this.isLeader = isLeader
 
     this.showGameWindow()
-    const bounds = this.getDimensions()
-    const { left, top, right, bottom, scaleFactor } = getBoundsAndScaleFactor(bounds)
+    const title = this.gameWindow.getTitle()
+    const roleName = title.split('【')[0]
+    const accountsData = global.appContext.accounts
+    let teamIndex = 0
+    let accountNum = ''
+    let lang = 'ch' as 'ch' | 'en'
+    for (const groupAccountData of accountsData) {
+      for (const account of groupAccountData) {
+        if (account.roles.includes(roleName)) {
+          teamIndex = account.teamIndex
+          accountNum = account.account
+          lang = account.lang as 'ch' | 'en'
+        }
+      }
+    }
+    this.roleInfo = {
+      roleName,
+      teamIndex,
+      accountNum,
+      lang,
+    }
+
+    const { left, top, right, bottom } = this.getDimensions()
     this.#bounds = { left, top, right, bottom }
     this.#scaleFactor = scaleFactor
-
-    // 每次新建实例后，都让alternateWindow定位并覆盖它
-    alternateWindow.setBounds({
-      x: left,
-      y: top,
-      width: right - left,
-      height: bottom - top,
-    })
+    this.#ziDongZhanDou = []
 
     gameWindows.set(pid, this)
   }
@@ -178,17 +83,55 @@ export default class GameWindowControl {
     return gameWindows
   }
 
-  /**
-   * 根据游戏账号查找对应的游戏窗口
-   */
-  static getGameWindowByAccount(account: string) {
-    if (!account) {
-      return null
-    }
-    const windows = [...gameWindows.values()]
-    const window = windows.find((item) => item.roleInfo?.account === account)
+  static getGameWindowsByTeamIndex(teamIndex: number): GameWindowControl[] {
+    const gameWindows = GameWindowControl.getAllGameWindows()
+    return [...gameWindows.values()].filter(
+      (gameWindow: GameWindowControl) => gameWindow.roleInfo.teamIndex === teamIndex
+    )
+  }
 
-    return window
+  static getGameWindowByRoleName(roleName: string) {
+    const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+    const roleNames = gameWindows.map((gameWindow) => gameWindow.roleInfo.roleName)
+    const matchRoleName = matchStrings(roleName, roleNames)
+    return gameWindows.find((gameWindow) => gameWindow.roleInfo.roleName === matchRoleName)
+  }
+
+  static async getTeamWindowsWithSequence(teamIndex: number) {
+    const gameWindows = GameWindowControl.getGameWindowsByTeamIndex(teamIndex)
+    const tempGameWindow = gameWindows[0]
+
+    await tempGameWindow.setForeground()
+    await tempGameWindow.restoreGameWindow()
+    robotUtils.moveMouseSmooth(0, 0)
+    robotUtils.keyTap('B', ['control'])
+    await sleep(500)
+    robotUtils.keyTap('T', ['alt'])
+    await sleep(500)
+
+    // const checked = await hasChecked('经典模式-框框')
+
+    // if (!checked) {
+    //   await clickGamePoint('经典模式-未选中', 'getTeamLeader')
+
+    //   await sleep(500)
+    // }
+
+    let srcImagePath = path.join(pythonImagesPath, `temp/getTeamLeader_${randomName()}.jpg`)
+    const { position, size } = global.appContext.gamePoints['组队-队员姓名']
+    const { left, top } = tempGameWindow.getDimensions()
+    await screenCaptureToFile(srcImagePath, [left + position[0], top + position[1]], size)
+    const names = await paddleOcr(srcImagePath, false, tempGameWindow.roleInfo.lang)
+    const teamWindows: GameWindowControl[] = []
+    for (const name of names) {
+      const teamWindow = GameWindowControl.getGameWindowByRoleName(name)!
+      teamWindows.push(teamWindow)
+    }
+
+    robotUtils.keyTap('B', ['control'])
+    await tempGameWindow.maximizGameWindow()
+    await sleep(500)
+    return teamWindows
   }
 
   static getAlternateWindow() {
@@ -200,10 +143,19 @@ export default class GameWindowControl {
           devTools: false,
           preload: path.join(mainPath, 'preload.js'),
         },
-        backgroundColor: '#456',
-        // transparent: true,
+        // backgroundColor: '#456',
+        transparent: true,
       })
+      const {
+        size: { width, height },
+      } = screen.getPrimaryDisplay()
 
+      alternateWindow.setBounds({
+        x: -200,
+        y: -200,
+        height: height + 400,
+        width: width + 400,
+      })
       alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
     }
 
@@ -215,32 +167,17 @@ export default class GameWindowControl {
     this.gameWindow.setPosition(HWND.TOP, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
   }
 
+  async setForeground() {
+    this.gameWindow.setForeground()
+    await sleep(300)
+  }
+
   hideGameWindow() {
     this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
   }
 
   closeGameWindow() {
     process.kill(this.pid)
-  }
-
-  /**
-   * 切换游戏窗口，移动鼠标到对应位置
-   */
-  async toggleGameWindowAndAlternateWindow(x: number, y: number) {
-    const { left, top } = this.#bounds
-
-    this.showGameWindow()
-    alternateWindow.setBounds({
-      x: left,
-      y: top,
-    })
-    alternateWindow.show()
-    robotUtils.moveMouseSmooth(left + x, top + y)
-    await setTimeoutPromise(() => {
-      alternateWindow.hide()
-    }, 500)
-    robotUtils.mouseClick('left')
-    this.showGameWindow()
   }
 
   /**
@@ -255,8 +192,7 @@ export default class GameWindowControl {
    */
   getBounds(reCompute?: boolean) {
     if (reCompute) {
-      const tempBounds = this.getDimensions()
-      const { scaleFactor, ...bounds } = getBoundsAndScaleFactor(tempBounds)
+      const bounds = this.getDimensions()
 
       this.#bounds = bounds
     }
@@ -269,8 +205,7 @@ export default class GameWindowControl {
    */
   getScaleFactor(reCompute?: boolean) {
     if (reCompute) {
-      const bounds = this.getDimensions()
-      const { scaleFactor } = getBoundsAndScaleFactor(bounds)
+      const { scaleFactor } = screen.getPrimaryDisplay()
 
       this.#scaleFactor = scaleFactor
     }
@@ -282,6 +217,7 @@ export default class GameWindowControl {
    * 设置窗口位置
    */
   setPosition(x: number, y: number) {
+    this.gameWindow.setShowStatus(WindowStates.SHOWNORMAL)
     this.gameWindow.setPosition(HWND.NOTOPMOST, x, y, 0, 0, SWP.NOSIZE)
   }
 
@@ -303,11 +239,71 @@ export default class GameWindowControl {
     return { img, density }
   }
 
-  getRoleInfo() {
-    return this.roleInfo
+  // 升为队长
+  becomeTeamLeader() {
+    const gameWindows = GameWindowControl.getGameWindowsByTeamIndex(this.roleInfo.teamIndex)
+    for (const gameWindow of gameWindows) {
+      if (this.pid === gameWindow.pid) {
+        this.isLeader = true
+      } else {
+        gameWindow.isLeader = false
+      }
+    }
   }
 
-  setRoleInfo(roleInfo: ExecuteTaskRoleInfo) {
-    this.roleInfo = roleInfo
+  refreshRoleName() {
+    const title = this.gameWindow.getTitle()
+    const roleName = title.split('【')[0]
+    const accountsData = global.appContext.accounts
+    let teamIndex = 0
+    let accountNum = ''
+    let lang = 'ch' as 'ch' | 'en'
+    for (const groupAccountData of accountsData) {
+      for (const account of groupAccountData) {
+        if (account.roles.includes(roleName)) {
+          teamIndex = account.teamIndex
+          accountNum = account.account
+          lang = account.lang as 'ch' | 'en'
+        }
+      }
+    }
+    this.roleInfo = {
+      roleName,
+      teamIndex,
+      accountNum,
+      lang,
+    }
+  }
+
+  minimizGameWindow() {
+    this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
+  }
+
+  maximizGameWindow() {
+    this.gameWindow.setShowStatus(WindowStates.MAXIMIZE)
+  }
+
+  restoreGameWindow() {
+    this.gameWindow.setShowStatus(WindowStates.RESTORE)
+  }
+
+  async getZiDongZhanDouPosition() {
+    if (this.#ziDongZhanDou.length > 0) {
+      return this.#ziDongZhanDou
+    }
+    const {
+      size: { width, height },
+    } = screen.getPrimaryDisplay()
+    await this.setForeground()
+    await moveMouseToBlank()
+    robotUtils.keyTap('B', ['control'])
+    await sleep(200)
+    const templatePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDou.jpg')
+    const tempCapturePath = path.join(pythonImagesPath, `temp/getZiDongZhanDouPosition_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath, [0, 0], [width, height])
+    const position = await findImagePositions(tempCapturePath, templatePath)
+
+    this.#ziDongZhanDou = position
+    return this.#ziDongZhanDou
   }
 }

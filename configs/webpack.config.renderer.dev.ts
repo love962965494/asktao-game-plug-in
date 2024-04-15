@@ -104,7 +104,7 @@ export default merge(baseConfig, {
     },
     onBeforeSetupMiddleware() {
       console.log('Starting Main Process...')
-      spawn('npm', ['run', 'start:main'], {
+      spawn('npm', ['run', 'watch:main'], {
         shell: true,
         env: process.env,
         stdio: 'inherit',

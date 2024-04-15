@@ -8,7 +8,7 @@ function getRandomNum(min: number = 5, max: number = 20) {
 }
 
 const robotUtils = {
-  moveMouseSmooth(x: number, y: number, speed: number = 3) {
+  moveMouseSmooth(x: number, y: number, speed: number = 1) {
     const num = getRandomNum()
 
     robotjs.moveMouseSmooth(x, y, speed)

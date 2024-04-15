@@ -1,0 +1,28 @@
+{
+  "仙人指路": {
+    "description": "[XRZL]",
+    "npcs": [
+      { "zh": "霹雳仙", "pinYin": "piLiXian" },
+      { "zh": "叶猾仙", "pinYin": "yeHuaXian" },
+      { "zh": "湖镜仙", "pinYin": "huJingXian" },
+      { "zh": "煽赤仙", "pinYin": "shanChiXian" },
+      { "zh": "地藤仙", "pinYin": "diTengXian" }
+    ],
+    "content": {
+      "position": [847, 497],
+      "size": [740, 65],
+      "firstNpc": {
+        "position": [1074, 495],
+        "size": [100, 30]
+      }
+    }
+  },
+  "强力驱魔香时间": {
+    "description": "[QLQMX]",
+    "content": {}
+  },
+  "降妖任务": {
+    "description": "[XYRW]",
+    "content": {}
+  }
+}

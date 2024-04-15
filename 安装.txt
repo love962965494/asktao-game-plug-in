@@ -1,0 +1,13 @@
+1、python、node、git、vscode安装
+
+2、nodemon安装
+npm install -g nodemon
+
+3、tasklist环境变量
+C:\Windows\system32
+
+4、python => cv2
+
+5、paddle ocr
+指定路径
+C:\\Users\\asus\\paddle_env\\Scripts\\python.exe

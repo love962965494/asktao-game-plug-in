@@ -1,49 +1,45 @@
 import { Button, Space } from 'antd'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { AppContext } from 'renderer/App'
 
 export default function Test() {
   const { ipcRenderer } = useContext(AppContext)
-  const [isTimerStarted, setIsTimerStarted] = useState<boolean>(false)
 
-  useEffect(() => {
-    let interval: number
-    if (isTimerStarted) {
-      interval = window.setInterval(() => {
-        ipcRenderer.invoke('get-game-point', 10272).then((result) => {
-          console.log('result: ', result)
-        })
-      }, 3000)
-    }
-
-    return () => {
-      window.clearInterval(interval)
-    }
-  }, [isTimerStarted])
-
-  const handleToggleTimerBtnClick = () => {
-    setIsTimerStarted(!isTimerStarted)
-  }
-
-  const handleStartGameBtnClick = () => {
-    ipcRenderer.send('test-start-game')
-  }
-
-  const handleCloseBtnClick = () => {
-    ipcRenderer.send('test-close-window')
-  }
-
-  return (
-    <Space>
-      <Button type="primary" onClick={handleToggleTimerBtnClick}>
-        切换定时器
-      </Button>
-      <Button type="primary" onClick={handleStartGameBtnClick}>
-        启动游戏
-      </Button>
-      <Button type="ghost" danger onClick={handleCloseBtnClick}>
-        关闭所有窗口
-      </Button>
-    </Space>
-  )
+  return [
+    <div>
+      <Space>
+        <Button type="primary" onClick={() => ipcRenderer.send('start-game')}>
+          启动游戏
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('monitor-game-login-failed')}>
+          测试登录失败
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('test-team-leader-by-turn', 1)}>
+          测试切换队长
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('xian-ren-zhi-lu')}>
+          仙人指路
+        </Button>
+      </Space>
+    </div>,
+    <div style={{ marginTop: '15px' }}>
+      <h3>全民：</h3>
+      <Space>
+        <Button type="primary" onClick={() => ipcRenderer.send('quan-min-shua-dao')}>
+          全民刷道
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('quan-min-sheng-ji')}>
+          全民升级
+        </Button>
+      </Space>
+    </div>,
+    <div style={{ marginTop: '15px' }}>
+      <h3>日常签到：</h3>
+      <Space>
+        <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-qian-dao')}>
+          一键签到
+        </Button>
+      </Space>
+    </div>,
+  ]
 }
