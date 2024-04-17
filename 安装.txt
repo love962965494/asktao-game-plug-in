@@ -7,7 +7,29 @@ npm install -g nodemon
 C:\Windows\system32
 
 4、python => cv2
+pip install opencv-python -i https://mirror.baidu.com/pypi/simple
 
-5、paddle ocr
-指定路径
-C:\\Users\\asus\\paddle_env\\Scripts\\python.exe
+5、accounts.json
+
+6、paddle ocr
+  1、安装python3.10.2
+
+  2、使用 virtualenv 创建虚拟环境：
+    安装 virtualenv（如果尚未安装）：
+    pip install virtualenv -i https://mirror.baidu.com/pypi/simple
+    创建虚拟环境：
+    virtualenv paddle_env
+    激活虚拟环境：
+    paddle_env\Scripts\activate
+
+  3、安装PaddlePaddl
+  pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
+
+  4、安装 PaddleOCR
+  pip install paddleocr==2.7.0.0 -i https://mirror.baidu.com/pypi/simple
+
+  5、测试
+  python -c "import paddleocr; print(paddleocr.__version__)"
+
+  6、修改fileOperation.ts中的paddleOcr方法，改路径
+

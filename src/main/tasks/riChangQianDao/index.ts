@@ -34,7 +34,9 @@ export async function yiJianQianDao() {
     await moveMouseToAndClick(templateImagePath, {
       buttonName: 'riChangQianDao_fuLi',
       position,
-      size: [40, 30]
+      size: [40, 30],
+    }, {
+      threshold: 30
     })
     await sleep(500)
     await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {

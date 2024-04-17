@@ -86,7 +86,7 @@ async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang
 
   return MyPromise((resolve, reject) => {
     child_process.exec(
-      `C:\\Users\\asus\\paddle_env\\Scripts\\python.exe -u ${filePath} ${targetImagePath} ${lang}`,
+      `C:\\Users\\96296\\paddle_env\\Scripts\\python.exe -u ${filePath} ${targetImagePath} ${lang}`,
       (error, stdout) => {
         if (error) {
           console.error(`stderr: ${error}`)
@@ -176,7 +176,7 @@ async function compareTwoImages(
   })
 }
 
-async function extractThemeColors(imagePath: string, top_n = 5): Promise<string> {
+async function extractThemeColors(imagePath: string, top_n = 15): Promise<string> {
   const filePath = path.join(pythonPath, 'extractThemeColors.py')
 
   return MyPromise((resolve, reject) => {

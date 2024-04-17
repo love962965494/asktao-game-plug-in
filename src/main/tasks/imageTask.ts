@@ -1,5 +1,5 @@
 import robotjs from 'robotjs'
-import { ipcMain, screen } from 'electron'
+import { ipcMain } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import robotUtil from '../../utils/robot'
@@ -40,6 +40,7 @@ export function registerImageTasks() {
 
         if (color === 'ffaa31') {
           // 当前界面是登录界面
+
           for (const char of account.toUpperCase()) {
             robotUtil.handleCharKeyTap(char)
           }

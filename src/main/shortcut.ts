@@ -1,11 +1,11 @@
-import { globalShortcut, screen } from 'electron'
+import { globalShortcut, app } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
 import { getGameWindows } from '../utils/systemCotroll'
 import path from 'path'
 import { pythonImagesPath } from '../paths'
 import { findImagePositions, prePorcessingImage, screenCaptureToFile } from '../utils/fileOperations'
 import robotjs from 'robotjs'
-import { goToNPCAndTalk } from './tasks/npcTasks'
+import { goToNPCAndTalk, talkToNPC } from './tasks/npcTasks'
 import { randomName } from '../utils/toolkits'
 import { searchGameTask } from './tasks/gameTask'
 import { waitFinishZhanDou } from './tasks/zhanDouTasks'
@@ -88,18 +88,18 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const gameWindows = await GameWindowControl.getTeamWindowsWithSequence(2)
-    const { npcs } = global.appContext.gameTask['仙人指路']
-    const allTask = npcs.reduce((tasks, npc) => {
-      tasks = [...tasks, ...gameWindows.map(gameWindow => `${gameWindow?.roleInfo.roleName}_${npc.pinYin}`)]
+    const [gameWindow] = await GameWindowControl.getTeamWindowsWithSequence(2)
+    await gameWindow.setForeground()
+    await goToNPCAndTalk({
+      city: '天墉城',
+      npcName: 'cheFu',
+      conversition: 'songWoQuDongHaiYuCun',
+      gameWindow
+    })
+  })
 
-      return tasks
-    }, [] as string[])
-  
-    await getTaskProgress(
-      gameWindows,
-      allTask
-    )
+  globalShortcut.register('CommandOrControl+Alt+Q', async () => {
+    app.quit()
   })
 }
 

@@ -1389,3 +1389,79 @@
     
 
 
+
+
+
+
+      剩余仙人指路任务：
+      [
+    [
+        "Keyの旺财_piLiXian",
+        "Keyの旺妻_piLiXian",
+        "Keyの旺夫_piLiXian",
+        "Keyの旺美_piLiXian",
+        "Keyの旺旺_piLiXian",
+        "Keyの旺财_yeHuaXian",
+        "Keyの旺妻_yeHuaXian",
+        "Keyの旺夫_yeHuaXian",
+        "Keyの旺美_yeHuaXian",
+        "Keyの旺旺_yeHuaXian",
+        "Keyの旺财_huJingXian",
+        "Keyの旺妻_huJingXian",
+        "Keyの旺夫_huJingXian",
+        "Keyの旺美_huJingXian",
+        "Keyの旺旺_huJingXian",
+        "Keyの旺财_shanChiXian",
+        "Keyの旺妻_shanChiXian",
+        "Keyの旺夫_shanChiXian",
+        "Keyの旺美_shanChiXian",
+        "Keyの旺旺_shanChiXian",
+        "Keyの旺财_diTengXian",
+        "Keyの旺妻_diTengXian",
+        "Keyの旺夫_diTengXian",
+        "Keyの旺美_diTengXian",
+        "Keyの旺旺_diTengXian"
+    ],
+    [
+        "KeyのLovely_piLiXian",
+        "KeyのLucky_piLiXian",
+        "KeyのHappy_piLiXian",
+        "KeyのHoney_piLiXian",
+        "KeyのFamily_piLiXian",
+        "KeyのLovely_yeHuaXian",
+        "KeyのLucky_yeHuaXian",
+        "KeyのHappy_yeHuaXian",
+        "KeyのHoney_yeHuaXian",
+        "KeyのFamily_yeHuaXian",
+        "KeyのLovely_huJingXian",
+        "KeyのLucky_huJingXian",
+        "KeyのHappy_huJingXian",
+        "KeyのHoney_huJingXian",
+        "KeyのFamily_huJingXian",
+        "KeyのLovely_shanChiXian",
+        "KeyのLucky_shanChiXian",
+        "KeyのHappy_shanChiXian",
+        "KeyのHoney_shanChiXian",
+        "KeyのFamily_shanChiXian",
+        "KeyのLovely_diTengXian",
+        "KeyのLucky_diTengXian",
+        "KeyのHappy_diTengXian",
+        "KeyのHoney_diTengXian",
+        "KeyのFamily_diTengXian"
+    ]
+]
+    
+
+
+
+
+
+
+      当前任务：
+      [
+    "Keyの旺财_piLiXian",
+    "KeyのLovely_piLiXian"
+]
+    
+
+

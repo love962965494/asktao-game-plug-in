@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "python": "C:\\Users\\asus\\paddle_env\\Scripts\\python.exe"
+      "python": "C:\\Users\\96296\\paddle_env\\Scripts\\python.exe"
     },
     {
       "type": "node",
