@@ -38,20 +38,25 @@ export function registerGlobalShortcut() {
 
   // TODO: 截图
   globalShortcut.register('CommandOrControl+Shift+S', async () => {
-    await getGameWindows()
-    
-    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+    async function _smallScreenCapture() {
+      await getGameWindows()
+      
+      const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
 
-    for (const gameWindow of allGameWindows) {
-      gameWindow.restoreGameWindow()
+      for (const gameWindow of allGameWindows) {
+        gameWindow.restoreGameWindow()
+      }
+
+      const gameWindow = GameWindowControl.getGameWindowByRoleName('KeyのLovely')
+      const { left, top } = gameWindow?.getDimensions()!
+      const randomName1 = 'testScreenCapture'
+      let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
+      await screenCaptureToFile(srcImagePath, [left + 360, top + 304], [325, 56])
     }
-
-    const gameWindow = GameWindowControl.getGameWindowByRoleName('KeyのLovely')
-    const { left, top } = gameWindow?.getDimensions()!
+    
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    await screenCaptureToFile(srcImagePath, [left + 360, top + 304], [325, 56])
-    // await screenCaptureToFile(srcImagePath, [540, 650], [170, 30])
+    await screenCaptureToFile(srcImagePath, [527, 677], [136, 34])
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
     //   console.log('color: ', color)

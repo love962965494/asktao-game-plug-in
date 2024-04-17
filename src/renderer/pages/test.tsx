@@ -25,8 +25,11 @@ export default function Test() {
     <div style={{ marginTop: '15px' }}>
       <h3>全民：</h3>
       <Space>
-        <Button type="primary" onClick={() => ipcRenderer.send('quan-min-shua-dao')}>
-          全民刷道
+        <Button type="primary" onClick={() => ipcRenderer.send('chu-yao-ren-wu')}>
+          除妖任务
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('fu-mo-ren-wu')}>
+          伏魔任务
         </Button>
         <Button type="primary" onClick={() => ipcRenderer.send('quan-min-sheng-ji')}>
           全民升级

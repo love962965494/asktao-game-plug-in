@@ -248,6 +248,20 @@
           "size": [168, 34]
         }
       }
+    },
+    "luYaZhenRen": {
+      "zh": "陆压真人",
+      "search": {
+        "abstract": "lyzr",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZheJiuQu": {
+          "zh": "我这就去",
+          "position": [527, 677],
+          "size": [136, 34]
+        }
+      }
     }
   },
   "桃柳林": {

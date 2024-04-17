@@ -80,12 +80,6 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
     restTasksWithGroup = allTask
   }
 
-  for (const teamWindows of teamWindowsWithGroup) {
-    const [teamLeaderWindow] = teamWindows
-    await teamLeaderWindow.setForeground()
-    await chiXiang(2, true)
-  }
-
   while (true) {
     writeLog(`
       剩余仙人指路任务：
@@ -237,6 +231,11 @@ async function executePairTask(
       await yiJianZuDui(roleName)
     } else {
       await nowGameWindow.setForeground()
+    }
+
+    // 第一个执行任务的
+    if (prevPairTask.length === 0) {
+      await chiXiang(2)
     }
 
     teamLeaderWindows.push(nowGameWindow)

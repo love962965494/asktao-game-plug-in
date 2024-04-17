@@ -24,5 +24,9 @@
   "降妖任务": {
     "description": "[XYRW]",
     "content": {}
+  },
+  "伏魔任务": {
+    "description": "[FMRW]",
+    "content": {}
   }
 }
