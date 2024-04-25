@@ -10,6 +10,7 @@ export default function registerWorkers() {
   worker.postMessage('npc.json')
   worker.postMessage('gameTask.json')
   worker.postMessage('gamePoints.json')
+  worker.postMessage('gameConfig.json')
   worker.on('message', ({ content, type }) => {
     global.appContext[type] = content
   })

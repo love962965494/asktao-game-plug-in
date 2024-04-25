@@ -4,25 +4,32 @@ import GameWindowControl from '../../utils/gameWindowControll'
 import path from 'path'
 import { randomName, sleep } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
-import { clickGamePoint, moveMouseToAndClick } from '../../utils/common'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
 import { getGameWindows } from '../../utils/systemCotroll'
-import { screen, dialog } from 'electron'
+import { dialog } from 'electron'
 import playSound from 'play-sound'
 import robotUtils from '../../utils/robot'
+import { displayGameWindows } from './basicTasks'
 
 // 判断是否还在战斗中
-export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
+export async function isInBattle(gameWindow: GameWindowControl) {
   const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle.jpg`)
 
+  await gameWindow.setForeground()
+  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const inBattle = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  return inBattle
+}
+
+export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
   return MyPromise((resolve) => {
     const interval = setInterval(async () => {
-      await gameWindow.setForeground()
-      const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
-      await screenCaptureToFile(tempCapturePath, position, size)
-      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+      const inBattle = await isInBattle(gameWindow)
 
-      if (!found) {
+      if (!inBattle) {
         clearInterval(interval)
         resolve()
       }
@@ -31,7 +38,9 @@ export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5)
 }
 
 // 补充角色和宝宝状态
-export async function buChongZhuangTai(needJueSe = false) {
+export async function buChongZhuangTai(
+  options: { needJueSe?: boolean; needZhongCheng?: boolean } = { needJueSe: false, needZhongCheng: false }
+) {
   await getGameWindows()
   const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
 
@@ -40,9 +49,18 @@ export async function buChongZhuangTai(needJueSe = false) {
     // TODO: 宝宝忠诚度补充
     await clickGamePoint('宝宝图像', 'buChongZhuangTai', { rightClick: true, notCheck: true })
     await sleep(200)
-    if (needJueSe) {
+    if (options.needJueSe) {
       await clickGamePoint('角色图像', 'buChongZhuangTai', { rightClick: true, notCheck: true })
       await sleep(200)
+    }
+
+    if (options.needZhongCheng) {
+      await moveMouseToBlank()
+      robotUtils.keyTap('R', 'alt')
+      await sleep(500)
+      await clickGamePoint('驯养', 'buChongZhuangTai', { notCheck: true })
+      await sleep(500)
+      robotUtils.keyTap('R', 'alt')
     }
   }
 }
@@ -50,11 +68,8 @@ export async function buChongZhuangTai(needJueSe = false) {
 // 判断是否遇到老君
 export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
-  const {
-    size: { width, height },
-  } = screen.getPrimaryDisplay()
   const filePath = path.join(pythonImagesPath, `temp/LaoJun_${randomName()}.jpg`)
-  await screenCaptureToFile(filePath, [0, 0], [width, height])
+  await screenCaptureToFile(filePath)
   const pinTu = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/pinTu.jpg')
   const xuanZe = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/xuanZe.jpg')
   const zhuanQuan = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/zhuanQUan.jpg')
@@ -66,19 +81,26 @@ export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
     findImageWithinTemplate(filePath, zhuanQuan, 0.7),
   ]).then(async (results) => {
     if (results.filter(Boolean).length > 0) {
+      await displayGameWindows()
       playSound().play(laoJunMp3)
       await waitLaoJunDaTi()
+      return true
     }
+
+    return false
   })
 }
 
 // 等待老君答题完毕
 export async function waitLaoJunDaTi() {
-  await dialog.showMessageBox({
+  const res = await dialog.showMessageBox({
     type: 'info',
     buttons: ['答题完毕'],
     message: '遇到老君了，快来答题！',
   })
+
+  console.log('res: ', res);
+  
 }
 
 // 点击继续补充自动战斗

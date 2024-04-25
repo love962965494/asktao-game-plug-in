@@ -9,7 +9,7 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 import { deleteDir } from '../utils/fileOperations'
 import { pythonImagesPath } from '../paths'
 import registerWorkers from './workers'
-import { IGamePoints, IGameTask, INPC } from 'constants/types'
+import { IGameConfig, IGamePoints, IGameTask, INPC } from 'constants/types'
 
 // 服务端端口号
 const port = 3000
@@ -20,7 +20,9 @@ global.appContext = {
   npc: {} as INPC,
   gameTask: {} as IGameTask,
   gamePoints: {} as IGamePoints,
+  // 空白鼠标坐标
   mousePositions: [[1760, 80]],
+  gameConfig: {} as IGameConfig
 }
 
 let mainWindow: BrowserWindow | null = null

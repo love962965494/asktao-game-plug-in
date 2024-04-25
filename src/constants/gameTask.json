@@ -1,5 +1,6 @@
 {
   "仙人指路": {
+    "pinYin": "xianRenZhiLu",
     "description": "[XRZL]",
     "npcs": [
       { "zh": "霹雳仙", "pinYin": "piLiXian" },
@@ -11,8 +12,11 @@
     "content": {
       "position": [847, 497],
       "size": [740, 65],
-      "firstNpc": {
-        "position": [1074, 495],
+      "taskNpc": {
+        "npcName": "liuRuYan",
+        "conversitions": ["[xianRenZhiLu]WoZhengXiangQuBaiHuiXianRenQingQiuZhiDianNe", "[lingQu]WoZheJiuQu"],
+        "city": "东海渔村",
+        "position": [1404, 462],
         "size": [100, 30]
       }
     }
@@ -27,6 +31,41 @@
   },
   "伏魔任务": {
     "description": "[FMRW]",
+    "content": {}
+  },
+  "十绝阵": {
+    "pinYin": "shiJueZhen",
+    "description": "[SJZ]",
+    "npcs": [
+      { "zh": "寒冰阵主", "pinYin": "hanBingZhenZhu" },
+      { "zh": "红水阵主", "pinYin": "hongShuiZhenZhu" },
+      { "zh": "天阙阵主", "pinYin": "tianQueZhenZhu" },
+      { "zh": "红砂阵主", "pinYin": "hongShaZhenZhu" },
+      { "zh": "风吼阵主", "pinYin": "fengHouZhenZhu" },
+      { "zh": "金光阵主", "pinYin": "jinGuangZhenZhu" },
+      { "zh": "地烈阵主", "pinYin": "diLieZhenZhu" },
+      { "zh": "烈焰阵主", "pinYin": "lieYanZhenZhu" },
+      { "zh": "化血阵主", "pinYin": "huaXueZhenZhu" },
+      { "zh": "落魄阵主", "pinYin": "luoPoZhenZhu" }
+    ],
+    "content": {
+      "position": [847, 465],
+      "size": [740, 134],
+      "taskNpc": {
+        "npcName": "yuQuanZhenRen",
+        "conversitions": ["woZhengYuQianWangTaoJiao", "haoDeWoZheJiuQianQu"],
+        "city": "无名小镇",
+        "position": [1404, 462],
+        "size": [100, 30]
+      }
+    }
+  },
+  "悬赏令": {
+    "description": "[XSL]",
+    "content": {}
+  },
+  "仙界通缉": {
+    "description": "[XJTJ]",
     "content": {}
   }
 }

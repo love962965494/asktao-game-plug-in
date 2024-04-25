@@ -1,4 +1,4 @@
-import { IAllAccounts, IGamePoints, IGameTask, INPC } from "constants/types"
+import { IAllAccounts, IGameConfig, IGamePoints, IGameTask, INPC } from "constants/types"
 
 declare module '*.module.scss' {
   const classes: { [key: string]: string }
@@ -13,6 +13,7 @@ declare global {
     gameTask: IGameTask
     gamePoints: IGamePoints
     mousePositions: [number, number][]
+    gameConfig: IGameConfig
   }
 }
 

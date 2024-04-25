@@ -103,7 +103,7 @@ export async function yiJianZuDui(roleName: string) {
   await clickGamePoint('活动图标', 'yiJianZuDui')
   await sleep(500)
   await clickGamePoint('一键组队', 'yiJianZuDui', {
-    callback: () => undefined
+    callback: () => undefined,
   })
   await sleep(500)
   robotUtils.keyTap('B', ['control'])
@@ -177,4 +177,46 @@ export async function teamLeaderByRoleName(teamIndex: number, roleName?: string)
 
   await sleep(200)
   robotUtils.keyTap('B', ['control'])
+}
+
+// 获取组队信息
+export async function getTeamsInfo() {
+  await getGameWindows()
+  const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+  const teamIndexes = [1].concat(gameWindows.length > 5 ? [2] : [])
+  const teamWindowsWithGroup: GameWindowControl[][] = []
+  for (const teamIndex of teamIndexes) {
+    const teamWindows = (await GameWindowControl.getTeamWindowsWithSequence(teamIndex)) as GameWindowControl[]
+    teamWindowsWithGroup.push(teamWindows)
+  }
+
+  return teamWindowsWithGroup
+}
+
+// 排列窗口
+const positions = [
+  [0, 0],
+  [1920 - 800, 0],
+  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) - 60],
+  [0, 1040 - 625],
+  [1920 - 800, 1040 - 625],
+  [125, 100],
+  [1920 - 800 - 125, 100],
+  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) + 60],
+  [125, 1040 - 625 - 100],
+  [1920 - 800 - 125, 1040 - 625 - 100],
+]
+export async function displayGameWindows() {
+  const teamWindowsWithGroup = await getTeamsInfo()
+
+  for (const [index1, teamWindows] of Object.entries(teamWindowsWithGroup)) {
+    for (const [index2, teamWindow] of Object.entries(teamWindows)) {
+      await teamWindow.setForeground()
+      await teamWindow.restoreGameWindow()
+      const index = Number(index1) + Number(index2)
+      const position = positions[index]
+      teamWindow.setPosition(position[0], position[1])
+      await sleep(100)
+    }
+  }
 }

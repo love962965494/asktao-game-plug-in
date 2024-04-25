@@ -47,18 +47,20 @@ export async function moveMouseToAndClick(
     rightClick?: boolean
     callback?: Function
     threshold?: number
-    notCheck?: boolean
+    notCheck?: boolean,
+    randomPixNums?: number[]
   } = {
     needPreProcessing: false,
     rightClick: false,
     notCheck: false,
+    randomPixNums: [20, 5]
   }
 ) {
   let isInRange = false
   let lastXPos = fileInfo.position[0] + Math.round(fileInfo.size[0] / 2)
   let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
   while (!isInRange) {
-    const position = [lastXPos + randomPixelNum(20), lastYPos + randomPixelNum(5)]
+    const position = [lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20), lastYPos + randomPixelNum(otherOptions.randomPixNums?.[1] || 5)]
     // console.log('position: ', position);
 
     await moveMouseTo(position[0], position[1])
@@ -188,7 +190,7 @@ export async function hasChecked(name: string) {
 export async function clickGamePoint(
   gamePoint: string,
   captureName: string,
-  otherOptions?: { rightClick?: boolean; callback?: Function; notCheck?: boolean; threshold?: number }
+  otherOptions?: { rightClick?: boolean; callback?: Function; notCheck?: boolean; threshold?: number; randomPixNums?: number[] }
 ) {
   await moveMouseToBlank()
   const { position, size } = global.appContext.gamePoints[gamePoint as keyof IGamePoints]

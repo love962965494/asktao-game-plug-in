@@ -7,7 +7,7 @@ import robotUtils from './robot'
 import { randomName, sleep } from './toolkits'
 import { findImagePositions, findMostSimilarImage, paddleOcr, screenCaptureToFile } from './fileOperations'
 import { matchStrings, moveMouseTo, moveMouseToBlank } from './common'
-import { IGamePoints } from 'constants/types'
+import { IAccountInfo, IGamePoints } from 'constants/types'
 
 const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow
@@ -19,19 +19,19 @@ type IBounds = {
   bottom: number
 }
 
-interface RoleInfo {
-  roleName: string
-  teamIndex: number
-  accountNum: string
-  lang: 'ch' | 'en'
-}
+// interface RoleInfo {
+//   roleName: string
+//   teamIndex: number
+//   accountNum: string
+//   lang: 'ch' | 'en'
+// }
 
 export default class GameWindowControl {
   public gameWindow!: WinControlInstance
   /**
    * 记录当前窗口对应的角色信息
    */
-  public roleInfo!: RoleInfo
+  public roleInfo!: IAccountInfo & { roleName: string }
   #bounds!: IBounds
   #scaleFactor!: number
   #ziDongZhanDou!: number[]
@@ -52,23 +52,12 @@ export default class GameWindowControl {
     const title = this.gameWindow.getTitle()
     const roleName = title.split('【')[0]
     const accountsData = global.appContext.accounts
-    let teamIndex = 0
-    let accountNum = ''
-    let lang = 'ch' as 'ch' | 'en'
     for (const groupAccountData of accountsData) {
       for (const account of groupAccountData) {
         if (account.roles.includes(roleName)) {
-          teamIndex = account.teamIndex
-          accountNum = account.account
-          lang = account.lang as 'ch' | 'en'
+          this.roleInfo = { ...account, roleName}
         }
       }
-    }
-    this.roleInfo = {
-      roleName,
-      teamIndex,
-      accountNum,
-      lang,
     }
 
     const { left, top, right, bottom } = this.getDimensions()
@@ -131,6 +120,9 @@ export default class GameWindowControl {
     robotUtils.keyTap('B', ['control'])
     await tempGameWindow.maximizGameWindow()
     await sleep(500)
+
+    console.log('teamWindows: ', teamWindows);
+    
     return teamWindows
   }
 
@@ -255,23 +247,12 @@ export default class GameWindowControl {
     const title = this.gameWindow.getTitle()
     const roleName = title.split('【')[0]
     const accountsData = global.appContext.accounts
-    let teamIndex = 0
-    let accountNum = ''
-    let lang = 'ch' as 'ch' | 'en'
     for (const groupAccountData of accountsData) {
       for (const account of groupAccountData) {
         if (account.roles.includes(roleName)) {
-          teamIndex = account.teamIndex
-          accountNum = account.account
-          lang = account.lang as 'ch' | 'en'
+          this.roleInfo = { ...account, roleName }
         }
       }
-    }
-    this.roleInfo = {
-      roleName,
-      teamIndex,
-      accountNum,
-      lang,
     }
   }
 
@@ -279,28 +260,27 @@ export default class GameWindowControl {
     this.gameWindow.setShowStatus(WindowStates.MINIMIZE)
   }
 
-  maximizGameWindow() {
+  async maximizGameWindow() {
     this.gameWindow.setShowStatus(WindowStates.MAXIMIZE)
+    await sleep(300)
   }
 
-  restoreGameWindow() {
+  async restoreGameWindow() {
     this.gameWindow.setShowStatus(WindowStates.RESTORE)
+    await sleep(300)
   }
 
   async getZiDongZhanDouPosition() {
     if (this.#ziDongZhanDou.length > 0) {
       return this.#ziDongZhanDou
     }
-    const {
-      size: { width, height },
-    } = screen.getPrimaryDisplay()
     await this.setForeground()
     await moveMouseToBlank()
     robotUtils.keyTap('B', ['control'])
     await sleep(200)
     const templatePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDou.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/getZiDongZhanDouPosition_${randomName()}.jpg`)
-    await screenCaptureToFile(tempCapturePath, [0, 0], [width, height])
+    await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templatePath)
 
     this.#ziDongZhanDou = position

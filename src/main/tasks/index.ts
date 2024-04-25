@@ -4,7 +4,7 @@ import { registerQuanMinShuaDao } from './quanMin'
 import { registerYiJianQianDao } from './riChangQianDao'
 import { registerTestTasks } from './testTask'
 
-import { registerXianRenZhiLu } from './xianRenZhiLu'
+import { registerXianRenZhiLu } from './xiuXing'
 
 export default function registerTasks() {
 

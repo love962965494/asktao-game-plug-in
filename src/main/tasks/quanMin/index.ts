@@ -47,7 +47,7 @@ export async function chuYaoRenWu() {
   }, 2 * 60 * 1000)
 
   setInterval(() => {
-    queue.enqueue(async () => await buChongZhuangTai(true))
+    queue.enqueue(async () => await buChongZhuangTai({ needJueSe: true }))
   }, 1 * 60 * 1000)
 }
 
@@ -137,7 +137,7 @@ export async function quanMinShengJi() {
       for (const teamLeaderWindow of teamLeaderWindows) {
         await teamLeaderWindow.setForeground()
         robotUtils.keyTap('enter')
-        await sleep(500)  
+        await sleep(500)
       }
     })
   }, 2 * 60 * 1000)

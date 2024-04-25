@@ -90,6 +90,92 @@
       }
     }
   },
+  "无名小镇": {
+    "yuQuanZhenRen": {
+      "zh": "玉泉真人",
+      "search": {
+        "abstract": "yqzr",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhengYuQianWangTaoJiao": {
+          "zh": "我正欲前往讨教",
+          "position": [526, 578],
+          "size": [236, 34]
+        },
+        "haoDeWoZheJiuQianQu": {
+          "zh": "好的，我这就前去",
+          "position": [526, 578],
+          "size": [270, 34]
+        }
+      }
+    },
+    "xianJieShenBu": {
+      "zh": "仙界神捕",
+      "search": {
+        "abstract": "xjsb",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "xuanShangRenWu(yiXingMoShi)_duiZhang": {
+          "zh": "悬赏任务（一星模式）",
+          "position": [526, 621],
+          "size": [100, 34]
+        },
+        "xuanShangRenWu(erXingMoShi)_duiZhang": {
+          "zh": "悬赏任务（二星模式）",
+          "position": [526, 655],
+          "size": [100, 34]
+        },
+        "xuanShangRenWu(yiXingMoShi)_duiYuan": {
+          "zh": "悬赏任务（一星模式）",
+          "position": [526, 550],
+          "size": [100, 34]
+        },
+        "xuanShangRenWu(erXingMoShi)_duiYuan": {
+          "zh": "悬赏任务（二星模式）",
+          "position": [526, 584],
+          "size": [100, 34]
+        },
+        "woYaoJingYanJiangLi": {
+          "zh": "我要经验奖励",
+          "position": [526, 579],
+          "size": [100, 34]
+        },
+        "woYaoDaoHangJiangLi": {
+          "zh": "我要道行奖励",
+          "position": [526, 614],
+          "size": [100, 34]
+        }
+      }
+    },
+    "yuJianShangRen": {
+      "zh": "玉鉴上人",
+      "search": {
+        "abstract": "yjsr",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "haoANaWoJiuZouYiTang": {
+          "zh": "好啊，那我就走一趟（三星模式）",
+          "position": [526, 650],
+          "size": [492, 34]
+        }
+      }
+    }
+  },
+  "十里坡": {
+    "xianJiePanNi": {
+      "zh": "仙界叛逆",
+      "conversitions": {
+        "jiNaTongJiFan": {
+          "zh": "缉拿通缉犯",
+          "position": [525, 550],
+          "size": [173, 34]
+        }
+      }
+    }
+  },
   "万妖岭": {
     "jieYinDaoTong": {
       "zh": "接引道童",
@@ -276,6 +362,156 @@
           "zh": "请仙人赐教",
           "position": [528, 551],
           "size": [168, 34]
+        }
+      }
+    }
+  },
+  "八德池": {
+    "hanBingZhenZhu": {
+      "zh": "寒冰阵主",
+      "search": {
+        "abstract": "hbzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    },
+    "hongShuiZhenZhu": {
+      "zh": "红水阵主",
+      "search": {
+        "abstract": "hszz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    }
+  },
+  "碧游宫": {
+    "tianQueZhenZhu": {
+      "zh": "天阙阵主",
+      "search": {
+        "abstract": "tqzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    },
+    "hongShaZhenZhu": {
+      "zh": "红砂阵主",
+      "search": {
+        "abstract": "hszz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    }
+  },
+  "西昆仑": {
+    "fengHouZhenZhu": {
+      "zh": "风吼阵主",
+      "search": {
+        "abstract": "fhzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    },
+    "jinGuangZhenZhu": {
+      "zh": "金光阵主",
+      "search": {
+        "abstract": "jgzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    }
+  },
+  "大罗宫": {
+    "diLieZhenZhu": {
+      "zh": "地烈阵主",
+      "search": {
+        "abstract": "dlzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    },
+    "lieYanZhenZhu": {
+      "zh": "烈焰阵主",
+      "search": {
+        "abstract": "lyzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    }
+  },
+  "七宝林": {
+    "huaXueZhenZhu": {
+      "zh": "化血阵主",
+      "search": {
+        "abstract": "hxzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    },
+    "luoPoZhenZhu": {
+      "zh": "落魄阵主",
+      "search": {
+        "abstract": "lpzz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingDaShenZhiDian": {
+          "zh": "请大神指点",
+          "position": [528, 578],
+          "size": [170, 34]
         }
       }
     }

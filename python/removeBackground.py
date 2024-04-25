@@ -29,10 +29,11 @@ def remove_background(image, threshold):
 
 
 if __name__ == "__main__":
-    image_path = sys.argv[1]
-    output_image_path = sys.argv[1]
-
-    threshold_value = 238  # 设置阈值
+    # image_path = sys.argv[1]
+    # output_image_path = sys.argv[1]
+    image_path = 'C:/Users/sc/Desktop/123.png'
+    output_image_path= 'C:/Users/sc/Desktop/456.png'
+    threshold_value = 200  # 设置阈值
 
     # 读取图像
     image = cv2.imread(image_path)

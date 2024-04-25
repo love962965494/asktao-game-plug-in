@@ -3,14 +3,20 @@ import GameWindowControl from '../utils/gameWindowControll'
 import { getGameWindows } from '../utils/systemCotroll'
 import path from 'path'
 import { pythonImagesPath } from '../paths'
-import { findImagePositions, prePorcessingImage, screenCaptureToFile } from '../utils/fileOperations'
+import {
+  findImagePositions,
+  findMultiMatchPositions,
+  prePorcessingImage,
+  screenCaptureToFile,
+} from '../utils/fileOperations'
 import robotjs from 'robotjs'
-import { goToNPCAndTalk, talkToNPC } from './tasks/npcTasks'
-import { randomName } from '../utils/toolkits'
-import { searchGameTask } from './tasks/gameTask'
-import { waitFinishZhanDou } from './tasks/zhanDouTasks'
-import { getTaskProgress, lingQuRenWu } from './tasks/xianRenZhiLu'
+import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from './tasks/npcTasks'
+import { randomName, sleep } from '../utils/toolkits'
+import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
+import { hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
+import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { writeLog } from '../utils/common'
+import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -40,7 +46,7 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Shift+S', async () => {
     async function _smallScreenCapture() {
       await getGameWindows()
-      
+
       const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
 
       for (const gameWindow of allGameWindows) {
@@ -53,10 +59,11 @@ export function registerGlobalShortcut() {
       let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
       await screenCaptureToFile(srcImagePath, [left + 360, top + 304], [325, 56])
     }
-    
+
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    await screenCaptureToFile(srcImagePath, [527, 677], [136, 34])
+    await screenCaptureToFile(srcImagePath, [577, 108], [170, 32])
+    // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
     //   console.log('color: ', color)
@@ -82,6 +89,7 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Shift+G', async () => {
     await getGameWindows()
     const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+    
 
     for (const gameWindow of allGameWindows) {
       gameWindow.restoreGameWindow()
@@ -93,14 +101,20 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const [gameWindow] = await GameWindowControl.getTeamWindowsWithSequence(2)
+    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
+    const gameWindow = allGameWindows[4]
     await gameWindow.setForeground()
-    await goToNPCAndTalk({
-      city: '天墉城',
-      npcName: 'cheFu',
-      conversition: 'songWoQuDongHaiYuCun',
-      gameWindow
-    })
+    let hasFinished = false
+    while (!hasFinished) {
+      await sleep(5000)
+      const hasMeet = await hasMeetLaoJun(gameWindow)
+
+      if (hasMeet) {
+        console.log(new Date().toLocaleTimeString());
+        
+        hasFinished = true
+      }
+    }
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

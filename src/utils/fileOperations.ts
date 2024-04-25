@@ -74,7 +74,7 @@ function findImagePositions(bigImagePath: string, smallImagePath: string): Promi
 }
 
 // 调用paddle-ocr对图片进行文字识别
-async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang: 'ch' | 'en' = 'ch'): Promise<string[]> {
+async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang: string = 'ch'): Promise<string[]> {
   let targetImagePath = sourceImagePath
   if (needPreProcessing) {
     targetImagePath = path.join(pythonImagesPath, `temp/${randomName()}.jpg`)
@@ -86,7 +86,7 @@ async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang
 
   return MyPromise((resolve, reject) => {
     child_process.exec(
-      `C:\\Users\\96296\\paddle_env\\Scripts\\python.exe -u ${filePath} ${targetImagePath} ${lang}`,
+      `C:\\Users\\sc\\paddle_env\\Scripts\\python.exe -u ${filePath} ${targetImagePath} ${lang}`,
       (error, stdout) => {
         if (error) {
           console.error(`stderr: ${error}`)
@@ -176,7 +176,7 @@ async function compareTwoImages(
   })
 }
 
-async function extractThemeColors(imagePath: string, top_n = 15): Promise<string> {
+async function extractThemeColors(imagePath: string, top_n = 50): Promise<string> {
   const filePath = path.join(pythonPath, 'extractThemeColors.py')
 
   return MyPromise((resolve, reject) => {
@@ -191,6 +191,7 @@ async function extractThemeColors(imagePath: string, top_n = 15): Promise<string
   })
 }
 
+//
 async function findImageWithinTemplate(
   bigImagePath: string,
   smallImagePath: string,
@@ -225,10 +226,7 @@ async function removeBackground(imagePath: string): Promise<void> {
   })
 }
 
-async function findMostSimilarImage(
-  templateImagePath: string,
-  imagePaths: string[]
-): Promise<string> {
+async function findMostSimilarImage(templateImagePath: string, imagePaths: string[]): Promise<string> {
   const filePath = path.join(pythonPath, 'findMostSimilarImage.py')
 
   return MyPromise((resolve, reject) => {
@@ -238,7 +236,7 @@ async function findMostSimilarImage(
         reject(error)
       }
 
-      const res = JSON.parse(stdout) as {[key: string]: number}
+      const res = JSON.parse(stdout) as { [key: string]: number }
       let imagePath = ''
       let maxVal = 0
       for (const [key, value] of Object.entries(res)) {
@@ -248,6 +246,24 @@ async function findMostSimilarImage(
         }
       }
       resolve(imagePath)
+    })
+  })
+}
+
+// 从大图片里找到与小图片匹配的多个位置
+async function findMultiMatchPositions(bigImagePath: string, smallImagePath: string): Promise<number[][]> {
+  const filePath = path.join(pythonPath, 'findMultiMatchPositions.py')
+
+  return MyPromise((resolve, reject) => {
+    child_process.exec(`python -u ${filePath} ${bigImagePath} ${smallImagePath}`, (error, stdout) => {
+      if (error) {
+        console.log('findMultiMatchPositions error: ', error)
+        reject(error)
+      }
+
+      const res = JSON.parse(stdout) as number[][]
+
+      resolve(res)
     })
   })
 }
@@ -264,4 +280,5 @@ export {
   compareTwoImages,
   removeBackground,
   findMostSimilarImage,
+  findMultiMatchPositions,
 }

@@ -1,39 +1,35 @@
 import robotUtils from '../../../utils/robot'
 import GameWindowControl from '../../../utils/gameWindowControll'
-import { liDui, yiJianZuDui } from '../basicTasks'
+import { getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { ipcMain } from 'electron/main'
-import { getGameWindows } from '../../../utils/systemCotroll'
 import { hasGameTask, searchGameTask } from '../gameTask'
 import { chiXiang } from '../wuPinTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import { clickGamePoint, moveMouseToBlank, writeLog } from '../../../utils/common'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
 import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
 import { IGameTask } from 'constants/types'
-import { screen } from 'electron'
+import { xianJieShenBu } from './xianJieShenBu'
 
 export async function registerXianRenZhiLu() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
+  ipcMain.on('shi-jue-zhen', shiJueZhen)
+  ipcMain.on('xian-jie-shen-bu', xianJieShenBu)
 }
 
 async function xianRenZhiLu() {
   await xiuXingTask('仙人指路')
 }
 
+async function shiJueZhen() {
+  await xiuXingTask('十绝阵')
+}
+
 async function xiuXingTask(taskType: string, isFirst: boolean = true) {
-  await getGameWindows()
-  const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
-  const teamIndexes = [1].concat(gameWindows.length > 5 ? [2] : [])
-  const teamWindowsWithGroup: GameWindowControl[][] = []
-  const teamLeaderWindows: GameWindowControl[] = []
-  for (const teamIndex of teamIndexes) {
-    const teamWindows = (await GameWindowControl.getTeamWindowsWithSequence(teamIndex)) as GameWindowControl[]
-    teamWindowsWithGroup.push(teamWindows)
-    teamLeaderWindows.push(teamWindows[0])
-  }
+  const teamWindowsWithGroup = await getTeamsInfo()
   const { npcs } = global.appContext.gameTask[taskType as keyof IGameTask] as {
     npcs: {
       zh: string
@@ -53,18 +49,19 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
   let restTasksWithGroup: string[][] = []
   if (isFirst) {
     for (const [index, teamWindows] of Object.entries(teamWindowsWithGroup)) {
-      const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
+      const [teamLeaderWindow] = teamWindows
       await teamLeaderWindow.setForeground()
       const hasTask = await hasGameTask(taskType)
       let tasks: string[] = []
       if (hasTask) {
         tasks = await getTaskProgress(
-          [teamLeaderWindow, ...(teamMemberWindows as GameWindowControl[])],
-          allTask[+index]
+          teamWindows,
+          allTask[+index],
+          taskType
         )
       }
       if (!hasTask || tasks.length === 0) {
-        await lingQuRenWu(teamLeaderWindow, teamMemberWindows as GameWindowControl[])
+        await lingQuRenWu1(teamWindows, taskType)
         tasks = allTask[+index]
       }
 
@@ -72,9 +69,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
     }
   } else {
     for (const teamWindows of teamWindowsWithGroup) {
-      const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
-
-      await lingQuRenWu(teamLeaderWindow, teamMemberWindows as GameWindowControl[])
+      await lingQuRenWu1(teamWindows, taskType)
     }
 
     restTasksWithGroup = allTask
@@ -82,13 +77,13 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
 
   while (true) {
     writeLog(`
-      剩余仙人指路任务：
+      剩余任务：
       ${JSON.stringify(restTasksWithGroup, undefined, 4)}
     `)
     await loopTasks(restTasksWithGroup, taskType)
     await keepZiDong()
-    await buChongZhuangTai()
-    await xiuXingTask('仙人指路', false)
+    await buChongZhuangTai({ needZhongCheng: true })
+    await xiuXingTask(taskType, false)
   }
 }
 
@@ -129,12 +124,9 @@ export async function lingQuRenWu(teamLeaderWindow: GameWindowControl, teamMembe
     gameWindow: teamLeaderWindow,
     calculatePosition: async () => {
       await moveMouseToBlank()
-      const {
-        size: { width, height },
-      } = screen.getPrimaryDisplay()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/xianRenZhiLu.jpg`)
       const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
-      await screenCaptureToFile(tempCapturePath, [0, 0], [width, height])
+      await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
     },
@@ -151,17 +143,73 @@ export async function lingQuRenWu(teamLeaderWindow: GameWindowControl, teamMembe
   }
 
   await teamLeaderWindow.setForeground()
-  robotUtils.keyTap('enter')
+  robotUtils.keyTap('escape')
 }
 
-export async function getTaskProgress(gameWindows: GameWindowControl[], allTask: string[]) {
+export async function lingQuRenWu1(teamWindows: GameWindowControl[], taskType: string) {
+  const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
+  await teamLeaderWindow.setForeground()
+  await searchGameTask(taskType)
+  const { content, pinYin } = global.appContext.gameTask[taskType as keyof IGameTask] as {
+    content: any
+    pinYin: string
+  }
+  const {
+    taskNpc: { city, position, size, npcName, conversitions },
+  } = content as {
+    taskNpc: { city: string; position: number[]; size: number[]; npcName: string; conversitions: string[] }
+  }
+  await moveMouseToBlank()
+  const tempCapturePath = path.join(pythonImagesPath, `temp/lingQuRenWu_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  await moveMouseToAndClick(tempCapturePath, {
+    buttonName: 'lingQuRenWu',
+    position,
+    size,
+  })
+  await hasGoneToNPC(teamLeaderWindow)
+  await goToNPCAndTalk({
+    city,
+    npcName,
+    conversition: conversitions[0],
+    gameWindow: teamLeaderWindow,
+    calculatePosition: async () => {
+      await moveMouseToBlank()
+      const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      return position
+    },
+  })
+  await sleep(500)
+  await talkToNPC(city, npcName, conversitions[1])
+  await sleep(500)
+
+  // 每个队员依次领取任务
+  for (const gameWindow of teamMemberWindows) {
+    await gameWindow.setForeground()
+    await talkToNPC(city, npcName, conversitions[0])
+    await sleep(500)
+    await talkToNPC(city, npcName, conversitions[1])
+    await sleep(500)
+  }
+
+  await teamLeaderWindow.setForeground()
+  robotUtils.keyTap('escape')
+}
+
+export async function getTaskProgress(gameWindows: GameWindowControl[], allTask: string[], taskType: string) {
   const restTasks = []
   // 获取每个队员的任务进度
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
 
-    await searchGameTask('仙人指路')
-    const { npcs, content } = global.appContext.gameTask['仙人指路']
+    await searchGameTask(taskType)
+    const { npcs, content } = global.appContext.gameTask[taskType as keyof IGameTask] as {
+      npcs: { zh: string; pinYin: string }[]
+      content: any
+    }
     const { position, size } = content
     const tempCapturePath = path.join(pythonImagesPath, `temp/getTaskProgress_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath, position, size)
@@ -202,16 +250,19 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
   }
 }
 
+const conversitionMap = {
+  仙人指路: 'qingXianRenCiJiao',
+  十绝阵: 'qingDaShenZhiDian',
+}
 async function executePairTask(
   pairTask: (string | undefined)[],
   taskType: string,
   prevPairTask: (string | undefined)[],
   taskIndex: number
 ) {
-  const conversition = taskType === '仙人指路' ? 'qingXianRenCiJiao' : ''
+  const conversition = conversitionMap[taskType as keyof typeof conversitionMap]
   const teamLeaderWindows: GameWindowControl[] = []
   const npcs: string[] = []
-
   for (const [index, taskName] of Object.entries(pairTask)) {
     if (!taskName) {
       continue
@@ -234,7 +285,7 @@ async function executePairTask(
     }
 
     // 第一个执行任务的
-    if (prevPairTask.length === 0) {
+    if (taskType === '仙人指路' && prevPairTask.length === 0) {
       await chiXiang(2)
     }
 
@@ -269,7 +320,7 @@ async function executePairTask(
   }
 
   // 补充自动回合，每5个任务补充一次
-  if (taskIndex && taskIndex % 4 === 0) {
+  if (taskIndex && taskIndex % 5 === 0) {
     await keepZiDong()
   }
 
@@ -279,14 +330,14 @@ async function executePairTask(
   }
 
   // 战斗结束
-  await sleep(2000)
+  await sleep(3000)
   // 检查是否遇到老君
   for (const teamLeaderWindow of teamLeaderWindows) {
     await hasMeetLaoJun(teamLeaderWindow)
   }
 
   // 补充状态，每5个任务补充一次
-  if (taskIndex && taskIndex % 4 === 0) {
+  if (taskType === '仙人指路' && taskIndex && taskIndex % 5 === 0) {
     await buChongZhuangTai()
   }
 

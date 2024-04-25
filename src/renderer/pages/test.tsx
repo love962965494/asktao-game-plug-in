@@ -17,9 +17,6 @@ export default function Test() {
         <Button type="primary" onClick={() => ipcRenderer.send('test-team-leader-by-turn', 1)}>
           测试切换队长
         </Button>
-        <Button type="primary" onClick={() => ipcRenderer.send('xian-ren-zhi-lu')}>
-          仙人指路
-        </Button>
       </Space>
     </div>,
     <div style={{ marginTop: '15px' }}>
@@ -41,6 +38,20 @@ export default function Test() {
       <Space>
         <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-qian-dao')}>
           一键签到
+        </Button>
+      </Space>
+    </div>,
+    <div style={{ marginTop: '15px' }}>
+      <h3>修行：</h3>
+      <Space>
+        <Button type="primary" onClick={() => ipcRenderer.send('xian-ren-zhi-lu')}>
+          仙人指路
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('shi-jue-zhen')}>
+          十绝阵
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('xian-jie-shen-bu')}>
+          仙界神捕
         </Button>
       </Space>
     </div>,

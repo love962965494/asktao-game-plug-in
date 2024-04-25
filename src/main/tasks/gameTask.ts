@@ -1,11 +1,11 @@
 import { IGameTask } from 'constants/types'
-import { clickGamePoint, matchString } from '../../utils/common'
+import { clickGamePoint, matchString, moveMouseToAndClick } from '../../utils/common'
 import robotUtils from '../../utils/robot'
 import { randomName, sleep } from '../../utils/toolkits'
 import { clipboard } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
+import { findImagePositions, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
 
 export async function hasGameTask(taskName: string) {
   await searchGameTask(taskName)
@@ -15,7 +15,8 @@ export async function hasGameTask(taskName: string) {
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   await screenCaptureToFile(tempCapturePath, position, size)
 
-  await removeBackground(tempCapturePath)
+  // TODO: 换台电脑后是否有问题？？
+  // await removeBackground(tempCapturePath)
   const tasks = await paddleOcr(tempCapturePath, false)
 
   for (const task of tasks) {
@@ -47,4 +48,46 @@ export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('enter')
 
   await sleep(500)
+}
+
+// 标题size
+export const escTaskBarSize = [250, 28]
+// 任务框框size
+const taskBarSize = [250, 60]
+export async function escShouCangTasks(taskName: string) {
+  robotUtils.keyTap('B', ['control'])
+  await sleep(300)
+  robotUtils.keyTap('escape')
+  await sleep(300)
+  await clickGamePoint('收藏任务', 'xianJieShenBu', {
+    callback: () => undefined
+  })
+  const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const position = await findImagePositions(tempCapturePath, templateImagePath)
+  let hasFinished = false
+  {
+    const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath, [position[0], position[1] + escTaskBarSize[1] + 5], [escTaskBarSize[0], taskBarSize[1] - escTaskBarSize[1]])
+    const [taskNums] = await paddleOcr(tempCapturePath, false, 'en')
+    const [firstNum, secondNum] = taskNums.split('/')
+    if (firstNum === secondNum) {
+      hasFinished = true
+    }
+  }
+  if (hasFinished) {
+    return hasFinished
+  }
+  {
+    const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath, position, taskBarSize)
+    await moveMouseToAndClick(tempCapturePath, {
+      buttonName: 'shouCangRenWu',
+      position,
+      size: taskBarSize
+    })
+  }
+
+  return hasFinished
 }
