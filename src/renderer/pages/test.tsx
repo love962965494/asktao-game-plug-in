@@ -39,6 +39,9 @@ export default function Test() {
         <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-qian-dao')}>
           一键签到
         </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-ri-chang')}>
+          一键日常
+        </Button>
       </Space>
     </div>,
     <div style={{ marginTop: '15px' }}>

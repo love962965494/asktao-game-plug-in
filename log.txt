@@ -5,134 +5,48 @@
       剩余任务：
       [
     [
-        "Kanonの_fengHouZhenZhu",
-        "AngelBeat_fengHouZhenZhu",
-        "Clannadの_fengHouZhenZhu",
-        "Airの_fengHouZhenZhu",
         "LittleBuster_fengHouZhenZhu",
-        "Kanonの_jinGuangZhenZhu",
-        "AngelBeat_jinGuangZhenZhu",
-        "Clannadの_jinGuangZhenZhu",
-        "Airの_jinGuangZhenZhu",
-        "LittleBuster_jinGuangZhenZhu",
-        "Kanonの_diLieZhenZhu",
-        "AngelBeat_diLieZhenZhu",
-        "Clannadの_diLieZhenZhu",
         "Airの_diLieZhenZhu",
+        "AngelBeat_diLieZhenZhu",
         "LittleBuster_diLieZhenZhu",
-        "Kanonの_lieYanZhenZhu",
-        "AngelBeat_lieYanZhenZhu",
-        "Clannadの_lieYanZhenZhu",
+        "Kanonの_diLieZhenZhu",
+        "Clannadの_diLieZhenZhu",
         "Airの_lieYanZhenZhu",
+        "AngelBeat_lieYanZhenZhu",
         "LittleBuster_lieYanZhenZhu",
-        "Kanonの_huaXueZhenZhu",
-        "AngelBeat_huaXueZhenZhu",
-        "Clannadの_huaXueZhenZhu",
+        "Kanonの_lieYanZhenZhu",
+        "Clannadの_lieYanZhenZhu",
         "Airの_huaXueZhenZhu",
+        "AngelBeat_huaXueZhenZhu",
         "LittleBuster_huaXueZhenZhu",
-        "Kanonの_luoPoZhenZhu",
-        "AngelBeat_luoPoZhenZhu",
-        "Clannadの_luoPoZhenZhu",
+        "Kanonの_huaXueZhenZhu",
+        "Clannadの_huaXueZhenZhu",
         "Airの_luoPoZhenZhu",
-        "LittleBuster_luoPoZhenZhu"
-    ],
-    [
-        "Keyの阿伦_lieYanZhenZhu",
-        "Keyの怒浪_lieYanZhenZhu",
-        "Keyの晴朗_lieYanZhenZhu",
-        "Keyの狂风_lieYanZhenZhu",
-        "Keyの神龙_lieYanZhenZhu",
-        "Keyの阿伦_huaXueZhenZhu",
-        "Keyの怒浪_huaXueZhenZhu",
-        "Keyの晴朗_huaXueZhenZhu",
-        "Keyの狂风_huaXueZhenZhu",
-        "Keyの神龙_huaXueZhenZhu",
-        "Keyの阿伦_luoPoZhenZhu",
-        "Keyの怒浪_luoPoZhenZhu",
-        "Keyの晴朗_luoPoZhenZhu",
-        "Keyの狂风_luoPoZhenZhu",
-        "Keyの神龙_luoPoZhenZhu"
-    ]
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Kanonの_fengHouZhenZhu",
-    "Keyの阿伦_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_fengHouZhenZhu",
-    "Keyの怒浪_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      剩余任务：
-      [
-    [
-        "LittleBuster_fengHouZhenZhu",
-        "AngelBeat_fengHouZhenZhu",
-        "Clannadの_fengHouZhenZhu",
-        "Airの_fengHouZhenZhu",
-        "Kanonの_jinGuangZhenZhu",
-        "LittleBuster_jinGuangZhenZhu",
-        "AngelBeat_jinGuangZhenZhu",
-        "Clannadの_jinGuangZhenZhu",
-        "Airの_jinGuangZhenZhu",
-        "Kanonの_diLieZhenZhu",
-        "LittleBuster_diLieZhenZhu",
-        "AngelBeat_diLieZhenZhu",
-        "Clannadの_diLieZhenZhu",
-        "Airの_diLieZhenZhu",
-        "Kanonの_lieYanZhenZhu",
-        "LittleBuster_lieYanZhenZhu",
-        "AngelBeat_lieYanZhenZhu",
-        "Clannadの_lieYanZhenZhu",
-        "Airの_lieYanZhenZhu",
-        "Kanonの_huaXueZhenZhu",
-        "LittleBuster_huaXueZhenZhu",
-        "AngelBeat_huaXueZhenZhu",
-        "Clannadの_huaXueZhenZhu",
-        "Airの_huaXueZhenZhu",
-        "Kanonの_luoPoZhenZhu",
-        "LittleBuster_luoPoZhenZhu",
         "AngelBeat_luoPoZhenZhu",
-        "Clannadの_luoPoZhenZhu",
-        "Airの_luoPoZhenZhu"
+        "Kanonの_luoPoZhenZhu",
+        "Clannadの_luoPoZhenZhu"
     ],
     [
-        "Keyの晴朗_lieYanZhenZhu",
-        "Keyの怒浪_lieYanZhenZhu",
+        "Keyの狂风_fengHouZhenZhu",
+        "Keyの阿伦_fengHouZhenZhu",
+        "Keyの狂风_diLieZhenZhu",
+        "Keyの神龙_diLieZhenZhu",
+        "Keyの怒浪_diLieZhenZhu",
+        "Keyの阿伦_diLieZhenZhu",
+        "Keyの晴朗_diLieZhenZhu",
         "Keyの狂风_lieYanZhenZhu",
         "Keyの神龙_lieYanZhenZhu",
-        "Keyの阿伦_huaXueZhenZhu",
-        "Keyの晴朗_huaXueZhenZhu",
-        "Keyの怒浪_huaXueZhenZhu",
+        "Keyの怒浪_lieYanZhenZhu",
+        "Keyの阿伦_lieYanZhenZhu",
+        "Keyの晴朗_lieYanZhenZhu",
         "Keyの狂风_huaXueZhenZhu",
         "Keyの神龙_huaXueZhenZhu",
-        "Keyの阿伦_luoPoZhenZhu",
-        "Keyの晴朗_luoPoZhenZhu",
+        "Keyの怒浪_huaXueZhenZhu",
+        "Keyの阿伦_huaXueZhenZhu",
+        "Keyの晴朗_huaXueZhenZhu",
+        "Keyの神龙_luoPoZhenZhu",
         "Keyの怒浪_luoPoZhenZhu",
-        "Keyの狂风_luoPoZhenZhu",
-        "Keyの神龙_luoPoZhenZhu"
+        "Keyの晴朗_luoPoZhenZhu"
     ]
 ]
     
@@ -145,151 +59,7 @@
       当前任务：
       [
     "LittleBuster_fengHouZhenZhu",
-    "Keyの晴朗_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_fengHouZhenZhu",
-    "Keyの怒浪_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_fengHouZhenZhu",
-    "Keyの狂风_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_fengHouZhenZhu",
-    "Keyの神龙_lieYanZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Kanonの_jinGuangZhenZhu",
-    "Keyの阿伦_huaXueZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "LittleBuster_jinGuangZhenZhu",
-    "Keyの晴朗_huaXueZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_jinGuangZhenZhu",
-    "Keyの怒浪_huaXueZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_jinGuangZhenZhu",
-    "Keyの狂风_huaXueZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_jinGuangZhenZhu",
-    "Keyの神龙_huaXueZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Kanonの_diLieZhenZhu",
-    "Keyの阿伦_luoPoZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "LittleBuster_diLieZhenZhu",
-    "Keyの晴朗_luoPoZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_diLieZhenZhu",
-    "Keyの怒浪_luoPoZhenZhu"
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_diLieZhenZhu",
-    "Keyの狂风_luoPoZhenZhu"
+    "Keyの狂风_fengHouZhenZhu"
 ]
     
 
@@ -301,7 +71,7 @@
       当前任务：
       [
     "Airの_diLieZhenZhu",
-    "Keyの神龙_luoPoZhenZhu"
+    "Keyの阿伦_fengHouZhenZhu"
 ]
     
 
@@ -312,8 +82,8 @@
 
       当前任务：
       [
-    "Kanonの_lieYanZhenZhu",
-    null
+    "AngelBeat_diLieZhenZhu",
+    "Keyの狂风_diLieZhenZhu"
 ]
     
 
@@ -324,8 +94,8 @@
 
       当前任务：
       [
-    "LittleBuster_lieYanZhenZhu",
-    null
+    "LittleBuster_diLieZhenZhu",
+    "Keyの神龙_diLieZhenZhu"
 ]
     
 
@@ -336,278 +106,8 @@
 
       当前任务：
       [
-    "AngelBeat_lieYanZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_lieYanZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_lieYanZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Kanonの_huaXueZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "LittleBuster_huaXueZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_huaXueZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_huaXueZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_huaXueZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Kanonの_luoPoZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "LittleBuster_luoPoZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "AngelBeat_luoPoZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Clannadの_luoPoZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_luoPoZhenZhu",
-    null
-]
-    
-
-
-
-
-
-
-      当前任务：
-      [
-    "Airの_hanBingZhenZhu",
-    "Keyの神龙_hanBingZhenZhu"
-]
-    
-
-
-
-
-
-
-      剩余任务：
-      [
-    [
-        "Airの_hanBingZhenZhu",
-        "LittleBuster_hanBingZhenZhu",
-        "Kanonの_hanBingZhenZhu",
-        "AngelBeat_hanBingZhenZhu",
-        "Clannadの_hanBingZhenZhu",
-        "Airの_hongShuiZhenZhu",
-        "LittleBuster_hongShuiZhenZhu",
-        "Kanonの_hongShuiZhenZhu",
-        "AngelBeat_hongShuiZhenZhu",
-        "Clannadの_hongShuiZhenZhu",
-        "Airの_tianQueZhenZhu",
-        "LittleBuster_tianQueZhenZhu",
-        "Kanonの_tianQueZhenZhu",
-        "AngelBeat_tianQueZhenZhu",
-        "Clannadの_tianQueZhenZhu",
-        "Airの_hongShaZhenZhu",
-        "LittleBuster_hongShaZhenZhu",
-        "Kanonの_hongShaZhenZhu",
-        "AngelBeat_hongShaZhenZhu",
-        "Clannadの_hongShaZhenZhu",
-        "Airの_fengHouZhenZhu",
-        "LittleBuster_fengHouZhenZhu",
-        "Kanonの_fengHouZhenZhu",
-        "AngelBeat_fengHouZhenZhu",
-        "Clannadの_fengHouZhenZhu",
-        "Airの_jinGuangZhenZhu",
-        "LittleBuster_jinGuangZhenZhu",
-        "Kanonの_jinGuangZhenZhu",
-        "AngelBeat_jinGuangZhenZhu",
-        "Clannadの_jinGuangZhenZhu",
-        "Airの_diLieZhenZhu",
-        "LittleBuster_diLieZhenZhu",
-        "Kanonの_diLieZhenZhu",
-        "AngelBeat_diLieZhenZhu",
-        "Clannadの_diLieZhenZhu",
-        "Airの_lieYanZhenZhu",
-        "LittleBuster_lieYanZhenZhu",
-        "Kanonの_lieYanZhenZhu",
-        "AngelBeat_lieYanZhenZhu",
-        "Clannadの_lieYanZhenZhu",
-        "Airの_huaXueZhenZhu",
-        "LittleBuster_huaXueZhenZhu",
-        "Kanonの_huaXueZhenZhu",
-        "AngelBeat_huaXueZhenZhu",
-        "Clannadの_huaXueZhenZhu",
-        "Airの_luoPoZhenZhu",
-        "LittleBuster_luoPoZhenZhu",
-        "Kanonの_luoPoZhenZhu",
-        "AngelBeat_luoPoZhenZhu",
-        "Clannadの_luoPoZhenZhu"
-    ],
-    [
-        "Keyの神龙_hanBingZhenZhu",
-        "Keyの怒浪_hanBingZhenZhu",
-        "Keyの晴朗_hanBingZhenZhu",
-        "Keyの狂风_hanBingZhenZhu",
-        "Keyの阿伦_hanBingZhenZhu",
-        "Keyの神龙_hongShuiZhenZhu",
-        "Keyの怒浪_hongShuiZhenZhu",
-        "Keyの晴朗_hongShuiZhenZhu",
-        "Keyの狂风_hongShuiZhenZhu",
-        "Keyの阿伦_hongShuiZhenZhu",
-        "Keyの神龙_tianQueZhenZhu",
-        "Keyの怒浪_tianQueZhenZhu",
-        "Keyの晴朗_tianQueZhenZhu",
-        "Keyの狂风_tianQueZhenZhu",
-        "Keyの阿伦_tianQueZhenZhu",
-        "Keyの神龙_hongShaZhenZhu",
-        "Keyの怒浪_hongShaZhenZhu",
-        "Keyの晴朗_hongShaZhenZhu",
-        "Keyの狂风_hongShaZhenZhu",
-        "Keyの阿伦_hongShaZhenZhu",
-        "Keyの神龙_fengHouZhenZhu",
-        "Keyの怒浪_fengHouZhenZhu",
-        "Keyの晴朗_fengHouZhenZhu",
-        "Keyの狂风_fengHouZhenZhu",
-        "Keyの阿伦_fengHouZhenZhu",
-        "Keyの神龙_jinGuangZhenZhu",
-        "Keyの怒浪_jinGuangZhenZhu",
-        "Keyの晴朗_jinGuangZhenZhu",
-        "Keyの狂风_jinGuangZhenZhu",
-        "Keyの阿伦_jinGuangZhenZhu",
-        "Keyの神龙_diLieZhenZhu",
-        "Keyの怒浪_diLieZhenZhu",
-        "Keyの晴朗_diLieZhenZhu",
-        "Keyの狂风_diLieZhenZhu",
-        "Keyの阿伦_diLieZhenZhu",
-        "Keyの神龙_lieYanZhenZhu",
-        "Keyの怒浪_lieYanZhenZhu",
-        "Keyの晴朗_lieYanZhenZhu",
-        "Keyの狂风_lieYanZhenZhu",
-        "Keyの阿伦_lieYanZhenZhu",
-        "Keyの神龙_huaXueZhenZhu",
-        "Keyの怒浪_huaXueZhenZhu",
-        "Keyの晴朗_huaXueZhenZhu",
-        "Keyの狂风_huaXueZhenZhu",
-        "Keyの阿伦_huaXueZhenZhu",
-        "Keyの神龙_luoPoZhenZhu",
-        "Keyの怒浪_luoPoZhenZhu",
-        "Keyの晴朗_luoPoZhenZhu",
-        "Keyの狂风_luoPoZhenZhu",
-        "Keyの阿伦_luoPoZhenZhu"
-    ]
+    "Kanonの_diLieZhenZhu",
+    "Keyの怒浪_diLieZhenZhu"
 ]
     
 

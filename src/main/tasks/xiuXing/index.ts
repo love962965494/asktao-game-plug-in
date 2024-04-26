@@ -330,7 +330,7 @@ async function executePairTask(
   }
 
   // 战斗结束
-  await sleep(3000)
+  await sleep(5000)
   // 检查是否遇到老君
   for (const teamLeaderWindow of teamLeaderWindows) {
     await hasMeetLaoJun(teamLeaderWindow)

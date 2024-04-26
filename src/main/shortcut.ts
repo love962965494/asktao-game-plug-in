@@ -17,6 +17,7 @@ import { hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTas
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
+import { displayGameWindows, liDui, yiJianZuDui } from './tasks/basicTasks'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -62,7 +63,7 @@ export function registerGlobalShortcut() {
 
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    await screenCaptureToFile(srcImagePath, [577, 108], [170, 32])
+    await screenCaptureToFile(srcImagePath, [1326, 563], [75, 85])
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -102,19 +103,23 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
     const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
-    const gameWindow = allGameWindows[4]
+    const gameWindow = allGameWindows[3]
     await gameWindow.setForeground()
-    let hasFinished = false
-    while (!hasFinished) {
-      await sleep(5000)
-      const hasMeet = await hasMeetLaoJun(gameWindow)
+    await liDui()
+    await sleep(200)
+    await yiJianZuDui(gameWindow.roleInfo.roleName)
+    
+    // let hasFinished = false
+    // while (!hasFinished) {
+    //   await sleep(5000)
+    //   const hasMeet = await hasMeetLaoJun(gameWindow)
 
-      if (hasMeet) {
-        console.log(new Date().toLocaleTimeString());
+    //   if (hasMeet) {
+    //     console.log(new Date().toLocaleTimeString());
         
-        hasFinished = true
-      }
-    }
+    //     hasFinished = true
+    //   }
+    // }
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

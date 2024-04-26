@@ -1,16 +1,20 @@
 import { screen } from 'electron'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { getGameWindows } from '../../utils/systemCotroll'
-import { sleep } from '../../utils/toolkits'
+import { randomName, sleep } from '../../utils/toolkits'
 import robotUtils from '../../utils/robot'
 import robotjs from 'robotjs'
 import {
   clickButton,
   clickGamePoint,
   moveMouseTo,
+  moveMouseToAndClick,
   moveMouseToAndClickUseColor,
   moveMouseToBlank,
 } from '../../utils/common'
+import path from 'path'
+import { pythonImagesPath } from '../../paths'
+import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 
 // 组队
 export async function groupTeam(teamIndex: number) {
@@ -92,6 +96,7 @@ export async function teamLeaderByTurn() {
 }
 
 // 一键组队
+const yiJianZuDuiSize = [75, 85]
 export async function yiJianZuDui(roleName: string) {
   await getGameWindows()
   const gameWindow = GameWindowControl.getGameWindowByRoleName(roleName)
@@ -102,9 +107,21 @@ export async function yiJianZuDui(roleName: string) {
 
   await clickGamePoint('活动图标', 'yiJianZuDui')
   await sleep(500)
-  await clickGamePoint('一键组队', 'yiJianZuDui', {
-    callback: () => undefined,
+  await moveMouseToBlank()
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/yiJianZuDui.jpg')
+  const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const position = await findImagePositions(tempCapturePath, templateImagePath)
+  await moveMouseToAndClick(templateImagePath, {
+    buttonName: 'yiJianZuDui',
+    position,
+    size: yiJianZuDuiSize
+  }, {
+    callback: () => undefined
   })
+  // await clickGamePoint('一键组队', 'yiJianZuDui', {
+  //   callback: () => undefined,
+  // })
   await sleep(500)
   robotUtils.keyTap('B', ['control'])
 }
@@ -203,20 +220,23 @@ const positions = [
   [125, 100],
   [1920 - 800 - 125, 100],
   [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) + 60],
-  [125, 1040 - 625 - 100],
-  [1920 - 800 - 125, 1040 - 625 - 100],
+  [125, 1040 - 625 - 80],
+  [1920 - 800 - 125, 1040 - 625 - 80],
 ]
 export async function displayGameWindows() {
-  const teamWindowsWithGroup = await getTeamsInfo()
+  await getGameWindows()
+  const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
 
-  for (const [index1, teamWindows] of Object.entries(teamWindowsWithGroup)) {
-    for (const [index2, teamWindow] of Object.entries(teamWindows)) {
-      await teamWindow.setForeground()
-      await teamWindow.restoreGameWindow()
-      const index = Number(index1) + Number(index2)
-      const position = positions[index]
-      teamWindow.setPosition(position[0], position[1])
-      await sleep(100)
-    }
+  for (const gameWindow of allGameWindows) {
+    gameWindow.restoreGameWindow()
+  }
+
+  for (const [index, gameWindow] of Object.entries(allGameWindows)) {
+    await gameWindow.setForeground()
+    const position = positions[+index]
+
+    gameWindow.setPosition(position[0], position[1])
+    await sleep(100)
+    
   }
 }

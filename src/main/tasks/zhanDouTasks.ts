@@ -93,14 +93,13 @@ export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
 
 // 等待老君答题完毕
 export async function waitLaoJunDaTi() {
-  const res = await dialog.showMessageBox({
+  await dialog.showMessageBox({
     type: 'info',
     buttons: ['答题完毕'],
     message: '遇到老君了，快来答题！',
   })
 
-  console.log('res: ', res);
-  
+  await getGameWindows()
 }
 
 // 点击继续补充自动战斗
