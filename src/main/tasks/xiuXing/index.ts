@@ -216,7 +216,7 @@ export async function getTaskProgress(gameWindows: GameWindowControl[], allTask:
 
     for (const npc of npcs) {
       const npcTemplatePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${npc.pinYin}.jpg`)
-      const found = await findImageWithinTemplate(tempCapturePath, npcTemplatePath, 0.6)
+      const found = await findImageWithinTemplate(tempCapturePath, npcTemplatePath, 0.7)
 
       if (found) {
         restTasks.push(`${gameWindow.roleInfo.roleName}_${npc.pinYin}`)

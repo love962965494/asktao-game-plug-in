@@ -97,6 +97,7 @@ export async function teamLeaderByTurn() {
 
 // 一键组队
 const yiJianZuDuiSize = [75, 85]
+let zuDuiPosition: number[]
 export async function yiJianZuDui(roleName: string) {
   await getGameWindows()
   const gameWindow = GameWindowControl.getGameWindowByRoleName(roleName)
@@ -107,21 +108,25 @@ export async function yiJianZuDui(roleName: string) {
 
   await clickGamePoint('活动图标', 'yiJianZuDui')
   await sleep(500)
-  await moveMouseToBlank()
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/yiJianZuDui.jpg')
-  const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
-  await screenCaptureToFile(tempCapturePath)
-  const position = await findImagePositions(tempCapturePath, templateImagePath)
-  await moveMouseToAndClick(templateImagePath, {
-    buttonName: 'yiJianZuDui',
-    position,
-    size: yiJianZuDuiSize
-  }, {
-    callback: () => undefined
-  })
-  // await clickGamePoint('一键组队', 'yiJianZuDui', {
-  //   callback: () => undefined,
-  // })
+
+  if (!zuDuiPosition) {
+    await moveMouseToBlank()
+    const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
+    zuDuiPosition = await findImagePositions(tempCapturePath, templateImagePath)
+  }
+  await moveMouseToAndClick(
+    templateImagePath,
+    {
+      buttonName: 'yiJianZuDui',
+      position: zuDuiPosition,
+      size: yiJianZuDuiSize,
+    },
+    {
+      callback: () => undefined,
+    }
+  )
   await sleep(500)
   robotUtils.keyTap('B', ['control'])
 }
@@ -237,6 +242,5 @@ export async function displayGameWindows() {
 
     gameWindow.setPosition(position[0], position[1])
     await sleep(100)
-    
   }
 }

@@ -2,7 +2,7 @@ import { MyPromise } from '../../utils/customizePromise'
 import { pythonImagesPath, staticPath } from '../../paths'
 import GameWindowControl from '../../utils/gameWindowControll'
 import path from 'path'
-import { randomName, sleep } from '../../utils/toolkits'
+import { randomName, randomName1, sleep } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
 import { getGameWindows } from '../../utils/systemCotroll'
@@ -68,7 +68,7 @@ export async function buChongZhuangTai(
 // 判断是否遇到老君
 export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
-  const filePath = path.join(pythonImagesPath, `temp/LaoJun_${randomName()}.jpg`)
+  const filePath = path.join(pythonImagesPath, `temp/LaoJun_${randomName1()}.jpg`)
   await screenCaptureToFile(filePath)
   const pinTu = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/pinTu.jpg')
   const xuanZe = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/xuanZe.jpg')

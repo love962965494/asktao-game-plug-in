@@ -63,7 +63,8 @@ export function registerGlobalShortcut() {
 
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    await screenCaptureToFile(srcImagePath, [1326, 563], [75, 85])
+    // 1304, 464
+    await screenCaptureToFile(srcImagePath, [1304, 464], [35, 30])
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -90,7 +91,6 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Shift+G', async () => {
     await getGameWindows()
     const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
-    
 
     for (const gameWindow of allGameWindows) {
       gameWindow.restoreGameWindow()
@@ -102,13 +102,24 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
-    const gameWindow = allGameWindows[3]
-    await gameWindow.setForeground()
-    await liDui()
-    await sleep(200)
-    await yiJianZuDui(gameWindow.roleInfo.roleName)
-    
+    const teamWindows = await GameWindowControl.getTeamWindowsWithSequence(1)
+    const { npcs } = global.appContext.gameTask['十绝阵'] as {
+      npcs: {
+        zh: string
+        pinYin: string
+      }[]
+    }
+    const allTask = [teamWindows].map((teamWindows) => {
+      const tasks = npcs.reduce((tasks, npc) => {
+        tasks = [...tasks, ...teamWindows.map((gameWindow) => `${gameWindow?.roleInfo.roleName}_${npc.pinYin}`)]
+
+        return tasks
+      }, [] as string[])
+
+      return tasks
+    })
+    await getTaskProgress(teamWindows, allTask[0], '十绝阵')
+
     // let hasFinished = false
     // while (!hasFinished) {
     //   await sleep(5000)
@@ -116,7 +127,7 @@ export function registerGlobalShortcut() {
 
     //   if (hasMeet) {
     //     console.log(new Date().toLocaleTimeString());
-        
+
     //     hasFinished = true
     //   }
     // }

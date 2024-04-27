@@ -71,6 +71,7 @@ export async function meiRiRiChang_ZuDui() {
   const teamWindowsWithGroup = await getTeamsInfo()
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()
+    await chiXiang(2)
     robotUtils.keyTap('B', ['control'])
     await sleep(500)
     robotUtils.keyTap('escape')
