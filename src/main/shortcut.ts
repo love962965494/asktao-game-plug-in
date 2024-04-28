@@ -64,7 +64,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1304, 464], [35, 30])
+    await screenCaptureToFile(srcImagePath, [858, 604], [80, 27])
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -89,12 +89,7 @@ export function registerGlobalShortcut() {
 
   // TODO: 缩小
   globalShortcut.register('CommandOrControl+Shift+G', async () => {
-    await getGameWindows()
-    const allGameWindows = [...GameWindowControl.getAllGameWindows().values()]
-
-    for (const gameWindow of allGameWindows) {
-      gameWindow.restoreGameWindow()
-    }
+    await displayGameWindows()
   })
 
   // TODO: 测试用

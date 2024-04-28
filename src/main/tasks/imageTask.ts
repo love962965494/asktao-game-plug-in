@@ -7,6 +7,7 @@ import { getProcessesByName, killProcessesByName } from '../../utils/systemCotro
 import GameWindowControl from '../../utils/gameWindowControll'
 import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 import { sleep } from '../../utils/toolkits'
+import { clickGamePoint } from '../../utils/common'
 
 export function registerImageTasks() {
   ipcMain.on('start-game', async () => {
@@ -57,7 +58,10 @@ export function registerImageTasks() {
           robotUtil.keyTap('enter')
 
           // TODO: 后续实现选择指定线路功能
-          await sleep(1000)
+          await sleep(2000)
+          await clickGamePoint('十三线', 'login', {
+            callback: () => undefined
+          })
           robotUtil.keyTap('enter')
 
           // TODO: 后续实现选择指定角色
