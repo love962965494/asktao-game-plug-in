@@ -194,7 +194,7 @@ export async function yiJianRiChang() {
 
   await meiRiRiChang_ZuDui()
 
-  await sleep(3 * 60 * 60 * 1000)
+  await sleep(2 * 60 * 60 * 1000)
 
   await meiRiRiChang_DanRen()
 }

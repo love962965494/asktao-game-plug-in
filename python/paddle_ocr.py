@@ -20,7 +20,7 @@ def ocr_image(image_path, lang = 'ch'):
 if __name__ == "__main__":
     image_path = sys.argv[1]
     lang = sys.argv[2]
-    # image_path = 'C:/Users/sc/Desktop/123_1.PNG'
+    # image_path = 'C:/Users/sc/Desktop/testScreenCapture1.jpg'
     # lang = 'ch'
     results = ocr_image(image_path, lang)
     formatRusult = []

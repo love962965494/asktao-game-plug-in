@@ -42,12 +42,6 @@ export function randomName() {
   // return Math.random().toString(16).slice(3)
 }
 
-let index1 = 0
-export function randomName1() {
-  index1++
-  return index1
-}
-
 export function randomNum(num: number) {
   return Math.floor(Math.random() * num)
 }

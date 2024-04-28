@@ -5,7 +5,9 @@ import path from 'path'
 import { pythonImagesPath } from '../paths'
 import {
   findImagePositions,
+  findImageWithinTemplate,
   findMultiMatchPositions,
+  matchImageWithTemplate,
   prePorcessingImage,
   screenCaptureToFile,
 } from '../utils/fileOperations'
@@ -13,7 +15,7 @@ import robotjs from 'robotjs'
 import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from './tasks/npcTasks'
 import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
-import { hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
+import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
@@ -64,7 +66,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [858, 604], [80, 27])
+    await screenCaptureToFile(srcImagePath, [20, 400], [438, 120])
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -97,23 +99,9 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const teamWindows = await GameWindowControl.getTeamWindowsWithSequence(1)
-    const { npcs } = global.appContext.gameTask['十绝阵'] as {
-      npcs: {
-        zh: string
-        pinYin: string
-      }[]
-    }
-    const allTask = [teamWindows].map((teamWindows) => {
-      const tasks = npcs.reduce((tasks, npc) => {
-        tasks = [...tasks, ...teamWindows.map((gameWindow) => `${gameWindow?.roleInfo.roleName}_${npc.pinYin}`)]
-
-        return tasks
-      }, [] as string[])
-
-      return tasks
-    })
-    await getTaskProgress(teamWindows, allTask[0], '十绝阵')
+    const gameWindow = GameWindowControl.getGameWindowByRoleName('Keyの阿伦')!
+    const inBattle = await isInBattle(gameWindow)
+    
 
     // let hasFinished = false
     // while (!hasFinished) {
