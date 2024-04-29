@@ -57,6 +57,10 @@
         "city": "无名小镇",
         "position": [1404, 462],
         "size": [100, 30]
+      },
+      "smallWindow": {
+        "position": [355, 275],
+        "size": [308, 139]
       }
     }
   },

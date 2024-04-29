@@ -56,17 +56,21 @@ export function registerGlobalShortcut() {
         gameWindow.restoreGameWindow()
       }
 
-      const gameWindow = GameWindowControl.getGameWindowByRoleName('KeyのLovely')
+      const gameWindow = GameWindowControl.getGameWindowByRoleName('Kanonの')
+      await gameWindow?.setForeground()
       const { left, top } = gameWindow?.getDimensions()!
       const randomName1 = 'testScreenCapture'
       let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-      await screenCaptureToFile(srcImagePath, [left + 360, top + 304], [325, 56])
+      await screenCaptureToFile(srcImagePath, [left + 355, top + 275], [308, 139])
     }
 
-    const randomName1 = 'testScreenCapture'
-    let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    // 1304, 464
-    await screenCaptureToFile(srcImagePath, [469, 27], [985, 120])
+    _smallScreenCapture()
+    // const randomName1 = 'testScreenCapture'
+    // let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
+    // // 1304, 464
+    // await screenCaptureToFile(srcImagePath, [1321, 463], [35, 32])
+
+
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -98,10 +102,7 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindow = GameWindowControl.getGameWindowByRoleName('AngelBeat')!
-    const inBattle = await isInBattle(gameWindow)
-    console.log('inBattle: ', inBattle);
+    await meiRiRiChang_DanRen()
     
 
     // let hasFinished = false

@@ -7,7 +7,7 @@ import { hasGameTask, searchGameTask } from '../gameTask'
 import { chiXiang } from '../wuPinTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
+import { findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
 import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
@@ -54,11 +54,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
       const hasTask = await hasGameTask(taskType)
       let tasks: string[] = []
       if (hasTask) {
-        tasks = await getTaskProgress(
-          teamWindows,
-          allTask[+index],
-          taskType
-        )
+        tasks = await getTaskProgress(teamWindows, allTask[+index], taskType)
       }
       if (!hasTask || tasks.length === 0) {
         await lingQuRenWu1(teamWindows, taskType)
@@ -206,21 +202,41 @@ export async function getTaskProgress(gameWindows: GameWindowControl[], allTask:
     await gameWindow.setForeground()
 
     await searchGameTask(taskType)
-    const { npcs, content } = global.appContext.gameTask[taskType as keyof IGameTask] as {
-      npcs: { zh: string; pinYin: string }[]
-      content: any
-    }
-    const { position, size } = content
-    const tempCapturePath = path.join(pythonImagesPath, `temp/getTaskProgress_${randomName()}.jpg`)
-    await screenCaptureToFile(tempCapturePath, position, size)
 
-    for (const npc of npcs) {
-      const npcTemplatePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${npc.pinYin}.jpg`)
-      const found = await findImageWithinTemplate(tempCapturePath, npcTemplatePath, 0.7)
-
-      if (found) {
-        restTasks.push(`${gameWindow.roleInfo.roleName}_${npc.pinYin}`)
+    {
+      await gameWindow.restoreGameWindow()
+      const { npcs, content } = global.appContext.gameTask[taskType as keyof IGameTask] as {
+        npcs: { zh: string; pinYin: string }[]
+        content: any
       }
+
+      const { position, size } = content.smallWindow
+      const tempCapturePath = path.join(pythonImagesPath, `temp/getTaskProgress_${randomName()}.jpg`)
+      const { left, top } = gameWindow.getDimensions()!
+      await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
+      const taskContent = await paddleOcr(tempCapturePath, false, 'ch')
+      const taskString = taskContent.join('')
+
+      for (const npc of npcs) {
+        let found = false
+        if (npc.zh === '天阙阵主') {
+          if (taskString.includes('天')) {
+            found = true
+          }
+        } else {
+          if (taskString.includes(npc.zh)) {
+            found = true
+          }
+        }
+        // const npcTemplatePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${npc.pinYin}.jpg`)
+        // const found = await findImageWithinTemplate(tempCapturePath, npcTemplatePath, 0.7)
+
+        if (found) {
+          restTasks.push(`${gameWindow.roleInfo.roleName}_${npc.pinYin}`)
+        }
+      }
+
+      await gameWindow.maximizGameWindow()
     }
   }
 
