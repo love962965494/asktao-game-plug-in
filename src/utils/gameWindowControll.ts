@@ -143,10 +143,10 @@ export default class GameWindowControl {
       } = screen.getPrimaryDisplay()
 
       alternateWindow.setBounds({
-        x: -200,
-        y: -200,
-        height: height + 400,
-        width: width + 400,
+        x: -400,
+        y: -400,
+        height: height + 800,
+        width: width + 800,
       })
       alternateWindow.loadFile(path.resolve(rendererPath, 'subWindow.html'))
     }

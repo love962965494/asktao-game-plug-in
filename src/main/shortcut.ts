@@ -66,7 +66,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [20, 400], [438, 120])
+    await screenCaptureToFile(srcImagePath, [469, 27], [985, 120])
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -99,8 +99,9 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const gameWindow = GameWindowControl.getGameWindowByRoleName('Keyの阿伦')!
+    const gameWindow = GameWindowControl.getGameWindowByRoleName('AngelBeat')!
     const inBattle = await isInBattle(gameWindow)
+    console.log('inBattle: ', inBattle);
     
 
     // let hasFinished = false

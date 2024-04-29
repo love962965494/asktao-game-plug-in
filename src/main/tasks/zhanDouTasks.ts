@@ -2,7 +2,7 @@ import { MyPromise } from '../../utils/customizePromise'
 import { pythonImagesPath, staticPath } from '../../paths'
 import GameWindowControl from '../../utils/gameWindowControll'
 import path from 'path'
-import { randomName, sleep } from '../../utils/toolkits'
+import { randomName, randomPixelNum, sleep } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
 import { clickGamePoint, moveMouseTo, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
 import { getGameWindows } from '../../utils/systemCotroll'
@@ -15,7 +15,6 @@ import { displayGameWindows } from './basicTasks'
 export async function isInBattle(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
   const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗']
-  await moveMouseTo(position[0], position[1])
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
