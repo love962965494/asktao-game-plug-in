@@ -60,7 +60,7 @@ export function registerImageTasks() {
           // TODO: 后续实现选择指定线路功能
           await sleep(2000)
           await clickGamePoint('十三线', 'login', {
-            callback: () => undefined
+            callback: () => true
           })
           robotUtil.keyTap('enter')
 

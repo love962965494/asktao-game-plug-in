@@ -71,5 +71,31 @@
   "仙界通缉": {
     "description": "[XJTJ]",
     "content": {}
+  },
+  "修行任务": {
+    "pinYin": "xiuXingRenWu",
+    "description": "[XXRW]",
+    "npcs": [
+      { "zh": "雷神", "pinYin": "leiShen" },
+      { "zh": "花神", "pinYin": "huaShen" },
+      { "zh": "龙神", "pinYin": "longShen" },
+      { "zh": "炎神", "pinYin": "yanShen" },
+      { "zh": "山神", "pinYin": "shanShen" }
+    ],
+    "content": {
+      "position": [847, 465],
+      "size": [740, 134],
+      "taskNpc": {
+        "npcName": "liuRuChen",
+        "conversitions": ["[xiuXing]woZhengXiangQuBaiHuiLingShenQingQiuZhiDianNe", "[lingQu]WoZheJiuQu"],
+        "city": "东海渔村",
+        "position": [1404, 462],
+        "size": [100, 30]
+      },
+      "smallWindow": {
+        "position": [355, 275],
+        "size": [308, 56]
+      }
+    }
   }
 }

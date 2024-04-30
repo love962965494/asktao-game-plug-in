@@ -88,6 +88,25 @@
           "size": [260, 34]
         }
       }
+    },
+    "liuRuChen": {
+      "zh": "柳如烟",
+      "search": {
+        "abstract": "lrc",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "[xiuXing]woZhengXiangQuBaiHuiLingShenQingQiuZhiDianNe": {
+          "zh": "【修行】我正想去拜会灵神请求指点呢",
+          "position": [536, 650],
+          "size": [658, 34]
+        },
+        "[lingQu]WoZheJiuQu": {
+          "zh": "【领取】我这就去",
+          "position": [536, 608],
+          "size": [260, 34]
+        }
+      }
     }
   },
   "无名小镇": {
@@ -206,6 +225,20 @@
           "size": [308, 34]
         }
       }
+    },
+    "yanShen": {
+      "zh": "炎神",
+      "search": {
+        "abstract": "ys",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingLingShenDuoDuoZhiJiao" : {
+          "zh": "请灵神多多指教",
+          "position": [528, 551],
+          "size": [236, 34]
+        }
+      }
     }
   },
   "五龙山": {
@@ -220,6 +253,20 @@
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
           "size": [308, 34]
+        }
+      }
+    },
+    "leiShen": {
+      "zh": "雷神",
+      "search": {
+        "abstract": "ls",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingLingShenDuoDuoZhiJiao" : {
+          "zh": "请灵神多多指教",
+          "position": [528, 551],
+          "size": [236, 34]
         }
       }
     }
@@ -238,6 +285,20 @@
           "size": [308, 34]
         }
       }
+    },
+    "huaShen": {
+      "zh": "花神",
+      "search": {
+        "abstract": "hs",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingLingShenDuoDuoZhiJiao" : {
+          "zh": "请灵神多多指教",
+          "position": [528, 551],
+          "size": [236, 34]
+        }
+      }
     }
   },
   "凤凰山": {
@@ -254,6 +315,20 @@
           "size": [308, 34]
         }
       }
+    },
+    "longShen": {
+      "zh": "龙神",
+      "search": {
+        "abstract": "ls",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingLingShenDuoDuoZhiJiao" : {
+          "zh": "请灵神多多指教",
+          "position": [528, 551],
+          "size": [236, 34]
+        }
+      }
     }
   },
   "骷髅山": {
@@ -268,6 +343,20 @@
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
           "size": [308, 34]
+        }
+      }
+    },
+    "shanShen": {
+      "zh": "山神",
+      "search": {
+        "abstract": "ss",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "qingLingShenDuoDuoZhiJiao" : {
+          "zh": "请灵神多多指教",
+          "position": [528, 551],
+          "size": [236, 34]
         }
       }
     }

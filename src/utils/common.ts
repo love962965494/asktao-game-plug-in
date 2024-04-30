@@ -83,7 +83,11 @@ export async function moveMouseToAndClick(
       await sleep(1000)
 
       if (otherOptions.callback) {
-        await otherOptions.callback()
+        const success = await otherOptions.callback()
+
+        if (!success) {
+          isInRange = false
+        }
       } else {
         async function defaultCallback() {
           await moveMouseToBlank()

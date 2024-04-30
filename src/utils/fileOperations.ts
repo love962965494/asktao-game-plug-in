@@ -3,11 +3,11 @@ import Jimp from 'jimp'
 import path from 'path'
 import child_process from 'child_process'
 import { pythonImagesPath, pythonPath } from '../paths'
-import random from 'random'
 import sharp from 'sharp'
 import robotjs from 'robotjs'
 import { randomName } from './toolkits'
 import { MyPromise } from './customizePromise'
+import commonConfig from '../constants/config.json'
 
 /**
  * 删除目录和下边所有文件
@@ -86,7 +86,7 @@ async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang
 
   return MyPromise((resolve, reject) => {
     child_process.exec(
-      `C:\\Users\\sc\\paddle_env\\Scripts\\python.exe -u ${filePath} ${targetImagePath} ${lang}`,
+      `${commonConfig.pythonPath} -u ${filePath} ${targetImagePath} ${lang}`,
       (error, stdout) => {
         if (error) {
           console.error(`stderr: ${error}`)

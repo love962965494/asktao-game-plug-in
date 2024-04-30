@@ -33,9 +33,9 @@ export async function searchGameTask(taskName: string) {
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
-  await clickGamePoint('当前任务', 'searchGameTask', { callback: () => undefined })
+  await clickGamePoint('当前任务', 'searchGameTask', { callback: () => true })
   await sleep(500)
-  await clickGamePoint('当前任务-搜索框', 'searchGameTask', { callback: () => undefined })
+  await clickGamePoint('当前任务-搜索框', 'searchGameTask', { callback: () => true })
   await sleep(500)
 
   clipboard.writeText(Buffer.from(description, 'utf-8').toLocaleString())
@@ -60,7 +60,7 @@ export async function escShouCangTasks(taskName: string) {
   robotUtils.keyTap('escape')
   await sleep(300)
   await clickGamePoint('收藏任务', 'xianJieShenBu', {
-    callback: () => undefined
+    callback: () => true
   })
   const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)

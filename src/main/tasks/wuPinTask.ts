@@ -16,7 +16,7 @@ export async function findWuPinPosition(name: string) {
 
   for (const packageName of packages) {
     // TODO: 对于切换tab这种按钮高亮的，考虑实现callback函数
-    await clickGamePoint(packageName, 'hasWuPin', { callback: () => undefined })
+    await clickGamePoint(packageName, 'hasWuPin', { callback: () => true })
 
     await sleep(200)
 
@@ -56,7 +56,7 @@ export async function useWuPin(name: string, times: number = 1) {
         },
         {
           rightClick: true,
-          callback: () => undefined,
+          callback: () => true,
         }
       )
       await sleep(200)

@@ -124,7 +124,7 @@ export async function yiJianZuDui(roleName: string) {
       size: yiJianZuDuiSize,
     },
     {
-      callback: () => undefined,
+      callback: () => true,
     }
   )
   await sleep(500)

@@ -6,13 +6,14 @@ import path from 'path'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { ipcMain } from 'electron'
 import robotUtils from '../../../utils/robot'
-import { findImagePositions, screenCaptureToFile } from '../../../utils/fileOperations'
+import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 import { getTeamsInfo, liDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
 import { goToNPCAndTalk, hasGoneToNPC } from '../npcTasks'
 import { isInBattle, waitFinishZhanDou } from '../zhanDouTasks'
 import { MyPromise } from '../../../utils/customizePromise'
 import { chiXiang } from '../wuPinTask'
+import commonConfig from '../../../constants/config.json'
 
 export async function registerYiJianQianDao() {
   ipcMain.on('yi-jian-qian-dao', async () => yiJianQianDao())
@@ -50,7 +51,7 @@ export async function yiJianQianDao() {
     )
     await sleep(500)
     await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {
-      callback: () => undefined,
+      callback: () => true,
     })
     await sleep(500)
     robotUtils.keyTap('B', ['control'])
@@ -76,7 +77,7 @@ export async function meiRiRiChang_ZuDui() {
     await sleep(500)
     robotUtils.keyTap('escape')
     await clickGamePoint('收藏任务_图标', 'meiRiRiChang_ZuDui', {
-      callback: () => undefined,
+      callback: () => true,
       threshold: 20,
       randomPixNums: [5, 2],
     })
@@ -94,7 +95,7 @@ export async function meiRiRiChang_ZuDui() {
     }
 
     await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui', {
-      callback: () => undefined,
+      callback: () => true,
     })
   }
 }
@@ -118,7 +119,7 @@ export async function meiRiRiChang_DanRen() {
       await sleep(500)
       robotUtils.keyTap('escape')
       await clickGamePoint('收藏任务_图标', 'meiRiRiChang_ZuDui', {
-        callback: () => undefined,
+        callback: () => true,
         threshold: 20,
         randomPixNums: [5, 2],
       })
@@ -138,7 +139,7 @@ export async function meiRiRiChang_DanRen() {
       }
 
       await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui', {
-        callback: () => undefined,
+        callback: () => true,
       })
     }
   }
@@ -166,7 +167,7 @@ export async function yiJianRiChang() {
   const teamWindowsWithGroup = await getTeamsInfo()
   await xianJieTongJi()
 
-  await sleep(60 * 1000)
+  await sleep(4 * 60 * 60 * 1000)
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()
@@ -177,7 +178,14 @@ export async function yiJianRiChang() {
 
         if (inBattle) {
           await clickGamePoint('终止', 'yiJianRiChang', {
-            callback: () => undefined
+            callback: async () => {
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhiZhanZhou.jpg')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+              return found
+            }
           })
           await sleep(300)
           robotUtils.keyTap('enter')
@@ -194,7 +202,7 @@ export async function yiJianRiChang() {
 
   await meiRiRiChang_ZuDui()
 
-  await sleep(2 * 60 * 60 * 1000)
+  await sleep(commonConfig.zuDuiTaskTime * 60 * 60 * 1000)
 
   await meiRiRiChang_DanRen()
 }

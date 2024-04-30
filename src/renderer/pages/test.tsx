@@ -53,6 +53,9 @@ export default function Test() {
         <Button type="primary" onClick={() => ipcRenderer.send('shi-jue-zhen')}>
           十绝阵
         </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('xiu-xing-ren-wu')}>
+          修行任务
+        </Button>
         <Button type="primary" onClick={() => ipcRenderer.send('xian-jie-shen-bu')}>
           仙界神捕
         </Button>

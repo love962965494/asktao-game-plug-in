@@ -120,7 +120,7 @@ export async function talkToNPC(city: string, npcName: string, conversition: str
     {
       buttonName: 'talkToNPC',
       position: [position[0] + Math.round(size[0] / 2) - 50, position[1]],
-      size: [200, size[1]],
+      size: [Math.min(200, size[0]) , size[1]],
     },
     '#fa0000'
   )

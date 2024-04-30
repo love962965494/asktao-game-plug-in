@@ -18,6 +18,7 @@ export async function registerXianRenZhiLu() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
   ipcMain.on('shi-jue-zhen', shiJueZhen)
   ipcMain.on('xian-jie-shen-bu', xianJieShenBu)
+  ipcMain.on('xiu-xing-ren-wu', xiuXianRenWu)
 }
 
 async function xianRenZhiLu() {
@@ -26,6 +27,10 @@ async function xianRenZhiLu() {
 
 async function shiJueZhen() {
   await xiuXingTask('十绝阵')
+}
+
+async function xiuXianRenWu() {
+  await xiuXingTask('修行任务')
 }
 
 async function xiuXingTask(taskType: string, isFirst: boolean = true) {
@@ -57,7 +62,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
         tasks = await getTaskProgress(teamWindows, allTask[+index], taskType)
       }
       if (!hasTask || tasks.length === 0) {
-        await lingQuRenWu1(teamWindows, taskType)
+        await lingQuRenWu(teamWindows, taskType)
         tasks = allTask[+index]
       }
 
@@ -65,7 +70,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
     }
   } else {
     for (const teamWindows of teamWindowsWithGroup) {
-      await lingQuRenWu1(teamWindows, taskType)
+      await lingQuRenWu(teamWindows, taskType)
     }
 
     restTasksWithGroup = allTask
@@ -83,66 +88,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
   }
 }
 
-export async function lingQuRenWu(teamLeaderWindow: GameWindowControl, teamMemberWindows: GameWindowControl[]) {
-  teamLeaderWindow.setForeground()
-  await sleep(500)
-  // 回家
-  robotUtils.keyTap('f1')
-  await sleep(500)
-  let city = ''
-  // 去天墉城
-  await goToNPCAndTalk({
-    npcName: 'jieYinDaoTong',
-    intervalTime: 2,
-    conversition: 'woYaoHuiTianYongChengBanXieShi',
-    gameWindow: teamLeaderWindow,
-  })
-  await sleep(1000)
-
-  city = '天墉城'
-  // 去东海渔村
-  await goToNPCAndTalk({
-    city: '天墉城',
-    npcName: 'cheFu',
-    conversition: 'songWoQuDongHaiYuCun',
-    gameWindow: teamLeaderWindow,
-  })
-
-  await sleep(1000)
-
-  city = '东海渔村'
-  // 柳如烟 -> 接任务
-  // 去东海渔村
-  await goToNPCAndTalk({
-    city: '东海渔村',
-    npcName: 'liuRuYan',
-    conversition: '[xianRenZhiLu]WoZhengXiangQuBaiHuiXianRenQingQiuZhiDianNe',
-    gameWindow: teamLeaderWindow,
-    calculatePosition: async () => {
-      await moveMouseToBlank()
-      const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/xianRenZhiLu.jpg`)
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
-      return position
-    },
-  })
-  await sleep(500)
-  await talkToNPC(city, 'liuRuYan', '[lingQu]WoZheJiuQu')
-  await sleep(1000)
-
-  // 每个队员依次领取任务
-  for (const gameWindow of teamMemberWindows) {
-    await gameWindow.setForeground()
-    await talkToNPC(city, 'liuRuYan', '[lingQu]WoZheJiuQu')
-    await sleep(1000)
-  }
-
-  await teamLeaderWindow.setForeground()
-  robotUtils.keyTap('escape')
-}
-
-export async function lingQuRenWu1(teamWindows: GameWindowControl[], taskType: string) {
+export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: string) {
   const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
   await teamLeaderWindow.setForeground()
   await searchGameTask(taskType)
@@ -202,6 +148,10 @@ export async function getTaskProgress(gameWindows: GameWindowControl[], allTask:
     await gameWindow.setForeground()
 
     await searchGameTask(taskType)
+
+    if (taskType === '修行任务') {
+      await sleep(2000)
+    }
 
     {
       await gameWindow.restoreGameWindow()
@@ -269,6 +219,7 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
 const conversitionMap = {
   仙人指路: 'qingXianRenCiJiao',
   十绝阵: 'qingDaShenZhiDian',
+  修行任务: 'qingLingShenDuoDuoZhiJiao'
 }
 async function executePairTask(
   pairTask: (string | undefined)[],

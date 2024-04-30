@@ -9,7 +9,7 @@ C:\Windows\system32
 4、python => cv2
 pip install opencv-python -i https://mirror.baidu.com/pypi/simple
 
-5、accounts.json
+5、accounts.json、config.json
 
 6、paddle ocr
   1、安装python3.10.2

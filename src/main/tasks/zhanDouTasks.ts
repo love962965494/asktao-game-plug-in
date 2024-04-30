@@ -119,7 +119,7 @@ export async function keepZiDong() {
         size: [120, 28],
       },
       {
-        callback: () => undefined,
+        callback: () => true,
         needPreProcessing: true,
         threshold: 30,
       }

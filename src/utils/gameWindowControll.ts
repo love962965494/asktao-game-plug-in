@@ -121,8 +121,6 @@ export default class GameWindowControl {
     await tempGameWindow.maximizGameWindow()
     await sleep(500)
 
-    console.log('teamWindows: ', teamWindows);
-    
     return teamWindows
   }
 
