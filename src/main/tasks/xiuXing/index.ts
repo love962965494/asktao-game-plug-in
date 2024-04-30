@@ -294,14 +294,15 @@ async function executePairTask(
   // 等待战斗结束
   for (const teamLeaderWindow of teamLeaderWindows) {
     await waitFinishZhanDou(teamLeaderWindow)
-  }
-
-  // 战斗结束
-  await sleep(3000)
-  // 检查是否遇到老君
-  for (const teamLeaderWindow of teamLeaderWindows) {
+    await sleep(2000)
     await hasMeetLaoJun(teamLeaderWindow)
   }
+
+  // // 战斗结束
+  // // 检查是否遇到老君
+  // for (const teamLeaderWindow of teamLeaderWindows) {
+  //   await hasMeetLaoJun(teamLeaderWindow)
+  // }
 
   // 补充状态，每5个任务补充一次
   if (taskType === '仙人指路' && taskIndex && taskIndex % 5 === 0) {

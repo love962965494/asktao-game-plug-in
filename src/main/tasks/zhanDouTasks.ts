@@ -80,8 +80,8 @@ export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
     findImageWithinTemplate(filePath, zhuanQuan, 0.7),
   ]).then(async (results) => {
     if (results.filter(Boolean).length > 0) {
-      await displayGameWindows()
       playSound().play(laoJunMp3)
+      await displayGameWindows()
       await waitLaoJunDaTi()
       return true
     }
