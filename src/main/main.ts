@@ -24,7 +24,6 @@ global.appContext = {
   mousePositions: [
     { position: [1760, 80], size: [50, 20] },
     { position: [130, 110], size: [40, 40] },
-    { position: [420, 1050], size: [150, 10] },
   ],
   gameConfig: {} as IGameConfig,
 }

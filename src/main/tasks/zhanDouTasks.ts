@@ -131,7 +131,9 @@ export async function keepZiDong() {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDouHuiHeShu.jpg')
           const tempCapturePath = path.join(pythonImagesPath, `temp/keepZiDong_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath, numPosition, numSize)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.7)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.6)
+          console.log('found: ', found);
+          
           return found
         },
         needPreProcessing: true,

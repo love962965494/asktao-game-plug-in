@@ -14,7 +14,12 @@ import {
 } from '../../utils/common'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { extractThemeColors, findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
+import {
+  extractThemeColors,
+  findImagePositions,
+  findImageWithinTemplate,
+  screenCaptureToFile,
+} from '../../utils/fileOperations'
 
 // 组队
 export async function groupTeam(teamIndex: number) {
@@ -106,7 +111,21 @@ export async function yiJianZuDui(roleName: string) {
   robotUtils.keyTap('B', ['control'])
   await sleep(200)
 
-  await clickGamePoint('活动图标', 'yiJianZuDui')
+  await clickGamePoint('活动图标', 'yiJianZuDui', {
+    callback: async () => {
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/huoDongZhongXin.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      if (found) {
+        return true
+      }
+
+      robotUtils.keyTap('B', ['control'])
+      return false
+    },
+  })
   await sleep(500)
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/yiJianZuDui.jpg')
 

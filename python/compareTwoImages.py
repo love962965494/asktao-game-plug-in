@@ -18,8 +18,8 @@ def compare_images(img1, img2, threshold):
     
     # 根据阈值判断是否认为两张图片相同
     meanDifference = np.mean(difference)
-    if meanDifference > 0:
-        if 0.1 < meanDifference < threshold:
+    if meanDifference > 0.1:
+        if meanDifference < threshold:
             return [1, meanDifference]
         else:
             return [-1, meanDifference]
@@ -31,8 +31,8 @@ if __name__ == "__main__":
     image1_path = sys.argv[1]
     image2_path = sys.argv[2]
     threshold_value = int(sys.argv[3])
-    # image1_path = 'C:/Users/sc/Desktop/Screenshot_1.png'
-    # image2_path = 'C:/Users/sc/Desktop/Screenshot_2.png'
+    # image1_path = 'C:/Users/sc/Desktop/liDui_1.jpg'
+    # image2_path = 'C:/Users/sc/Desktop/liDui_3.jpg'
     # threshold_value = 10
     # image2_path = 'C:/Users/asus/Desktop/groupTeam_JiaRu_2.jpg'
     found = compare_images(image1_path, image2_path, threshold_value)

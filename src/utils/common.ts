@@ -160,7 +160,7 @@ export async function moveMouseToAndClick(
     const callback =
       otherOptions.callback ||
       async function defaultCallback() {
-        const tempCapturePath = path.join(pythonImagesPath, `temp/moveMouseToAndClick_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName}_${randomName()}.jpg`)
         await screenCaptureToFile(tempCapturePath, fileInfo.position, fileInfo.size)
         const [result] = await compareTwoImages(tempCapturePath, templateImagePath, {
           threshold: otherOptions.threshold

@@ -69,7 +69,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [528, 580], [236, 34])
+    await screenCaptureToFile(srcImagePath, [824, 90], [260, 34])
 
 
     // await screenCaptureToFile(srcImagePath)
@@ -104,9 +104,16 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')
-    await gameWindow?.setForeground()
-    await searchGameTask('悬赏令')
+    const gameWindows = await GameWindowControl.getGameWindowByRoleName('Kanonの')
+    await gameWindows?.setForeground()
+
+    let i = 0
+    while (i < 100) {
+      await liDui()
+      await yiJianZuDui('Kanonの')
+      await sleep(1000)
+      i++
+    }
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {
