@@ -124,12 +124,24 @@ export async function meiRiRiChang_DanRen() {
       await sleep(500)
       robotUtils.keyTap('escape')
       await clickGamePoint('收藏任务_图标', 'meiRiRiChang_ZuDui', {
-        callback: () => true,
+        callback: async () => {
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongRenWuPeiZhi.jpg')
+          const tempCapturePath = path.join(pythonImagesPath, `temp/meiRiRiChang_DanRen_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+  
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+          return found
+        },
         threshold: 20,
         randomPixNums: [5, 2],
       })
       await sleep(500)
-      await clickGamePoint('收藏任务_单人', 'meiRiRiChang_DanRen')
+      await clickGamePoint('收藏任务_单人', 'meiRiRiChang_DanRen', {
+        tabOptions: {
+          isTab: true,
+          activeTabColor: '#785a00'
+        }
+      })
       await sleep(500)
 
       for (const task of riChangTasks_DanRen) {
@@ -170,7 +182,7 @@ export async function yiJianRiChang() {
   const teamWindowsWithGroup = await getTeamsInfo()
   await xianJieTongJi()
 
-  await sleep(60 * 1000)
+  await sleep(4 * 60 * 60 * 1000)
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()
@@ -207,5 +219,13 @@ export async function yiJianRiChang() {
 
   await sleep(commonConfig.zuDuiTaskTime * 60 * 60 * 1000)
 
+  for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+    await waitFinishZhanDou(teamLeaderWindow)
+    robotUtils.keyTap('f1')
+    await sleep(200)
+    robotUtils.keyTap('f1')
+  }
+
+  await sleep(5000)
   await meiRiRiChang_DanRen()
 }

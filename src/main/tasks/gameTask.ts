@@ -33,9 +33,14 @@ export async function searchGameTask(taskName: string) {
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
-  await clickGamePoint('当前任务', 'searchGameTask', { callback: () => true })
+  await clickGamePoint('当前任务', 'searchGameTask', {
+    tabOptions: {
+      isTab: true,
+      activeTabColor: '#785a00',
+    },
+  })
   await sleep(500)
-  await clickGamePoint('当前任务-搜索框', 'searchGameTask', { callback: () => true })
+  await clickGamePoint('当前任务-搜索框', 'searchGameTask')
   await sleep(500)
 
   clipboard.writeText(Buffer.from(description, 'utf-8').toLocaleString())
@@ -60,7 +65,10 @@ export async function escShouCangTasks(taskName: string) {
   robotUtils.keyTap('escape')
   await sleep(300)
   await clickGamePoint('收藏任务', 'xianJieShenBu', {
-    callback: () => true
+    tabOptions: {
+      isTab: true,
+      activeTabColor: '#1e140a',
+    },
   })
   const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)
@@ -69,7 +77,11 @@ export async function escShouCangTasks(taskName: string) {
   let hasFinished = false
   {
     const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
-    await screenCaptureToFile(tempCapturePath, [position[0], position[1] + escTaskBarSize[1] + 5], [escTaskBarSize[0], taskBarSize[1] - escTaskBarSize[1]])
+    await screenCaptureToFile(
+      tempCapturePath,
+      [position[0], position[1] + escTaskBarSize[1] + 5],
+      [escTaskBarSize[0], taskBarSize[1] - escTaskBarSize[1]]
+    )
     const [taskNums] = await paddleOcr(tempCapturePath, false, 'en')
     const [firstNum, secondNum] = taskNums.split('/')
     if (firstNum === secondNum) {
@@ -85,7 +97,7 @@ export async function escShouCangTasks(taskName: string) {
     await moveMouseToAndClick(tempCapturePath, {
       buttonName: 'shouCangRenWu',
       position,
-      size: taskBarSize
+      size: taskBarSize,
     })
   }
 

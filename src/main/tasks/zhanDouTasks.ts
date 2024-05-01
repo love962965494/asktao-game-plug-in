@@ -2,9 +2,9 @@ import { MyPromise } from '../../utils/customizePromise'
 import { pythonImagesPath, staticPath } from '../../paths'
 import GameWindowControl from '../../utils/gameWindowControll'
 import path from 'path'
-import { randomName, randomPixelNum, sleep } from '../../utils/toolkits'
-import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
-import { clickGamePoint, moveMouseTo, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
+import { randomName, sleep } from '../../utils/toolkits'
+import { findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../utils/fileOperations'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
 import { getGameWindows } from '../../utils/systemCotroll'
 import { dialog } from 'electron'
 import playSound from 'play-sound'
@@ -24,7 +24,13 @@ export async function isInBattle(gameWindow: GameWindowControl) {
 }
 
 export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
-  return MyPromise((resolve) => {
+  return MyPromise(async (resolve) => {
+    const inBattle = await isInBattle(gameWindow)
+
+    if (!inBattle) {
+      resolve()
+      return
+    }
     const interval = setInterval(async () => {
       const inBattle = await isInBattle(gameWindow)
 
@@ -119,7 +125,15 @@ export async function keepZiDong() {
         size: [120, 28],
       },
       {
-        callback: () => true,
+        callback: async () => {
+          const numPosition = [position[0] + 27, position[1] - 49]
+          const numSize = [60, 28]
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDouHuiHeShu.jpg')
+          const tempCapturePath = path.join(pythonImagesPath, `temp/keepZiDong_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath, numPosition, numSize)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.7)
+          return found
+        },
         needPreProcessing: true,
         threshold: 30,
       }

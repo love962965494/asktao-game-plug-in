@@ -12,7 +12,7 @@ declare global {
     npc: INPC,
     gameTask: IGameTask
     gamePoints: IGamePoints
-    mousePositions: [number, number][]
+    mousePositions: { position: [number, number]; size: [number, number] }[]
     gameConfig: IGameConfig
   }
 }

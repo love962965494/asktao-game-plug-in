@@ -14,7 +14,7 @@ import {
 } from '../../utils/common'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
+import { extractThemeColors, findImagePositions, screenCaptureToFile } from '../../utils/fileOperations'
 
 // 组队
 export async function groupTeam(teamIndex: number) {
@@ -124,7 +124,18 @@ export async function yiJianZuDui(roleName: string) {
       size: yiJianZuDuiSize,
     },
     {
-      callback: () => true,
+      callback: async () => {
+        const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath, [870, 475], [100, 20])
+
+        const colors = await extractThemeColors(tempCapturePath)
+
+        if (colors.includes('#e6c8')) {
+          return true
+        }
+
+        return false
+      },
     }
   )
   await sleep(500)

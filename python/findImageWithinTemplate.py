@@ -20,11 +20,12 @@ def find_template_in_image(big_image_path, small_image_path, threshold=0.8):
 # 示例使用
     
 if __name__ == "__main__":
-    big_image_path = sys.argv[1]
-    small_image_path = sys.argv[2]
-    threshold = float(sys.argv[3])
-    # big_image_path = 'C:/Users/asus/Desktop/getTaskProgress_33.jpg'
-    # small_image_path = 'C:/Users/asus/Desktop/diTengXian.jpg'
+    # big_image_path = sys.argv[1]
+    # small_image_path = sys.argv[2]
+    # threshold = float(sys.argv[3])
+    big_image_path = 'C:/Users/sc/Desktop/Screenshot_1.png'
+    small_image_path = 'C:/Users/sc/Desktop/ziDongZhanDouHuiHeShu.jpg'
+    threshold = 0.8
     # small_image_path = 'C:/Users/asus/Desktop/Key_WangCai.jpg'
     # small_image_path = 'C:/Users/asus/Desktop/zhuanQuan.jpg'
     # small_image_path = 'C:/Users/asus/Desktop/pinTu.jpg'

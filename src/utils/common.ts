@@ -39,7 +39,7 @@ export async function clickButton(
 /**
  * 移动鼠标到指定位置并点击，通过callback检测鼠标是否成功点击
  */
-export async function moveMouseToAndClick(
+export async function moveMouseToAndClick1(
   templateImagePath: string,
   fileInfo: ImageFileInfo,
   otherOptions: {
@@ -47,20 +47,25 @@ export async function moveMouseToAndClick(
     rightClick?: boolean
     callback?: Function
     threshold?: number
-    notCheck?: boolean,
+    notCheck?: boolean
     randomPixNums?: number[]
   } = {
     needPreProcessing: false,
     rightClick: false,
     notCheck: false,
-    randomPixNums: [20, 5]
+    randomPixNums: [20, 5],
   }
 ) {
   let isInRange = false
   let lastXPos = fileInfo.position[0] + Math.round(fileInfo.size[0] / 2)
   let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
+  let errorCounts = 0
   while (!isInRange) {
-    const position = [lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20), lastYPos + randomPixelNum(otherOptions.randomPixNums?.[1] || 5)]
+    errorCounts++
+    const position = [
+      lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20),
+      lastYPos + Math.min(Math.ceil(errorCounts / 5), 4) * randomPixelNum(otherOptions.randomPixNums?.[1] || 5),
+    ]
     // console.log('position: ', position);
 
     await moveMouseTo(position[0], position[1])
@@ -105,6 +110,67 @@ export async function moveMouseToAndClick(
       }
     } else {
       await moveMouseToBlank()
+    }
+  }
+}
+
+export async function moveMouseToAndClick(
+  templateImagePath: string,
+  fileInfo: ImageFileInfo,
+  otherOptions: {
+    needPreProcessing?: boolean
+    rightClick?: boolean
+    callback?: Function
+    threshold?: number
+    notCheck?: boolean
+    randomPixNums?: number[]
+  } = {
+    needPreProcessing: false,
+    rightClick: false,
+    notCheck: false,
+    randomPixNums: [20, 5],
+  }
+) {
+  let isInRange = false
+  let lastXPos = fileInfo.position[0] + Math.round(fileInfo.size[0] / 2)
+  let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
+  let errorCounts = 0
+  while (!isInRange) {
+    errorCounts++
+    const position = [
+      lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20),
+      lastYPos + Math.min(Math.ceil(errorCounts / 5), 4) * randomPixelNum(otherOptions.randomPixNums?.[1] || 5),
+    ]
+    // console.log('position: ', position);
+
+    await moveMouseTo(position[0], position[1])
+    await sleep(200)
+
+    if (otherOptions.notCheck) {
+      isInRange = true
+      robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
+      await moveMouseToBlank()
+      return
+    }
+
+    robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
+    isInRange = true
+    await sleep(1000)
+    await moveMouseToBlank()
+
+    const callback =
+      otherOptions.callback ||
+      async function defaultCallback() {
+        const tempCapturePath = path.join(pythonImagesPath, `temp/moveMouseToAndClick_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath, fileInfo.position, fileInfo.size)
+        const [result] = await compareTwoImages(tempCapturePath, templateImagePath)
+
+        return result === -1
+      }
+    const success = await callback()
+
+    if (!success) {
+      isInRange = false
     }
   }
 }
@@ -195,12 +261,39 @@ export async function hasChecked(name: string) {
 export async function clickGamePoint(
   gamePoint: string,
   captureName: string,
-  otherOptions?: { rightClick?: boolean; callback?: Function; notCheck?: boolean; threshold?: number; randomPixNums?: number[] }
+  otherOptions?: {
+    rightClick?: boolean
+    callback?: Function
+    notCheck?: boolean
+    threshold?: number
+    randomPixNums?: number[]
+    tabOptions?: {
+      isTab: boolean
+      activeTabColor: string
+    }
+  }
 ) {
   await moveMouseToBlank()
   const { position, size } = global.appContext.gamePoints[gamePoint as keyof IGamePoints]
   const tempCapturePath = path.join(pythonImagesPath, `temp/${captureName}_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
+  if (otherOptions?.tabOptions?.isTab) {
+    otherOptions.callback =
+      otherOptions.callback ||
+      async function defaultCallback() {
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${captureName}_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath, position, size)
+
+        const colors = await extractThemeColors(tempCapturePath)
+
+        if (colors.includes(otherOptions.tabOptions?.activeTabColor || '')) {
+          return true
+        }
+
+        return false
+      }
+  }
+
   await moveMouseToAndClick(
     tempCapturePath,
     {
@@ -239,9 +332,9 @@ export class AsyncQueue {
 
 export async function moveMouseToBlank() {
   const moustPostions = global.appContext.mousePositions
-  const mousePosition = moustPostions[randomNum(moustPostions.length)]
+  const { position, size } = moustPostions[randomNum(moustPostions.length)]
 
-  await moveMouseTo(mousePosition[0] + randomPixelNum(5), mousePosition[1] + randomPixelNum(3))
+  await moveMouseTo(position[0] + randomPixelNum(size[0]), position[1] + randomPixelNum(size[1]))
 }
 
 export async function writeLog(logMessage: string) {

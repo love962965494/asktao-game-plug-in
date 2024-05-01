@@ -45,7 +45,7 @@ export function registerImageTasks() {
           for (const char of account.toUpperCase()) {
             robotUtil.handleCharKeyTap(char)
           }
-          
+
           robotUtil.keyTap('tab')
 
           await sleep(500)
@@ -60,7 +60,10 @@ export function registerImageTasks() {
           // TODO: 后续实现选择指定线路功能
           await sleep(2000)
           await clickGamePoint('十三线', 'login', {
-            callback: () => true
+            tabOptions: {
+              isTab: true,
+              activeTabColor: '#147882',
+            },
           })
           robotUtil.keyTap('enter')
 

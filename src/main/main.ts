@@ -21,8 +21,12 @@ global.appContext = {
   gameTask: {} as IGameTask,
   gamePoints: {} as IGamePoints,
   // 空白鼠标坐标
-  mousePositions: [[1760, 80]],
-  gameConfig: {} as IGameConfig
+  mousePositions: [
+    { position: [1760, 80], size: [50, 20] },
+    { position: [130, 110], size: [40, 40] },
+    { position: [420, 1050], size: [150, 10] },
+  ],
+  gameConfig: {} as IGameConfig,
 }
 
 let mainWindow: BrowserWindow | null = null
@@ -138,9 +142,9 @@ app.on('before-quit', async (event) => {
 })
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+  console.error('Uncaught Exception:', error)
   // 在这里添加处理逻辑，如记录错误、向用户显示错误信息等
   // 注意：在此处发生的错误可能导致应用程序不稳定，建议在此处仅记录错误信息，并尽快修复应用程序
-});
+})
 
 export { mainWindow }

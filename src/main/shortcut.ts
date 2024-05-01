@@ -17,9 +17,10 @@ import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { writeLog } from '../utils/common'
+import { moveMouseToBlank, writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
 import { displayGameWindows, liDui, yiJianZuDui } from './tasks/basicTasks'
+import robotUtils from '../utils/robot'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -67,8 +68,8 @@ export function registerGlobalShortcut() {
     // _smallScreenCapture()
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
-    // 1304, 464
-    await screenCaptureToFile(srcImagePath, [840, 36], [320, 36])
+    // 891, 967
+    await screenCaptureToFile(srcImagePath, [932, 921], [36, 22])
 
 
     // await screenCaptureToFile(srcImagePath)
@@ -102,20 +103,8 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await meiRiRiChang_DanRen()
-    
-
-    // let hasFinished = false
-    // while (!hasFinished) {
-    //   await sleep(5000)
-    //   const hasMeet = await hasMeetLaoJun(gameWindow)
-
-    //   if (hasMeet) {
-    //     console.log(new Date().toLocaleTimeString());
-
-    //     hasFinished = true
-    //   }
-    // }
+    await getGameWindows()
+    await keepZiDong()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {
