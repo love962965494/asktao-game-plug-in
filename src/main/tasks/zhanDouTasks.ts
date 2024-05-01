@@ -135,7 +135,6 @@ export async function keepZiDong() {
           return found
         },
         needPreProcessing: true,
-        threshold: 30,
       }
     )
     await sleep(200)

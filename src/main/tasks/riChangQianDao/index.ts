@@ -45,9 +45,6 @@ export async function yiJianQianDao() {
         position,
         size: [40, 30],
       },
-      {
-        threshold: 30,
-      }
     )
     await sleep(500)
     await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {
@@ -85,7 +82,6 @@ export async function meiRiRiChang_ZuDui() {
         const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
         return found
       },
-      threshold: 20,
       randomPixNums: [5, 2],
     })
     await sleep(500)
@@ -95,7 +91,6 @@ export async function meiRiRiChang_ZuDui() {
 
       if (!isChecked) {
         await clickGamePoint(task, 'meiRiRiChang_ZuDui', {
-          threshold: 20,
           randomPixNums: [5, 2],
         })
       }
@@ -132,7 +127,6 @@ export async function meiRiRiChang_DanRen() {
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
           return found
         },
-        threshold: 20,
         randomPixNums: [5, 2],
       })
       await sleep(500)
@@ -149,7 +143,6 @@ export async function meiRiRiChang_DanRen() {
 
         if (!isChecked) {
           await clickGamePoint(task, 'meiRiRiChang_ZuDui', {
-            threshold: 20,
             randomPixNums: [5, 2],
           })
         }

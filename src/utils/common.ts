@@ -141,7 +141,6 @@ export async function moveMouseToAndClick(
       lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20),
       lastYPos + Math.min(Math.ceil(errorCounts / 5), 4) * randomPixelNum(otherOptions.randomPixNums?.[1] || 5),
     ]
-    // console.log('position: ', position);
 
     await moveMouseTo(position[0], position[1])
     await sleep(200)
@@ -163,7 +162,9 @@ export async function moveMouseToAndClick(
       async function defaultCallback() {
         const tempCapturePath = path.join(pythonImagesPath, `temp/moveMouseToAndClick_${randomName()}.jpg`)
         await screenCaptureToFile(tempCapturePath, fileInfo.position, fileInfo.size)
-        const [result] = await compareTwoImages(tempCapturePath, templateImagePath)
+        const [result] = await compareTwoImages(tempCapturePath, templateImagePath, {
+          threshold: otherOptions.threshold
+        })
 
         return result === -1
       }

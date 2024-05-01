@@ -104,7 +104,9 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    await keepZiDong()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')
+    await gameWindow?.setForeground()
+    await searchGameTask('悬赏令')
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

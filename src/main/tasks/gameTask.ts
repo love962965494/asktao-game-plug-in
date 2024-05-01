@@ -40,7 +40,9 @@ export async function searchGameTask(taskName: string) {
     },
   })
   await sleep(500)
-  await clickGamePoint('当前任务-搜索框', 'searchGameTask')
+  await clickGamePoint('当前任务-搜索框', 'searchGameTask', {
+    threshold: 1
+  })
   await sleep(500)
 
   clipboard.writeText(Buffer.from(description, 'utf-8').toLocaleString())
