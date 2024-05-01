@@ -252,7 +252,7 @@ async function executePairTask(
     }
 
     // 第一个执行任务的
-    if (taskType === '仙人指路' && prevPairTask.length === 0) {
+    if (taskType !== '十绝阵' && prevPairTask.length === 0) {
       await chiXiang(2)
     }
 
@@ -261,6 +261,9 @@ async function executePairTask(
 
     if (prevNpc !== npc) {
       await searchGameTask(taskType)
+      if (taskType === '修行任务') {
+        await sleep(3000)
+      }
       await sleep(500)
       await clickGamePoint(`${taskType}-NPC`, 'singleTask')
       await sleep(500)
