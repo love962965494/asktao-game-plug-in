@@ -117,28 +117,12 @@ export async function keepZiDong() {
     robotUtils.keyTap('B', ['control'])
     const position = await gameWindow.getZiDongZhanDouPosition()
 
-    await moveMouseToAndClick(
-      templateImagePath,
-      {
-        buttonName: 'ziDongZhanDou',
-        position,
-        size: [120, 28],
-      },
-      {
-        callback: async () => {
-          const numPosition = [position[0] + 27, position[1] - 49]
-          const numSize = [60, 28]
-          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDouHuiHeShu.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/keepZiDong_${randomName()}.jpg`)
-          await screenCaptureToFile(tempCapturePath, numPosition, numSize)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.6)
-          console.log('found: ', found);
-          
-          return found
-        },
-        needPreProcessing: true,
-      }
-    )
+    await moveMouseToAndClick(templateImagePath, {
+      buttonName: 'ziDongZhanDou',
+      position,
+      size: [46, 34],
+    })
+    robotUtils.keyTap('2', ['control'])
     await sleep(200)
   }
 }
