@@ -90,7 +90,7 @@
       }
     },
     "liuRuChen": {
-      "zh": "柳如烟",
+      "zh": "柳如尘",
       "search": {
         "abstract": "lrc",
         "steps": ["up", "enter"]
@@ -98,7 +98,7 @@
       "conversitions": {
         "[xiuXing]woZhengXiangQuBaiHuiLingShenQingQiuZhiDianNe": {
           "zh": "【修行】我正想去拜会灵神请求指点呢",
-          "position": [536, 650],
+          "position": [536, 579],
           "size": [658, 34]
         },
         "[lingQu]WoZheJiuQu": {
