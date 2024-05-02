@@ -1,7 +1,9 @@
 import { ipcMain } from 'electron'
-import GameWindowControl from '../../utils/gameWindowControll'
-import { getGameWindows } from '../../utils/systemCotroll'
-import { hasMeetLaoJun } from './zhanDouTasks'
+import path from 'path'
+import { pythonImagesPath } from '../../paths'
+import { randomName } from '../../utils/toolkits'
+import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
+import { loginGame } from './imageTask'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
@@ -19,23 +21,20 @@ export function registerMonitorTasks() {
   // }, 1000 * 10)
 
 
-  ipcMain.on('monitor-game-login-failed', async () => {
-    const interval = setInterval(async (): Promise<void> => {
-      await getGameWindows()
-      const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Keyの兰花')
-      await teamLeaderWindow?.setForeground()
+  monitorGameDiaoXian()
+}
 
-      const result = await hasMeetLaoJun(teamLeaderWindow!)
+export async function monitorGameDiaoXian() {
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/diaoXian.jpg')
+  const interval = setInterval(async () => {
+    const tempCapturePath = path.join(pythonImagesPath, `temp/monitorGameDiaoXian_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
 
-      if (result) {
-        clearInterval(interval)
-      }
+    const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-    }, 5 * 1000)
-    // let sourceImagePath = path.join(pythonImagesPath, 'temp/test123.png')
-
-    // const result = await paddleOcr(sourceImagePath)
-
-    // console.log('result: ', result);
-  })
+    if (found) {
+      clearInterval(interval)
+      await loginGame()
+    }
+  }, 5 * 1000)
 }

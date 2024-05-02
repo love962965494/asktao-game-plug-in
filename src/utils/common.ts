@@ -272,9 +272,12 @@ export async function clickGamePoint(
       isTab: boolean
       activeTabColor: string
     }
+    notMoveMouse?: boolean
   }
 ) {
-  await moveMouseToBlank()
+  if (!otherOptions?.notMoveMouse) {
+    await moveMouseToBlank()
+  }
   const { position, size } = global.appContext.gamePoints[gamePoint as keyof IGamePoints]
   const tempCapturePath = path.join(pythonImagesPath, `temp/${captureName}_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)

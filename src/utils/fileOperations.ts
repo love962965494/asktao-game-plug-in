@@ -191,7 +191,6 @@ async function extractThemeColors(imagePath: string, top_n = 50): Promise<string
   })
 }
 
-//
 async function findImageWithinTemplate(
   bigImagePath: string,
   smallImagePath: string,

@@ -70,7 +70,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [275, 605], [46, 34])
+    await screenCaptureToFile(srcImagePath, [525, 418], [860, 40])
 
 
     // await screenCaptureToFile(srcImagePath)
