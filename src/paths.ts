@@ -1,7 +1,7 @@
 import path from 'path'
 
 const staticPath = path.resolve(__dirname, '../static')
-const logPath = path.resolve(__dirname, '../log.txt')
+const logPath = path.resolve(__dirname, '../logs')
 
 const pythonPath = path.resolve(__dirname, '../python')
 const pythonImagesPath = path.resolve(pythonPath, 'images')

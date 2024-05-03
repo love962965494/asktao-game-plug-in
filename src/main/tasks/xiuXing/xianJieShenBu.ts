@@ -47,12 +47,13 @@ export async function xianJieShenBu() {
     taskPositions.push(positions)
   }
 
-  while (!allHasFinished.every(Boolean)) {
+  while (allHasFinished.length > 0 && !allHasFinished.every(Boolean)) {
     for (const teamLeaderWindow of teamLeaderWindows) {
       await teamLeaderWindow.setForeground()
       await chiXiang(1)
     }
     await loopTasks(taskPositions, teamLeaderWindows)
+    allHasFinished = []
     await xianJieShenBu()
   }
 }

@@ -7,8 +7,13 @@ import { hasGameTask, searchGameTask } from '../gameTask'
 import { chiXiang } from '../wuPinTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
-import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
+import {
+  findImagePositions,
+  findImageWithinTemplate,
+  paddleOcr,
+  screenCaptureToFile,
+} from '../../../utils/fileOperations'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
 import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
 import { IGameTask } from 'constants/types'
@@ -57,8 +62,11 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
       const [teamLeaderWindow] = teamWindows
       await teamLeaderWindow.setForeground()
       const hasTask = await hasGameTask(taskType)
+      const restTasksContent = await readLog(taskType)
       let tasks: string[] = []
-      if (hasTask) {
+      if (restTasksContent) {
+        tasks = JSON.parse(restTasksContent)
+      } else if (hasTask) {
         tasks = await getTaskProgress(teamWindows, allTask[+index], taskType)
       }
       if (!hasTask || tasks.length === 0) {
@@ -77,10 +85,6 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
   }
 
   while (true) {
-    writeLog(`
-      剩余任务：
-      ${JSON.stringify(restTasksWithGroup, undefined, 4)}
-    `)
     await loopTasks(restTasksWithGroup, taskType)
     await keepZiDong()
     await buChongZhuangTai({ needZhongCheng: true })
@@ -204,14 +208,12 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
       // TODO: 当完成一轮任务后，可以考虑再检查下每个角色的任务进度，看是否有角色因为死亡而导致任务没有完成的
       return
     }
-    const pairTask = tasksWithGroup.map((tasks) => tasks.shift())
+    writeLog(taskType, JSON.stringify(tasksWithGroup, undefined, 4), true)
 
-    writeLog(`
-      当前任务：
-      ${JSON.stringify(pairTask, undefined, 4)}
-    `)
+    const pairTask = tasksWithGroup.map((tasks) => tasks[0])
     await executePairTask(pairTask, taskType, prevPairTask, taskIndex)
     prevPairTask = pairTask
+    tasksWithGroup.map((tasks) => tasks.shift())
     taskIndex++
   }
 }
@@ -219,7 +221,7 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
 const conversitionMap = {
   仙人指路: 'qingXianRenCiJiao',
   十绝阵: 'qingDaShenZhiDian',
-  修行任务: 'qingLingShenDuoDuoZhiJiao'
+  修行任务: 'qingLingShenDuoDuoZhiJiao',
 }
 async function executePairTask(
   pairTask: (string | undefined)[],

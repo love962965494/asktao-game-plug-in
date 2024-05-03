@@ -2,7 +2,7 @@ import { globalShortcut, app } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
 import { getGameWindows } from '../utils/systemCotroll'
 import path from 'path'
-import { pythonImagesPath } from '../paths'
+import { logPath, pythonImagesPath } from '../paths'
 import {
   findImagePositions,
   findImageWithinTemplate,
@@ -18,10 +18,11 @@ import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { moveMouseToBlank, writeLog } from '../utils/common'
+import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
 import { displayGameWindows, liDui, yiJianZuDui } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
+import fs from 'fs'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -72,7 +73,6 @@ export function registerGlobalShortcut() {
     // 1304, 464
     await screenCaptureToFile(srcImagePath, [525, 418], [860, 40])
 
-
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
     // for (const color of colors.split('\r\n')[0].replace('[', '').replace(']', '').split(',')) {
@@ -104,8 +104,8 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    await keepZiDong()
+    const content = await readLog('xiuXingTaskLog')
+    console.log('content: ', JSON.parse(content))
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

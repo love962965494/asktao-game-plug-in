@@ -2,10 +2,11 @@ import GameWindowControl from './gameWindowControll'
 import robotUtils from './robot'
 import { ImageFileInfo, randomName, randomNum, randomPixelNum, sleep } from './toolkits'
 import path from 'path'
-import { logPath, pythonImagesPath } from '../paths'
+import { logPath, logPath, pythonImagesPath } from '../paths'
 import { compareTwoImages, extractThemeColors, findImageWithinTemplate, screenCaptureToFile } from './fileOperations'
 import { IGamePoints } from 'constants/types'
 import fs from 'fs'
+import { MyPromise } from './customizePromise'
 
 export async function moveMouseTo(x: number, y: number) {
   const alternateWindow = GameWindowControl.getAlternateWindow()
@@ -163,7 +164,7 @@ export async function moveMouseToAndClick(
         const tempCapturePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName}_${randomName()}.jpg`)
         await screenCaptureToFile(tempCapturePath, fileInfo.position, fileInfo.size)
         const [result] = await compareTwoImages(tempCapturePath, templateImagePath, {
-          threshold: otherOptions.threshold
+          threshold: otherOptions.threshold,
         })
 
         return result === -1
@@ -341,14 +342,50 @@ export async function moveMouseToBlank() {
   await moveMouseTo(position[0] + randomPixelNum(size[0]), position[1] + randomPixelNum(size[1]))
 }
 
-export async function writeLog(logMessage: string) {
+export async function writeLog(logFile: string, logMessage: string, rewrite: boolean = false) {
   // 构建日志格式
   const logLine = `\n\n\n${logMessage}\n\n\n`
+  const filePath = path.join(logPath, logFile + '.txt')
 
   // 使用 fs.appendFile() 向日志文件中追加日志
-  fs.appendFile(logPath, logLine, (err) => {
-    if (err) {
-      console.error('Failed to write to log file:', err)
-    }
+  if (rewrite) {
+    fs.writeFile(filePath, logLine, (err) => {
+      if (err) {
+        console.error('Failed to write to log file:', err)
+      }
+    })
+  } else {
+    fs.appendFile(filePath, logLine, (err) => {
+      if (err) {
+        console.error('Failed to write to log file:', err)
+      }
+    })
+  }
+}
+
+export async function readLog(logFile: string): Promise<string> {
+  const filePath = path.join(logPath, logFile + '.txt')
+  return MyPromise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          // 文件不存在
+          console.log('File does not exist. Creating a new file...')
+          // 创建一个空文件
+          fs.writeFile(filePath, '', (err) => {
+            if (err) {
+              console.error('Error creating file:', err)
+            } else {
+              console.log('Empty file created successfully.')
+            }
+          })
+        } else {
+          console.error('Error reading file:', err)
+          reject(err)
+        }
+      }
+
+      resolve(data)
+    })
   })
 }
