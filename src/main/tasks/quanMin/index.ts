@@ -8,7 +8,7 @@ import { ipcMain } from 'electron/main'
 import { buChongZhuangTai, keepZiDong } from '../zhanDouTasks'
 import robotUtils from '../../../utils/robot'
 
-export async function registerQuanMinShuaDao() {
+export async function registerQuanMin() {
   ipcMain.on('chu-yao-ren-wu', async () => chuYaoRenWu())
   ipcMain.on('fu-mo-ren-wu', async () => fuMoRenWu())
   ipcMain.on('quan-min-sheng-ji', async () => quanMinShengJi())

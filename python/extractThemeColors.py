@@ -34,7 +34,7 @@ def find_top_frequent_colors(image_path, top_n=3):
 if __name__ == "__main__":
     image_path = sys.argv[1]  # 更改为你的图片路径
     top_n = int(sys.argv[2])
-    # image_path = 'C:/Users/sc/Desktop/testScreenCapture.jpg'  # 更改为你的图片路径
+    # image_path = 'C:/Users/asus/Desktop/testScreenCapture.jpg'  # 更改为你的图片路径
     # top_n = 20
     top_colors_hex = find_top_frequent_colors(image_path, top_n)
     print(top_colors_hex)

@@ -19,7 +19,7 @@ import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '
 import { IGameTask } from 'constants/types'
 import { xianJieShenBu } from './xianJieShenBu'
 
-export async function registerXianRenZhiLu() {
+export async function registerXiuXing() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
   ipcMain.on('shi-jue-zhen', shiJueZhen)
   ipcMain.on('xian-jie-shen-bu', xianJieShenBu)

@@ -1,9 +1,8 @@
-import { ipcMain } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import { randomName } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
-import { loginGame } from './imageTask'
+import { loginGame } from './loginTask'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
