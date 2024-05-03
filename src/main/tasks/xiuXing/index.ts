@@ -58,23 +58,25 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
 
   let restTasksWithGroup: string[][] = []
   if (isFirst) {
-    for (const [index, teamWindows] of Object.entries(teamWindowsWithGroup)) {
-      const [teamLeaderWindow] = teamWindows
-      await teamLeaderWindow.setForeground()
-      const hasTask = await hasGameTask(taskType)
-      const restTasksContent = await readLog(taskType)
-      let tasks: string[] = []
-      if (restTasksContent) {
-        tasks = JSON.parse(restTasksContent)
-      } else if (hasTask) {
-        tasks = await getTaskProgress(teamWindows, allTask[+index], taskType)
-      }
-      if (!hasTask || tasks.length === 0) {
-        await lingQuRenWu(teamWindows, taskType)
-        tasks = allTask[+index]
-      }
+    const restTasksContent = await readLog(taskType)
+    if (restTasksContent) {
+      restTasksWithGroup = JSON.parse(restTasksContent)
+    } else {
+      for (const [index, teamWindows] of Object.entries(teamWindowsWithGroup)) {
+        let tasks: string[] = []
+        const [teamLeaderWindow] = teamWindows
+        await teamLeaderWindow.setForeground()
+        const hasTask = await hasGameTask(taskType)
+        if (hasTask) {
+          tasks = await getTaskProgress(teamWindows, allTask[+index], taskType)
+        }
+        if (!hasTask || tasks.length === 0) {
+          await lingQuRenWu(teamWindows, taskType)
+          tasks = allTask[+index]
+        }
 
-      restTasksWithGroup.push(tasks)
+        restTasksWithGroup.push(tasks)
+      }
     }
   } else {
     for (const teamWindows of teamWindowsWithGroup) {
