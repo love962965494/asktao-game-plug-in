@@ -23,7 +23,7 @@ export async function isInBattle(gameWindow: GameWindowControl) {
   return inBattle
 }
 
-export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
+export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 3): Promise<void> {
   return MyPromise(async (resolve) => {
     const inBattle = await isInBattle(gameWindow)
 

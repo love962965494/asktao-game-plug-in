@@ -23,8 +23,8 @@ if __name__ == "__main__":
     big_image_path = sys.argv[1]
     small_image_path = sys.argv[2]
     threshold = float(sys.argv[3])
-    # big_image_path = 'C:/Users/asus/Desktop/huoDongZhongXin.jpg'
-    # small_image_path = 'C:/Users/asus/Desktop/ziDongZhanDouHuiHeShu.jpg'
+    # big_image_path = 'C:/Users/96296/Desktop/baiBaoFanPai_11.jpg'
+    # small_image_path = 'C:/Users/96296/Desktop/baiBaoFanPai.jpg'
     # threshold = 0.8
     # small_image_path = 'C:/Users/asus/Desktop/Key_WangCai.jpg'
     # small_image_path = 'C:/Users/asus/Desktop/zhuanQuan.jpg'

@@ -59,7 +59,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
   let restTasksWithGroup: string[][] = []
   if (isFirst) {
     const restTasksContent = await readLog(taskType)
-    if (restTasksContent) {
+    if (restTasksContent.trim()) {
       restTasksWithGroup = JSON.parse(restTasksContent)
     } else {
       for (const [index, teamWindows] of Object.entries(teamWindowsWithGroup)) {
@@ -88,6 +88,12 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
 
   while (true) {
     await loopTasks(restTasksWithGroup, taskType)
+    if (taskType !== '十绝阵') {
+      for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+        await teamLeaderWindow.setForeground()
+        await chiXiang(1, true)
+      }
+    }
     await keepZiDong()
     await buChongZhuangTai({ needZhongCheng: true })
     await xiuXingTask(taskType, false)
@@ -205,12 +211,13 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
   let prevPairTask: (string | undefined)[] = []
   let taskIndex = 0
   while (true) {
+    writeLog(taskType, JSON.stringify(tasksWithGroup, undefined, 4), true)
+
     const hasFinished = tasksWithGroup.every((tasks) => tasks.length === 0)
     if (hasFinished) {
       // TODO: 当完成一轮任务后，可以考虑再检查下每个角色的任务进度，看是否有角色因为死亡而导致任务没有完成的
       return
     }
-    writeLog(taskType, JSON.stringify(tasksWithGroup, undefined, 4), true)
 
     const pairTask = tasksWithGroup.map((tasks) => tasks[0])
     await executePairTask(pairTask, taskType, prevPairTask, taskIndex)
