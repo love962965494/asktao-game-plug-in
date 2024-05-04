@@ -3,6 +3,10 @@ import { pythonImagesPath } from '../../paths'
 import { randomName } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
 import { loginGame } from './loginTask'
+import { displayGameWindows, yiJianZuDui } from './basicTasks'
+import { keepZiDong } from './zhanDouTasks'
+import { getGameWindows } from '../../utils/systemCotroll'
+import GameWindowControl from '../../utils/gameWindowControll'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
@@ -34,6 +38,19 @@ export async function monitorGameDiaoXian() {
     if (found) {
       clearInterval(interval)
       await loginGame()
+      await getGameWindows()
+      const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
+
+      for (const gameWindow of gameWindows) {
+        if (gameWindow.roleInfo.defaultTeamLeader) {
+          await gameWindow.setForeground()
+          await yiJianZuDui(gameWindow.roleInfo.roleName)
+        }
+      }
+
+      await keepZiDong()
+
+      await displayGameWindows()
     }
   }, 5 * 1000)
 }

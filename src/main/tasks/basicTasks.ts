@@ -21,6 +21,24 @@ import {
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 
+// 是否组队
+export async function isGroupedTeam(gameWindow: GameWindowControl) {
+  await gameWindow.setForeground()
+  robotUtils.keyTap('B', ['control'])
+  await sleep(200)
+  robotUtils.keyTap('T', ['alt'])
+  await moveMouseToBlank()
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuDuiPingTai.jpg')
+  const tempCapturePath = path.join(pythonImagesPath, `temp/isGroupedTeam_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  robotUtils.keyTap('B', ['control'])
+  
+  return found
+}
+
 // 组队
 export async function groupTeam(teamIndex: number) {
   await getGameWindows()
@@ -116,7 +134,7 @@ export async function yiJianZuDui(roleName: string) {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/huoDongZhongXin.jpg')
       const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
       await screenCaptureToFile(tempCapturePath)
-      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.8)
 
       if (found) {
         return true

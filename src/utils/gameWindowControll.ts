@@ -88,6 +88,7 @@ export default class GameWindowControl {
 
   static async getTeamWindowsWithSequence(teamIndex: number) {
     const gameWindows = GameWindowControl.getGameWindowsByTeamIndex(teamIndex)
+    // const tempGameWindow = gameWindows.find(gameWindow => gameWindow.roleInfo.defaultTeamLeader)!
     const tempGameWindow = gameWindows[0]
 
     await tempGameWindow.setForeground()

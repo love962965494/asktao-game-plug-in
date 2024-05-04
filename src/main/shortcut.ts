@@ -20,7 +20,7 @@ import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './task
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
-import { displayGameWindows, liDui, yiJianZuDui } from './tasks/basicTasks'
+import { displayGameWindows, isGroupedTeam, liDui, yiJianZuDui } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
 import fs from 'fs'
 
@@ -71,7 +71,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [718, 614], [135, 34])
+    await screenCaptureToFile(srcImagePath, [770, 108], [240, 38])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -104,8 +104,9 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    const content = await readLog('xiuXingTaskLog')
-    console.log('content: ', JSON.parse(content))
+    await getGameWindows()
+    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
+    await yiJianZuDui('Keyの旺财')
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {
