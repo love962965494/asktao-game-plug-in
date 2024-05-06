@@ -292,3 +292,6 @@ export async function displayGameWindows() {
     await sleep(100)
   }
 }
+
+
+// 找到目标

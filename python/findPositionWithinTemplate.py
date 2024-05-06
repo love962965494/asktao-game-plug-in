@@ -30,8 +30,8 @@ def find_template(template_path, image_path, threshold=0.7):
 if __name__ == "__main__":
   template_path = sys.argv[1]  # 小图路径
   image_path = sys.argv[2]    # 大图路径
-  # template_path = 'C:/Users/sc/Desktop/123.png'  # 小图路径
-  # image_path = 'C:/Users/sc/Desktop/123_1.png'    # 大图路径
+  # template_path = 'C:/Users/asus/Desktop/testScreenCapture.jpg'  # 小图路径
+  # image_path = 'C:/Users/asus/Desktop/Screenshot_3.png'    # 大图路径
 
   top_left = find_template(template_path, image_path)
   print(top_left)

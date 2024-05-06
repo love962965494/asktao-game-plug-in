@@ -2,6 +2,7 @@ import path from 'path'
 
 const staticPath = path.resolve(__dirname, '../static')
 const logPath = path.resolve(__dirname, '../logs')
+const pythonEnvPath = path.resolve(__dirname, '../.venv/Scripts/python.exe')
 
 const pythonPath = path.resolve(__dirname, '../python')
 const pythonImagesPath = path.resolve(pythonPath, 'images')
@@ -17,6 +18,7 @@ const serverPath = path.resolve(srcPath, 'server')
 const utilsPath = path.resolve(srcPath, 'utils')
 
 export {
+  pythonEnvPath,
   staticPath,
   logPath,
   pythonPath,

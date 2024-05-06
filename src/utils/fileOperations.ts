@@ -2,7 +2,7 @@ import fs from 'fs/promises'
 import Jimp from 'jimp'
 import path from 'path'
 import child_process from 'child_process'
-import { pythonImagesPath, pythonPath } from '../paths'
+import { pythonEnvPath, pythonImagesPath, pythonPath } from '../paths'
 import sharp from 'sharp'
 import robotjs from 'robotjs'
 import { randomName } from './toolkits'
@@ -86,7 +86,7 @@ async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang
 
   return MyPromise((resolve, reject) => {
     child_process.exec(
-      `${commonConfig.pythonPath} -u ${filePath} ${targetImagePath} ${lang}`,
+      `${pythonEnvPath} -u ${filePath} ${targetImagePath} ${lang}`,
       (error, stdout) => {
         if (error) {
           console.error(`stderr: ${error}`)
