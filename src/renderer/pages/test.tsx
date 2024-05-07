@@ -11,8 +11,8 @@ export default function Test() {
         <Button type="primary" onClick={() => ipcRenderer.send('start-game')}>
           启动游戏
         </Button>
-        <Button type="primary" onClick={() => ipcRenderer.send('monitor-game-login-failed')}>
-          测试登录失败
+        <Button type="primary" onClick={() => ipcRenderer.send('monitor-game')}>
+          开启监控
         </Button>
         <Button type="primary" onClick={() => ipcRenderer.send('test-team-leader-by-turn', 1)}>
           测试切换队长

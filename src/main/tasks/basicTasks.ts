@@ -189,7 +189,17 @@ export async function liDui() {
   robotUtils.keyTap('T', ['alt'])
   await sleep(200)
 
-  await clickGamePoint('离队', 'liDui')
+  await clickGamePoint('离队', 'liDui', {
+    callback: async () => {
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuDuiPingTai.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/liDui_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return !found
+    }
+  })
 }
 
 // 升为队长

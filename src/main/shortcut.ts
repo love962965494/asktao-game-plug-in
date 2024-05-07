@@ -103,9 +103,10 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    const sourceImagePath = 'C:\\Users\\asus\\Desktop\\testScreenCapture1.jpg'
-    const targetImagePath = 'C:\\Users\\asus\\Desktop\\testScreenCapture_2.jpg'
-    await prePorcessingImage(sourceImagePath, targetImagePath)
+    await getGameWindows()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの随你')
+    await gameWindow?.setForeground()
+    await liDui()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

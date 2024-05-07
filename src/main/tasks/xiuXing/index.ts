@@ -312,12 +312,6 @@ async function executePairTask(
     await hasMeetLaoJun(teamLeaderWindow)
   }
 
-  // // 战斗结束
-  // // 检查是否遇到老君
-  // for (const teamLeaderWindow of teamLeaderWindows) {
-  //   await hasMeetLaoJun(teamLeaderWindow)
-  // }
-
   // 补充状态，每5个任务补充一次
   if (taskType === '仙人指路' && taskIndex && taskIndex % 5 === 0) {
     await buChongZhuangTai()

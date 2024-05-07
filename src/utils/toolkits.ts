@@ -38,6 +38,8 @@ export function randomName() {
     index = 0
   }
   index++
+  console.log('currentIndex: ', index);
+  
   return index
   // return Math.random().toString(16).slice(3)
 }

@@ -171,7 +171,7 @@ async function extractThemeColors(imagePath: string, top_n = 50): Promise<string
 async function findImageWithinTemplate(
   bigImagePath: string,
   smallImagePath: string,
-  threshold = 0.9
+  threshold = 0.8
 ): Promise<boolean> {
   const filePath = path.join(pythonPath, 'findImageWithinTemplate.py')
 
@@ -194,7 +194,7 @@ async function removeBackground(imagePath: string): Promise<void> {
   return MyPromise((resolve, reject) => {
     child_process.exec(`python -u ${filePath} ${imagePath}`, (error) => {
       if (error) {
-        console.log('findImageWithinTemplate error: ', error)
+        console.log('removeBackground error: ', error)
         reject(error)
       }
 

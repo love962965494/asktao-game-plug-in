@@ -3,10 +3,12 @@ import { pythonImagesPath } from '../../paths'
 import { randomName } from '../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
 import { loginGame } from './loginTask'
-import { displayGameWindows, yiJianZuDui } from './basicTasks'
+import { yiJianZuDui } from './basicTasks'
 import { keepZiDong } from './zhanDouTasks'
 import { getGameWindows } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
+import { yiJianRiChang } from './riChangQianDao'
+import { ipcMain } from 'electron'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
@@ -23,8 +25,7 @@ export function registerMonitorTasks() {
   //   }
   // }, 1000 * 10)
 
-
-  monitorGameDiaoXian()
+  ipcMain.on('monitor-game', monitorGameDiaoXian)
 }
 
 export async function monitorGameDiaoXian() {
@@ -49,8 +50,7 @@ export async function monitorGameDiaoXian() {
       }
 
       await keepZiDong()
-
-      await displayGameWindows()
+      await yiJianRiChang()
     }
-  }, 5 * 1000)
+  }, 5 * 60 * 1000)
 }
