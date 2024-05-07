@@ -1,4 +1,4 @@
-import { IAllAccounts, IGameConfig, IGamePoints, IGameTask, INPC } from "constants/types"
+import { IAllAccounts, ICityMap, IGameConfig, IGamePoints, IGameTask, INPC } from "constants/types"
 
 declare module '*.module.scss' {
   const classes: { [key: string]: string }
@@ -14,6 +14,8 @@ declare global {
     gamePoints: IGamePoints
     mousePositions: { position: [number, number]; size: [number, number] }[]
     gameConfig: IGameConfig
+    cityMap: ICityMap
+    hasFoundTarget: boolean
   }
 }
 

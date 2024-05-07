@@ -6,6 +6,7 @@ import robotUtils from '../../../utils/robot'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
+import commonConfig from '../../../constants/config.json'
 
 // 需要所有游戏页面都先把百宝翻牌页面打开
 export async function baiBaoFanPai() {
@@ -23,7 +24,7 @@ export async function baiBaoFanPai() {
         },
       })
       await sleep(200)
-      await clickGamePoint('百宝翻牌-采用', 'baiBaoFanPai')
+      await clickGamePoint(`百宝翻牌-采用${commonConfig.baiBaoFanPai}`, 'baiBaoFanPai')
       await sleep(200)
       robotUtils.keyTap('enter')
     }
@@ -38,7 +39,7 @@ export async function baiBaoFanPai() {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/baiBaoFanPai.jpg')
           await screenCaptureToFile(tempCapturePath)
 
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.8)
 
           return found
         },

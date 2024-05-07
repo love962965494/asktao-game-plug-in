@@ -1,4 +1,4 @@
-import { screen } from 'electron'
+import { clipboard, screen } from 'electron'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { getGameWindows } from '../../utils/systemCotroll'
 import { randomName, sleep } from '../../utils/toolkits'
@@ -18,8 +18,10 @@ import {
   extractThemeColors,
   findImagePositions,
   findImageWithinTemplate,
+  findTargetInVideo,
   screenCaptureToFile,
 } from '../../utils/fileOperations'
+import { ICityMap } from 'constants/types'
 
 // 是否组队
 export async function isGroupedTeam(gameWindow: GameWindowControl) {
@@ -35,7 +37,7 @@ export async function isGroupedTeam(gameWindow: GameWindowControl) {
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
   robotUtils.keyTap('B', ['control'])
-  
+
   return found
 }
 
@@ -293,5 +295,58 @@ export async function displayGameWindows() {
   }
 }
 
+// 移动行走找到地图中目标
+// 1920 * 1080分辨率
+const oneScreenSize = [70, 50]
+function generateMapCoordinates(size: number[]) {
+  const [width, height] = size
+  let coordinates = []
+  let xStep = oneScreenSize[0]
+  let yStep = oneScreenSize[1]
+  let xSteps = Array.from(
+    { length: Math.floor(width / xStep) },
+    (_, index) => index * xStep + Math.floor(xStep / 2)
+  ).concat(width % xStep ? [Math.floor(width / xStep) * xStep + Math.floor((width % xStep) / 2)] : [])
+  let ySteps = Array.from(
+    { length: Math.floor(height / yStep) },
+    (_, index) => index * yStep + Math.floor(yStep / 2)
+  ).concat(height % yStep ? [Math.floor(height / yStep) * yStep + Math.floor((height % yStep) / 2)] : [])
 
-// 找到目标
+  let direction = true // true 向左，false 向右
+  while (ySteps.length > 0) {
+    // Along x-axis
+    const y = ySteps.shift()!
+
+    if (direction) {
+      for (let i = 0; i < xSteps.length; i++) {
+        coordinates.push({ x: xSteps[i], y })
+      }
+    } else {
+      for (let i = xSteps.length - 1; i >= 0; i--) {
+        coordinates.push({ x: xSteps[i], y })
+      }
+    }
+
+    direction = !direction
+  }
+
+  return coordinates
+}
+export async function findTargetInMap(mapName: keyof ICityMap, targetName: string) {
+  const { size } = global.appContext.cityMap[mapName]
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/cheFu.jpg')
+  findTargetInVideo(templateImagePath)
+  const positions = generateMapCoordinates(size)
+  const currentPosition = []
+  const position = positions[0]
+
+  while (!global.appContext.hasFoundTarget) {
+    robotUtils.keyTap('B', ['control'])
+    await sleep(100)
+    robotUtils.keyTap('W', ['alt'])
+    clipboard.writeText(`${position.x}.${position.y}`)
+    robotUtils.keyTap('V', ['control'])
+    await sleep(100)
+    robotUtils.keyTap('enter')
+  }
+}

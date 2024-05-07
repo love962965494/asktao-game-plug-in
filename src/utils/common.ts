@@ -2,11 +2,12 @@ import GameWindowControl from './gameWindowControll'
 import robotUtils from './robot'
 import { ImageFileInfo, randomName, randomNum, randomPixelNum, sleep } from './toolkits'
 import path from 'path'
-import { logPath, logPath, pythonImagesPath } from '../paths'
+import { logPath, pythonImagesPath, staticPath } from '../paths'
 import { compareTwoImages, extractThemeColors, findImageWithinTemplate, screenCaptureToFile } from './fileOperations'
 import { IGamePoints } from 'constants/types'
 import fs from 'fs'
 import { MyPromise } from './customizePromise'
+import playSound from 'play-sound'
 
 export async function moveMouseTo(x: number, y: number) {
   const alternateWindow = GameWindowControl.getAlternateWindow()
@@ -80,7 +81,6 @@ export async function moveMouseToAndClick1(
 
     const srcImagePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName + '_' + randomName()}.jpg`)
     await screenCaptureToFile(srcImagePath, fileInfo.position, fileInfo.size)
-    // const isMatch = await matchImageWithTemplate(srcImagePath, templateImagePath, otherOptions.needPreProcessing)
     const [result] = await compareTwoImages(srcImagePath, templateImagePath, { ...otherOptions })
 
     if (result === 1) {
@@ -115,6 +115,7 @@ export async function moveMouseToAndClick1(
   }
 }
 
+const errorBgm = path.join(staticPath, '/error.wav')
 export async function moveMouseToAndClick(
   templateImagePath: string,
   fileInfo: ImageFileInfo,
@@ -137,6 +138,10 @@ export async function moveMouseToAndClick(
   let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
   let errorCounts = 0
   while (!isInRange) {
+    if (errorCounts > 10) {
+      playSound().play(errorBgm)
+      return
+    }
     errorCounts++
     const position = [
       lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20),

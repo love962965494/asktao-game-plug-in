@@ -5,9 +5,9 @@ import path from 'path'
 import { mainPath, pythonImagesPath, rendererPath } from '../paths'
 import robotUtils from './robot'
 import { randomName, sleep } from './toolkits'
-import { findImagePositions, findMostSimilarImage, paddleOcr, screenCaptureToFile } from './fileOperations'
-import { matchStrings, moveMouseTo, moveMouseToBlank } from './common'
-import { IAccountInfo, IGamePoints } from 'constants/types'
+import { findImagePositions, paddleOcr, screenCaptureToFile } from './fileOperations'
+import { matchStrings, moveMouseToBlank } from './common'
+import { IAccountInfo } from 'constants/types'
 
 const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow

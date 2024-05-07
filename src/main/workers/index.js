@@ -11,6 +11,7 @@ export default function registerWorkers() {
   worker.postMessage('gameTask.json')
   worker.postMessage('gamePoints.json')
   worker.postMessage('gameConfig.json')
+  worker.postMessage('cityMap.json')
   worker.on('message', ({ content, type }) => {
     global.appContext[type] = content
   })

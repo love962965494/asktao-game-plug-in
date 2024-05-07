@@ -57,6 +57,7 @@ function screenCaptureToFile(filePath: string, position: number[] = [], size: nu
   })
 }
 
+// 从图片中找到目标图片的坐标位置
 function findImagePositions(bigImagePath: string, smallImagePath: string): Promise<number[]> {
   const filePath = path.join(pythonPath, 'findPositionWithinTemplate.py')
 
@@ -85,19 +86,16 @@ async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang
   const filePath = path.join(pythonPath, 'paddle_ocr.py')
 
   return MyPromise((resolve, reject) => {
-    child_process.exec(
-      `${pythonEnvPath} -u ${filePath} ${targetImagePath} ${lang}`,
-      (error, stdout) => {
-        if (error) {
-          console.error(`stderr: ${error}`)
-          reject(error)
-        }
-
-        const results: string[] = JSON.parse(stdout.split('\r\n')[5]) as string[]
-
-        resolve(results)
+    child_process.exec(`${pythonEnvPath} -u ${filePath} ${targetImagePath} ${lang}`, (error, stdout) => {
+      if (error) {
+        console.error(`stderr: ${error}`)
+        reject(error)
       }
-    )
+
+      const results: string[] = JSON.parse(stdout.split('\r\n')[5]) as string[]
+
+      resolve(results)
+    })
   })
 }
 
@@ -118,30 +116,7 @@ async function prePorcessingImage(sourceImagePath: string, targetImagePath: stri
   )
 }
 
-async function matchImageWithTemplate(imagePath: string, templateImagePath: string, needPreProcessing = false) {
-  const filePath = path.join(pythonPath, 'matchImageWithTemplate.py')
-  let targetImagePath1 = imagePath
-  let targetImagePath2 = templateImagePath
-  if (needPreProcessing) {
-    const name = randomName()
-    targetImagePath1 = path.join(pythonImagesPath, `temp/preProcessing_${name + '_1'}.jpg`)
-    targetImagePath2 = path.join(pythonImagesPath, `temp/preProcessing_${name + '_2'}.jpg`)
-    targetImagePath1 = await prePorcessingImage(imagePath, targetImagePath1)
-    targetImagePath2 = await prePorcessingImage(templateImagePath, targetImagePath2)
-  }
-
-  return MyPromise((resolve, reject) => {
-    child_process.exec(`python -u ${filePath} ${targetImagePath1} ${targetImagePath2}`, (error, stdout) => {
-      if (error) {
-        console.log('matchImageWithTemplate error: ', error)
-        reject(error)
-      }
-
-      resolve(stdout.trim() === 'True' ? true : false)
-    })
-  })
-}
-
+// 比较两张大小一样的图片是否相同
 async function compareTwoImages(
   captureImagePath: string,
   templateImagePath: string,
@@ -176,6 +151,7 @@ async function compareTwoImages(
   })
 }
 
+// 提取图片颜色
 async function extractThemeColors(imagePath: string, top_n = 50): Promise<string> {
   const filePath = path.join(pythonPath, 'extractThemeColors.py')
 
@@ -191,6 +167,7 @@ async function extractThemeColors(imagePath: string, top_n = 50): Promise<string
   })
 }
 
+// 是否可以从模板中找到目标
 async function findImageWithinTemplate(
   bigImagePath: string,
   smallImagePath: string,
@@ -205,11 +182,12 @@ async function findImageWithinTemplate(
         reject(error)
       }
 
-      resolve(stdout.trim() === 'True' ? true : false)
+      resolve(stdout.trim() === 'True')
     })
   })
 }
 
+// 删除图片背景色
 async function removeBackground(imagePath: string): Promise<void> {
   const filePath = path.join(pythonPath, 'removeBackground.py')
 
@@ -221,30 +199,6 @@ async function removeBackground(imagePath: string): Promise<void> {
       }
 
       resolve()
-    })
-  })
-}
-
-async function findMostSimilarImage(templateImagePath: string, imagePaths: string[]): Promise<string> {
-  const filePath = path.join(pythonPath, 'findMostSimilarImage.py')
-
-  return MyPromise((resolve, reject) => {
-    child_process.exec(`python -u ${filePath} ${templateImagePath} ${imagePaths}`, (error, stdout) => {
-      if (error) {
-        console.log('findImageWithinTemplate error: ', error)
-        reject(error)
-      }
-
-      const res = JSON.parse(stdout) as { [key: string]: number }
-      let imagePath = ''
-      let maxVal = 0
-      for (const [key, value] of Object.entries(res)) {
-        if (value > maxVal) {
-          maxVal = value
-          imagePath = key
-        }
-      }
-      resolve(imagePath)
     })
   })
 }
@@ -267,17 +221,37 @@ async function findMultiMatchPositions(bigImagePath: string, smallImagePath: str
   })
 }
 
+// 不停监控屏幕，直到找到目标
+async function findTargetInVideo(targetImagePath: string) {
+  const filePath = path.join(pythonPath, 'findTargetInVideo.py')
+
+  return MyPromise((resolve, reject) => {
+    child_process.exec(`python -u ${filePath} ${targetImagePath}`, (error, stdout) => {
+      if (error) {
+        console.log('findTargetInVideo error: ', error)
+        reject(error)
+      }
+
+      const result = stdout.trim() === 'True'
+      if (result) {
+        global.appContext.hasFoundTarget = true
+      }
+
+      resolve(result)
+    })
+  })
+}
+
 export {
   deleteDir,
   screenCaptureToFile,
   findImagePositions,
   paddleOcr,
   prePorcessingImage,
-  matchImageWithTemplate,
   extractThemeColors,
   findImageWithinTemplate,
   compareTwoImages,
   removeBackground,
-  findMostSimilarImage,
+  findTargetInVideo,
   findMultiMatchPositions,
 }

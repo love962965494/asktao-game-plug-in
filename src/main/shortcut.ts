@@ -7,7 +7,6 @@ import {
   findImagePositions,
   findImageWithinTemplate,
   findMultiMatchPositions,
-  matchImageWithTemplate,
   prePorcessingImage,
   removeBackground,
   screenCaptureToFile,
@@ -20,7 +19,7 @@ import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './task
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
-import { displayGameWindows, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from './tasks/basicTasks'
+import { displayGameWindows, findTargetInMap, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
 import fs from 'fs'
 
@@ -71,7 +70,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1106, 464], [36, 18])
+    await screenCaptureToFile(srcImagePath, [1420, 741], [112, 32])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -104,11 +103,9 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    const teamWindowsWithGroup =  await getTeamsInfo()
-    
-    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-      await teamLeaderWindow.setForeground()
-    }
+    const sourceImagePath = 'C:\\Users\\asus\\Desktop\\testScreenCapture1.jpg'
+    const targetImagePath = 'C:\\Users\\asus\\Desktop\\testScreenCapture_2.jpg'
+    await prePorcessingImage(sourceImagePath, targetImagePath)
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {
