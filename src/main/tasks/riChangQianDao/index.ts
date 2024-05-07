@@ -158,7 +158,7 @@ export async function xianJieTongJi() {
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()
-    await escShouCangTasks('quanMinShuaDao')
+    await escShouCangTasks('quanMinShuaDao', true)
     await hasGoneToNPC(teamLeaderWindow)
     await goToNPCAndTalk({
       city: '无名小镇',
@@ -173,6 +173,13 @@ export async function xianJieTongJi() {
 
 export async function yiJianRiChang() {
   const teamWindowsWithGroup = await getTeamsInfo()
+
+  for (const teamWindows of teamWindowsWithGroup) {
+    for (const teamWindow of teamWindows) {
+      await teamWindow.setForeground()
+      robotUtils.keyTap('W', ['control'])
+    }
+  }
   await xianJieTongJi()
 
   await sleep(4 * 60 * 60 * 1000)

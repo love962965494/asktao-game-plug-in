@@ -94,8 +94,8 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
         await chiXiang(1, true)
       }
     }
-    await keepZiDong()
-    await buChongZhuangTai({ needZhongCheng: true })
+    // await keepZiDong()
+    await buChongZhuangTai()
     await xiuXingTask(taskType, false)
   }
 }
@@ -207,9 +207,9 @@ export async function getTaskProgress(gameWindows: GameWindowControl[], allTask:
   return restTasks
 }
 
+let taskIndex = 0
 async function loopTasks(tasksWithGroup: string[][], taskType: string) {
   let prevPairTask: (string | undefined)[] = []
-  let taskIndex = 0
   while (true) {
     writeLog(taskType, JSON.stringify(tasksWithGroup, undefined, 4), true)
 
@@ -220,7 +220,7 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
     }
 
     const pairTask = tasksWithGroup.map((tasks) => tasks[0])
-    await executePairTask(pairTask, taskType, prevPairTask, taskIndex)
+    await executePairTask(pairTask, taskType, prevPairTask)
     prevPairTask = pairTask
     tasksWithGroup.map((tasks) => tasks.shift())
     taskIndex++
@@ -236,7 +236,6 @@ async function executePairTask(
   pairTask: (string | undefined)[],
   taskType: string,
   prevPairTask: (string | undefined)[],
-  taskIndex: number
 ) {
   const conversition = conversitionMap[taskType as keyof typeof conversitionMap]
   const teamLeaderWindows: GameWindowControl[] = []

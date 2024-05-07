@@ -5,7 +5,7 @@ import { randomName, sleep } from '../../utils/toolkits'
 import { clipboard } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { findImagePositions, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
+import { extractThemeColors, findImagePositions, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
 
 export async function hasGameTask(taskName: string) {
   await searchGameTask(taskName)
@@ -61,7 +61,7 @@ export async function searchGameTask(taskName: string) {
 export const escTaskBarSize = [250, 28]
 // 任务框框size
 const taskBarSize = [250, 60]
-export async function escShouCangTasks(taskName: string) {
+export async function escShouCangTasks(taskName: string, ignoreHasFinished = false) {
   robotUtils.keyTap('B', ['control'])
   await sleep(300)
   robotUtils.keyTap('escape')
@@ -84,13 +84,12 @@ export async function escShouCangTasks(taskName: string) {
       [position[0], position[1] + escTaskBarSize[1] + 5],
       [escTaskBarSize[0], taskBarSize[1] - escTaskBarSize[1]]
     )
-    const [taskNums] = await paddleOcr(tempCapturePath, false, 'en')
-    const [firstNum, secondNum] = taskNums.split('/')
-    if (firstNum === secondNum) {
+    const colors = await extractThemeColors(tempCapturePath)
+    if (!colors.includes('#e6c878')) {
       hasFinished = true
     }
   }
-  if (hasFinished) {
+  if (hasFinished && !ignoreHasFinished) {
     return hasFinished
   }
   {
