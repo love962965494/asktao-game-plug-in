@@ -27,7 +27,6 @@ export function registerMonitorTasks() {
 
 async function dianXianResolve() {
   await loginGame()
-  monitorGameDiaoXian()
   await getGameWindows()
   const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
 

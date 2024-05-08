@@ -14,6 +14,7 @@ import { isInBattle, waitFinishZhanDou } from '../zhanDouTasks'
 import { MyPromise } from '../../../utils/customizePromise'
 import { chiXiang } from '../wuPinTask'
 import commonConfig from '../../../constants/config.json'
+import { monitorGameDiaoXian } from '../monitorTask'
 
 export async function registerYiJianQianDao() {
   ipcMain.on('yi-jian-qian-dao', async () => yiJianQianDao())
@@ -173,6 +174,7 @@ export async function xianJieTongJi() {
 
 export async function yiJianRiChang() {
   const teamWindowsWithGroup = await getTeamsInfo()
+  monitorGameDiaoXian()
 
   for (const teamWindows of teamWindowsWithGroup) {
     for (const teamWindow of teamWindows) {
