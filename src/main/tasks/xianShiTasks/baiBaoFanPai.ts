@@ -24,7 +24,17 @@ export async function baiBaoFanPai() {
         },
       })
       await sleep(200)
-      await clickGamePoint(`百宝翻牌-采用${commonConfig.baiBaoFanPai}`, 'baiBaoFanPai')
+      await clickGamePoint(`百宝翻牌-采用${commonConfig.baiBaoFanPai}`, 'baiBaoFanPai', {
+        callback: async () => {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/baiBaoFanPai_${randomName()}.jpg`)
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/baiBaoFanPai.jpg')
+          await screenCaptureToFile(tempCapturePath)
+
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.8)
+
+          return found
+        },
+      })
       await sleep(200)
       robotUtils.keyTap('enter')
     }

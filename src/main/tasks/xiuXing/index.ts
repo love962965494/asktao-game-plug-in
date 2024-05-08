@@ -58,6 +58,12 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
 
   let restTasksWithGroup: string[][] = []
   if (isFirst) {
+    for (const teamWindows of teamWindowsWithGroup) {
+      for (const teamWindow of teamWindows) {
+        await teamWindow.setForeground()
+        robotUtils.keyTap('w', ['control'])
+      }
+    }
     const restTasksContent = await readLog(taskType)
     if (restTasksContent.trim()) {
       restTasksWithGroup = JSON.parse(restTasksContent)
@@ -87,15 +93,17 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
   }
 
   while (true) {
-    await loopTasks(restTasksWithGroup, taskType)
     if (taskType !== '十绝阵') {
-      for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-        await teamLeaderWindow.setForeground()
-        await chiXiang(1, true)
+      for (const teamWindows of teamWindowsWithGroup) {
+        for (const teamWindow of teamWindows) {
+          await teamWindow.setForeground()
+          await chiXiang(2, true)
+        }
       }
     }
-    // await keepZiDong()
-    await buChongZhuangTai()
+    await loopTasks(restTasksWithGroup, taskType)
+    await keepZiDong()
+    await buChongZhuangTai({ needZhongCheng: true })
     await xiuXingTask(taskType, false)
   }
 }
@@ -262,9 +270,9 @@ async function executePairTask(
     }
 
     // 第一个执行任务的
-    if (taskType !== '十绝阵' && prevPairTask.length === 0) {
-      await chiXiang(2)
-    }
+    // if (taskType !== '十绝阵' && prevPairTask.length === 0) {
+    //   await chiXiang(2)
+    // }
 
     teamLeaderWindows.push(nowGameWindow)
     npcs.push(npc)
