@@ -14,7 +14,7 @@ import {
   screenCaptureToFile,
 } from '../../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
-import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
+import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, hasNPCDialog, talkToNPC } from '../npcTasks'
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
 import { IGameTask } from 'constants/types'
 import { xianJieShenBu } from './xianJieShenBu'
@@ -151,7 +151,21 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
   // 每个队员依次领取任务
   for (const gameWindow of teamMemberWindows) {
     await gameWindow.setForeground()
-    await talkToNPC(city, npcName, conversitions[0])
+    const found = await hasNPCDialog()
+    if (!found) {
+      await clickGamePoint('队伍-暂离', 'lingQuRenWu')
+      await sleep(200)
+      await goToNPC(city, npcName)
+      await sleep(500)
+    }
+    await talkToNPC(city, npcName, conversitions[0], async () => {
+      await moveMouseToBlank()
+      const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      return position
+    })
     await sleep(500)
     await talkToNPC(city, npcName, conversitions[1])
     await sleep(500)
@@ -243,7 +257,7 @@ const conversitionMap = {
 async function executePairTask(
   pairTask: (string | undefined)[],
   taskType: string,
-  prevPairTask: (string | undefined)[],
+  prevPairTask: (string | undefined)[]
 ) {
   const conversition = conversitionMap[taskType as keyof typeof conversitionMap]
   const teamLeaderWindows: GameWindowControl[] = []
