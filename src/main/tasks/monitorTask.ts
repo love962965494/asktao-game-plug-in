@@ -1,15 +1,12 @@
-import path from 'path'
-import { pythonImagesPath } from '../../paths'
-import { randomName } from '../../utils/toolkits'
-import { findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
 import { loginGame } from './loginTask'
-import { yiJianZuDui } from './basicTasks'
+import { isGroupedTeam, liDui, yiJianZuDui } from './basicTasks'
 import { keepZiDong } from './zhanDouTasks'
-import { getGameWindows } from '../../utils/systemCotroll'
+import { getGameWindows, getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { yiJianRiChang } from './riChangQianDao'
 import { ipcMain } from 'electron'
-
+import { Window as WinControl } from 'win-control'
+import { sleep } from '../../utils/toolkits'
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
   // const worker = new Worker(path.join(__dirname, '../workers/monitor.js'))
@@ -28,29 +25,40 @@ export function registerMonitorTasks() {
   ipcMain.on('monitor-game', monitorGameDiaoXian)
 }
 
-export async function monitorGameDiaoXian() {
-  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/diaoXian.jpg')
-  const interval = setInterval(async () => {
-    const tempCapturePath = path.join(pythonImagesPath, `temp/monitorGameDiaoXian_${randomName()}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
+async function dianXianResolve() {
+  await loginGame()
+  monitorGameDiaoXian()
+  await getGameWindows()
+  const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
 
-    const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-    if (found) {
-      clearInterval(interval)
-      await loginGame()
-      await getGameWindows()
-      const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
-
-      for (const gameWindow of gameWindows) {
-        if (gameWindow.roleInfo.defaultTeamLeader) {
-          await gameWindow.setForeground()
-          await yiJianZuDui(gameWindow.roleInfo.roleName)
-        }
+  for (const gameWindow of gameWindows) {
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      await gameWindow.setForeground()
+      const isGrouped = await isGroupedTeam(gameWindow)
+      if (isGrouped) {
+        await liDui()
+        await sleep(500)
       }
-
-      await keepZiDong()
-      await yiJianRiChang()
+      await yiJianZuDui(gameWindow.roleInfo.roleName)
     }
-  }, 5 * 60 * 1000)
+  }
+
+  await keepZiDong()
+
+  await yiJianRiChang()
+}
+export async function monitorGameDiaoXian() {
+  const interval = setInterval(async () => {
+    const processes = await getProcessesByName('asktao')
+    const gameWindows = processes.map(([_, pId]) => {
+      const gameWindow = WinControl.getByPid(+pId)
+      
+      return gameWindow
+    })
+
+    if (gameWindows.length !== 10 || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
+      dianXianResolve()
+      clearInterval(interval)
+    }
+  }, 5 * 1000)
 }

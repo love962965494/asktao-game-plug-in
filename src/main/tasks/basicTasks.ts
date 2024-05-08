@@ -19,6 +19,7 @@ import {
   findImagePositions,
   findImageWithinTemplate,
   findTargetInVideo,
+  paddleOcr,
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 import { ICityMap } from 'constants/types'
@@ -307,7 +308,7 @@ export async function displayGameWindows() {
 
 // 移动行走找到地图中目标
 // 1920 * 1080分辨率
-const oneScreenSize = [70, 50]
+const oneScreenSize = [60, 30]
 function generateMapCoordinates(size: number[]) {
   const [width, height] = size
   let coordinates = []
@@ -342,15 +343,55 @@ function generateMapCoordinates(size: number[]) {
 
   return coordinates
 }
-export async function findTargetInMap(mapName: keyof ICityMap, targetName: string) {
+export async function getCurrentGamePosition() {
+  await sleep(1000)
+  robotUtils.keyTap('B', ['control'])
+  await sleep(100)
+  robotUtils.keyTap('G', ['alt'])
+  await sleep(100)
+  await clickGamePoint('特八-保存', 'getCurrentGamePosition', {
+    callback: async () => {
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/teBaBaoCun.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/getCurrentGamePosition_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return found
+    },
+  })
+
+  const { position, size } = global.appContext.gamePoints['特八-保存坐标']
+  const tempCapturePath = path.join(pythonImagesPath, `temp/getCurrentGamePosition_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const result = await paddleOcr(tempCapturePath)
+  const currentPosition = result[1].replaceAll(/[^\d]/g, ' ').split(' ').filter(Boolean)
+
+  await moveMouseToBlank()
+  await sleep(200)
+  robotUtils.mouseClick('right')
+  await sleep(100)
+  robotUtils.keyTap('B', ['control'])
+
+  return currentPosition
+}
+export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, targetName: string) {
+  await gameWindow.setForeground()
+  gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
-  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/cheFu.jpg')
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${targetName}.jpg`)
   findTargetInVideo(templateImagePath)
   const positions = generateMapCoordinates(size)
-  const currentPosition = []
-  const position = positions[0]
+  const currentPosition = await getCurrentGamePosition()
+  let index = positions.findIndex(
+    (item) =>
+      Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
+      Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
+  )
 
-  while (!global.appContext.hasFoundTarget) {
+  let backToZero = false
+  while (true) {
+    const position = positions[index]
     robotUtils.keyTap('B', ['control'])
     await sleep(100)
     robotUtils.keyTap('W', ['alt'])
@@ -358,5 +399,28 @@ export async function findTargetInMap(mapName: keyof ICityMap, targetName: strin
     robotUtils.keyTap('V', ['control'])
     await sleep(100)
     robotUtils.keyTap('enter')
+    if (backToZero) {
+      await sleep(2 * 60 * 1000)
+    }
+    await sleep(10 * 1000)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
+    const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+    if (found) {
+      const position = await findImagePositions(tempCapturePath, templateImagePath)
+
+      await moveMouseTo(position[0] + 3, position[1] - 10)
+      await sleep(200)
+      robotUtils.mouseClick('left')
+      break
+    } else {
+      index++
+
+      if (index > positions.length - 1) {
+        index = 0
+        backToZero = true
+      }
+    }
   }
 }

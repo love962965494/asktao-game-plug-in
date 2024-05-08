@@ -18,10 +18,10 @@ def ocr_image(image_path, lang = 'ch'):
     return result
 
 if __name__ == "__main__":
-    # image_path = sys.argv[1]
-    # lang = sys.argv[2]
-    image_path = 'C:/Users/asus/Desktop/testScreenCapture_1.jpg'
-    lang = 'ch'
+    image_path = sys.argv[1]
+    lang = sys.argv[2]
+    # image_path = 'C:/Users/asus/Desktop/testScreenCapture_1.jpg'
+    # lang = 'ch'
     results = ocr_image(image_path, lang)
     formatRusult = []
     for idx in range(len(results)):

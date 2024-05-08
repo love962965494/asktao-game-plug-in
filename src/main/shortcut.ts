@@ -19,9 +19,19 @@ import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './task
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
-import { displayGameWindows, findTargetInMap, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from './tasks/basicTasks'
+import {
+  displayGameWindows,
+  findTargetInMap,
+  getCurrentGamePosition,
+  getTeamsInfo,
+  isGroupedTeam,
+  liDui,
+  yiJianZuDui,
+} from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
 import fs from 'fs'
+import { loginGame } from './tasks/loginTask'
+import { monitorGameDiaoXian } from './tasks/monitorTask'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -70,7 +80,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [720, 614], [132, 30])
+    await screenCaptureToFile(srcImagePath, [788, 508], [200, 21])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -103,10 +113,8 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの随你')
-    await gameWindow?.setForeground()
-    await liDui()
+    monitorGameDiaoXian()
+    // keepZiDong()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

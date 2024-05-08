@@ -117,11 +117,14 @@ export async function keepZiDong() {
     robotUtils.keyTap('B', ['control'])
     const position = await gameWindow.getZiDongZhanDouPosition()
 
-    await moveMouseToAndClick(templateImagePath, {
-      buttonName: 'ziDongZhanDou',
-      position,
-      size: [46, 34],
-    })
+    if (position.length !== 0) {
+      await moveMouseToAndClick(templateImagePath, {
+        buttonName: 'ziDongZhanDou',
+        position,
+        size: [46, 34],
+      })
+    }
+
     robotUtils.keyTap('2', ['control'])
     await sleep(200)
   }
