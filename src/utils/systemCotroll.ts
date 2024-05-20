@@ -1,7 +1,7 @@
 import { exec } from 'child_process'
 import GameWindowControl from './gameWindowControll'
 import { MyPromise } from './customizePromise'
-
+import process from 'process'
 /**
  *  游戏进程信息，[pName, pId]
  */
@@ -61,6 +61,21 @@ async function killProcessesByName(name: string) {
   })
 }
 
+function killProcessesByPid(pid: number) {
+  try {
+    process.kill(pid, 'SIGKILL')
+  } catch (err: any) {
+    // 错误处理
+    if (err.code === 'ESRCH') {
+      console.error(`进程 ${pid} 不存在`)
+    } else if (err.code === 'EPERM') {
+      console.error(`没有权限终止进程 ${pid}`)
+    } else {
+      console.error(`终止进程 ${pid} 时发生错误: ${err.message}`)
+    }
+  }
+}
+
 // 获取游戏窗口
 async function getGameWindows() {
   const processes = await getProcessesByName('asktao')
@@ -78,4 +93,4 @@ async function getGameWindows() {
   return allGameWindows
 }
 
-export { getProcessesByName, killProcessesByName, getGameWindows }
+export { getProcessesByName, killProcessesByName, getGameWindows, killProcessesByPid }

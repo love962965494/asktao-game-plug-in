@@ -31,20 +31,23 @@ async function dianXianResolve() {
   const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
 
   for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+    const isGrouped = await isGroupedTeam(gameWindow)
+    if (isGrouped) {
+      await liDui()
+      await sleep(500)
+    }
+  }
+
+  for (const gameWindow of gameWindows) {
     if (gameWindow.roleInfo.defaultTeamLeader) {
-      await gameWindow.setForeground()
-      const isGrouped = await isGroupedTeam(gameWindow)
-      if (isGrouped) {
-        await liDui()
-        await sleep(500)
-      }
       await yiJianZuDui(gameWindow.roleInfo.roleName)
     }
   }
 
   await keepZiDong()
 
-  await yiJianRiChang()
+  // await yiJianRiChang()
 }
 export async function monitorGameDiaoXian() {
   const interval = setInterval(async () => {
