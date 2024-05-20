@@ -90,13 +90,14 @@ export async function hasNPCDialog() {
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/hasGoneToNPC.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/hasGoneToNPC_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
-  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-  return found
+  const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  await sleep(1000)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  return found1 && found2
 }
 
 export async function hasGoneToNPC(gameWindow: GameWindowControl, time = 5): Promise<void> {
-
   return MyPromise((resolve) => {
     const interval = setInterval(async () => {
       await gameWindow.setForeground()

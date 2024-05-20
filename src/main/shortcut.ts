@@ -12,7 +12,7 @@ import {
   screenCaptureToFile,
 } from '../utils/fileOperations'
 import robotjs from 'robotjs'
-import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from './tasks/npcTasks'
+import { goToNPCAndTalk, hasGoneToNPC, hasNPCDialog, talkToNPC } from './tasks/npcTasks'
 import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
@@ -113,7 +113,8 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    monitorGameDiaoXian()
+    // monitorGameDiaoXian()
+    hasNPCDialog()
     // keepZiDong()
   })
 
