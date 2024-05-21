@@ -34,19 +34,23 @@ export async function loginGame() {
       robotUtil.mouseClick('left', true)
 
       const promise1 = new Promise<number>((resolve) => {
-        const interval = setInterval(async () => {
+        let hasFound = false
+        async function _test() {
           const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFlag.jpg')
           await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+          hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-          if (found) {
-            clearInterval(interval)
-
+          if (!hasFound) {
+            setTimeout(() => _test(), 1000)
+          } else {
             resolve(1)
           }
-        }, 1000)
+        }
+
+        _test()
       })
+      
       const promise2 = new Promise<number>((resolve) => {
         setTimeout(() => {
           resolve(2)
@@ -96,7 +100,7 @@ export async function loginGame() {
       const allGameWindows = GameWindowControl.getAllGameWindows()
       const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
       const instance = new GameWindowControl(+pid)
-      
+
       for (const char of account.toUpperCase()) {
         robotUtil.handleCharKeyTap(char)
       }
