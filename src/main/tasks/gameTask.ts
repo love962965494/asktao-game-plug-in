@@ -5,7 +5,14 @@ import { randomName, sleep } from '../../utils/toolkits'
 import { clipboard } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { extractThemeColors, findImagePositions, findImageWithinTemplate, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
+import {
+  extractThemeColors,
+  findImagePositions,
+  findImageWithinTemplate,
+  paddleOcr,
+  removeBackground,
+  screenCaptureToFile,
+} from '../../utils/fileOperations'
 
 export async function hasGameTask(taskName: string) {
   await searchGameTask(taskName)
@@ -28,17 +35,24 @@ export async function hasGameTask(taskName: string) {
   return false
 }
 
+const taskEnum = {
+  十绝阵: 'shiJueZhenTask',
+  修行任务: 'xiuXingRenWuTask',
+}
 export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('B', ['control'])
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
-  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/shiJueZhenTask.jpg`)
+  const templateImagePath = path.join(
+    pythonImagesPath,
+    `GUIElements/common/${taskEnum[taskName as keyof typeof taskEnum]}.jpg`
+  )
   const tempCapturePath = path.join(pythonImagesPath, `temp/searchGameTask_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   if (found) {
-    return
+    return true
   }
 
   await clickGamePoint('当前任务', 'searchGameTask', {
@@ -49,7 +63,7 @@ export async function searchGameTask(taskName: string) {
   })
   await sleep(500)
   await clickGamePoint('当前任务-搜索框', 'searchGameTask', {
-    threshold: 1
+    threshold: 1,
   })
   await sleep(500)
 
@@ -63,6 +77,7 @@ export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('enter')
 
   await sleep(500)
+  return false
 }
 
 // 标题size

@@ -114,7 +114,8 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     // monitorGameDiaoXian()
-    await meiRiRiChang_DanRen()
+    meiRiRiChang_DanRen()
+    // keepZiDong()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

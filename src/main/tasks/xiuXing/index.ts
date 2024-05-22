@@ -152,13 +152,13 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
   // 每个队员依次领取任务
   for (const gameWindow of teamMemberWindows) {
     await gameWindow.setForeground()
-    const found = await hasNPCDialog()
-    if (!found) {
-      await clickGamePoint('队伍-暂离', 'lingQuRenWu')
-      await sleep(200)
-      await goToNPC(city, npcName)
-      await sleep(500)
-    }
+    // const found = await hasNPCDialog()
+    // if (!found) {
+    //   await clickGamePoint('队伍-暂离', 'lingQuRenWu')
+    //   await sleep(200)
+    //   await goToNPC(city, npcName)
+    //   await sleep(500)
+    // }
     await talkToNPC(city, npcName, conversitions[0], async () => {
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
@@ -293,8 +293,8 @@ async function executePairTask(
     npcs.push(npc)
 
     if (prevNpc !== npc) {
-      await searchGameTask(taskType)
-      if (taskType === '修行任务') {
+      const found = await searchGameTask(taskType)
+      if (taskType === '修行任务' && !found) {
         await sleep(3000)
       }
       await sleep(500)
