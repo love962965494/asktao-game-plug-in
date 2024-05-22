@@ -18,12 +18,14 @@ export async function isInBattle(gameWindow: GameWindowControl) {
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
-  const inBattle = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-  return inBattle
+  const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  await sleep(1000)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  return found1 && found2
 }
 
-export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 3): Promise<void> {
+export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
   return MyPromise(async (resolve) => {
     const inBattle = await isInBattle(gameWindow)
 

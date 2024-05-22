@@ -80,7 +80,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [578, 260], [50, 50])
+    await screenCaptureToFile(srcImagePath, [836, 293], [750, 120])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -114,8 +114,7 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     // monitorGameDiaoXian()
-    hasNPCDialog()
-    // keepZiDong()
+    await meiRiRiChang_DanRen()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {

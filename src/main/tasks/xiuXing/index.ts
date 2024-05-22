@@ -18,6 +18,7 @@ import { getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, hasNPCDialo
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
 import { IGameTask } from 'constants/types'
 import { xianJieShenBu } from './xianJieShenBu'
+import commonConfig from '../../../constants/config.json'
 
 export async function registerXiuXing() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
@@ -309,21 +310,17 @@ async function executePairTask(
   for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
     const npc = npcs[+index]
     await hasGoneToNPC(teamLeaderWindow)
-    await sleep(500)
+    // await sleep(500)
     const city = getCurrentCityByNpc(npc)
-    await goToNPCAndTalk({
-      city,
-      npcName: npc,
-      conversition,
-      intervalTime: 1,
-      gameWindow: teamLeaderWindow,
-    })
+    await talkToNPC(city, npc, conversition)
+    // await goToNPCAndTalk({
+    //   city,
+    //   npcName: npc,
+    //   conversition,
+    //   intervalTime: 1,
+    //   gameWindow: teamLeaderWindow,
+    // })
     await sleep(500)
-  }
-
-  // 补充自动回合，每5个任务补充一次
-  if (taskIndex && taskIndex % 5 === 0) {
-    await keepZiDong()
   }
 
   // 等待战斗结束
@@ -331,6 +328,11 @@ async function executePairTask(
     await waitFinishZhanDou(teamLeaderWindow)
     await sleep(2000)
     await hasMeetLaoJun(teamLeaderWindow)
+  }
+
+  // 补充自动回合，每5个任务补充一次
+  if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
+    await keepZiDong()
   }
 
   // 补充状态，每5个任务补充一次

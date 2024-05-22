@@ -47,7 +47,7 @@ async function dianXianResolve() {
 
   await keepZiDong()
 
-  // await yiJianRiChang()
+  await yiJianRiChang()
 }
 export async function monitorGameDiaoXian() {
   const interval = setInterval(async () => {

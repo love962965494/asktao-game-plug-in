@@ -5,7 +5,7 @@ import { randomName, sleep } from '../../utils/toolkits'
 import { clipboard } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
-import { extractThemeColors, findImagePositions, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
+import { extractThemeColors, findImagePositions, findImageWithinTemplate, paddleOcr, removeBackground, screenCaptureToFile } from '../../utils/fileOperations'
 
 export async function hasGameTask(taskName: string) {
   await searchGameTask(taskName)
@@ -32,6 +32,14 @@ export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('B', ['control'])
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
+
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/shiJueZhenTask.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/searchGameTask_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  if (found) {
+    return
+  }
 
   await clickGamePoint('当前任务', 'searchGameTask', {
     tabOptions: {
