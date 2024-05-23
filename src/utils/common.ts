@@ -61,10 +61,10 @@ export async function moveMouseToAndClick(
   let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
   let errorCounts = 0
   while (!isInRange) {
-    if (errorCounts > 10) {
-      playSound().play(errorBgm)
-      return
-    }
+    // if (errorCounts > 10) {
+    //   playSound().play(errorBgm)
+    //   return
+    // }
     errorCounts++
     const position = [
       lastXPos + randomPixelNum(otherOptions.randomPixNums?.[0] || 20),

@@ -604,5 +604,140 @@
         }
       }
     }
+  },
+  "南天门": {
+    "taiQingZhenJun": {
+      "zh": "太清真君",
+      "search": {
+        "abstract": "tqzj",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhengYouCiYi": {
+          "zh": "我正有此意",
+          "position": [528, 578],
+          "size": [170, 34]
+        },
+        "woZheJiuQianQu": {
+          "zh": "我这就前去",
+          "position": [528, 578],
+          "size": [170, 34]
+        }
+      }
+    }
+  },
+  "蓬莱岛": {
+    "tieGuaiLi": {
+      "zh": "铁拐李",
+      "search": {
+        "abstract": "tgl",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "hanZhongLi": {
+      "zh": "汉钟离",
+      "search": {
+        "abstract": "hzl",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "lvDongBin": {
+      "zh": "吕洞宾",
+      "search": {
+        "abstract": "ldb",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "lanCaiHe": {
+      "zh": "蓝采和",
+      "search": {
+        "abstract": "lch",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "hanXiangZi": {
+      "zh": "韩湘子",
+      "search": {
+        "abstract": "hxz",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "zhangGuoLao": {
+      "zh": "张果老",
+      "search": {
+        "abstract": "zgl",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "heXianGu": {
+      "zh": "何仙姑",
+      "search": {
+        "abstract": "hxg",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "caoGuoJiu": {
+      "zh": "曹国舅",
+      "search": {
+        "abstract": "cgj",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woXiangYuXianZhangQieCuoYiXiaXianFa": {
+          "zh": "我想与仙长切磋一下仙法",
+          "position": [528, 649],
+          "size": [370, 34]
+        }
+      }
+    }
   }
 }

@@ -25,6 +25,19 @@ export async function isInBattle(gameWindow: GameWindowControl) {
   return found1 && found2
 }
 
+export async function isInBattle_1(gameWindow: GameWindowControl) {
+  await gameWindow.setForeground()
+  const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗']
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle_1.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  await sleep(1000)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  return found1 && found2
+}
+
 export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5): Promise<void> {
   return MyPromise(async (resolve) => {
     const inBattle = await isInBattle(gameWindow)
@@ -35,6 +48,25 @@ export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 5)
     }
     const interval = setInterval(async () => {
       const inBattle = await isInBattle(gameWindow)
+
+      if (!inBattle) {
+        clearInterval(interval)
+        resolve()
+      }
+    }, time * 1000)
+  })
+}
+
+export async function waitFinishZhanDou_1(gameWindow: GameWindowControl, time = 5): Promise<void> {
+  return MyPromise(async (resolve) => {
+    const inBattle = await isInBattle_1(gameWindow)
+
+    if (!inBattle) {
+      resolve()
+      return
+    }
+    const interval = setInterval(async () => {
+      const inBattle = await isInBattle_1(gameWindow)
 
       if (!inBattle) {
         clearInterval(interval)

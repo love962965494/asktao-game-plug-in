@@ -102,5 +102,34 @@
         "size": [308, 56]
       }
     }
+  },
+  "寻仙任务": {
+    "pinYin": "xunXianRenWu",
+    "description": "[XUN140]",
+    "npcs": [
+      { "zh": "汉钟离", "pinYin": "hanZhongLi" },
+      { "zh": "蓝采和", "pinYin": "lanCaiHe" },
+      { "zh": "韩湘子", "pinYin": "hanXiangZi" },
+      { "zh": "张果老", "pinYin": "zhangGuoLao" },
+      { "zh": "曹国舅", "pinYin": "caoGuoJiu" },
+      { "zh": "吕洞宾", "pinYin": "lvDongBin" },
+      { "zh": "何仙姑", "pinYin": "heXianGu" },
+      { "zh": "铁拐李", "pinYin": "tieGuaiLi" }
+    ],
+    "content": {
+      "position": [847, 465],
+      "size": [740, 134],
+      "taskNpc": {
+        "npcName": "taiQingZhenJun",
+        "conversitions": ["woZhengYouCiYi", "woZheJiuQianQu"],
+        "city": "南天门",
+        "position": [1336, 465],
+        "size": [136, 30]
+      },
+      "smallWindow": {
+        "position": [355, 275],
+        "size": [308, 60]
+      }
+    }
   }
 }
