@@ -110,7 +110,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
       for (const [index, teamWindows] of Object.entries(teamWindowsWithGroup)) {
         const defaultTeamLeaderWindow = teamWindows.find((teamWindow) => teamWindow.roleInfo.defaultTeamLeader)!
         await defaultTeamLeaderWindow.setForeground()
-        await chiXiang(2, true)
+        await chiXiang(2)
         if (taskType === '寻仙任务' && restTasksWithGroup[+index].length > 0) {
           const currentCity = await getCurrentCity()
           if (currentCity !== '蓬莱岛') {
@@ -325,7 +325,7 @@ async function executePairTask(
 
     if (prevNpc !== npc) {
       if (!nowGameWindow.roleInfo.defaultTeamLeader) {
-        await chiXiang(1, true)
+        await chiXiang(1)
       }
       const found = await searchGameTask(taskType)
       if (taskType === '修行任务' && !found) {
@@ -403,7 +403,7 @@ async function executePairTaskOfXunXian(
     const city = '蓬莱岛'
     if (prevNpc !== npc) {
       if (!nowGameWindow.roleInfo.defaultTeamLeader) {
-        await chiXiang(1, true)
+        await chiXiang(1)
       }
     }
     await goToNPC(city, npc)
