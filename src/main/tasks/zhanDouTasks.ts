@@ -19,10 +19,15 @@ export async function isInBattle(gameWindow: GameWindowControl) {
   const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-  await sleep(1000)
-  await screenCaptureToFile(tempCapturePath, position, size)
-  const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-  return found1 && found2
+  if (!found1) {
+    await sleep(2000)
+    await screenCaptureToFile(tempCapturePath, position, size)
+    const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+    return found2
+  }
+  
+  return found1
 }
 
 export async function isInBattle_1(gameWindow: GameWindowControl) {
