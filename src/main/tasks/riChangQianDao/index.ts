@@ -184,7 +184,7 @@ export async function yiJianRiChang() {
   }
   await xianJieTongJi()
 
-  await sleep(3 * 60 * 60 * 1000)
+  await sleep(4 * 60 * 60 * 1000)
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()

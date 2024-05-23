@@ -10,7 +10,6 @@ import {
   findImagePositions,
   findImageWithinTemplate,
   paddleOcr,
-  removeBackground,
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 
@@ -35,19 +34,12 @@ export async function hasGameTask(taskName: string) {
   return false
 }
 
-const taskEnum = {
-  十绝阵: 'shiJueZhenTask',
-  修行任务: 'xiuXingRenWuTask',
-}
 export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('B', ['control'])
-  const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
+  const { description, pinYin } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
-  const templateImagePath = path.join(
-    pythonImagesPath,
-    `GUIElements/common/${taskEnum[taskName as keyof typeof taskEnum]}.jpg`
-  )
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}Task.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/searchGameTask_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)

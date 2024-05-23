@@ -22,14 +22,17 @@
     }
   },
   "强力驱魔香时间": {
+    "pinYin": "qiangLiQuMoXiang",
     "description": "[QLQMX]",
     "content": {}
   },
   "降妖任务": {
+    "pinYin": "xiangYaoRenWu",
     "description": "[XYRW]",
     "content": {}
   },
   "伏魔任务": {
+    "pinYin": "fuMoRenWu",
     "description": "[FMRW]",
     "content": {}
   },
@@ -65,10 +68,12 @@
     }
   },
   "悬赏令": {
+    "pinYin": "xuanShangLing",
     "description": "[XSL]",
     "content": {}
   },
   "仙界通缉": {
+    "pinYin": "xianJieTongJi",
     "description": "[XJTJ]",
     "content": {}
   },
