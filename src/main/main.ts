@@ -44,9 +44,9 @@ if (isDevelopment) {
 }
 
 const createWindow = async () => {
-  if (isDevelopment) {
-    await installExtension(REACT_DEVELOPER_TOOLS)
-  }
+  // if (isDevelopment) {
+  //   await installExtension(REACT_DEVELOPER_TOOLS)
+  // }
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')

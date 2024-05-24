@@ -67,7 +67,7 @@ export async function useWuPin(name: string, times: number = 1) {
 }
 
 // 吃香
-export async function chiXiang(times: number, buXiang: boolean = false) {
+export async function chiXiang(times: number, buXiang: boolean = true) {
   if (buXiang) {
     await useWuPin('qiangLiQuMoXiang', times)
     return
