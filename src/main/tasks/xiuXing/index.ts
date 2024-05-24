@@ -124,7 +124,8 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
     await loopTasks(restTasksWithGroup, taskType)
     await keepZiDong()
     await buChongZhuangTai({ needZhongCheng: true })
-    for (const teamWindows of teamWindowsWithGroup) {
+    const nowTeamWindowsWithGroup = await getTeamsInfo()
+    for (const teamWindows of nowTeamWindowsWithGroup) {
       const [teamLeaderWindow] = teamWindows
       const defaultTeamLeaderWindow = teamWindows.find((teamWindow) => teamWindow.roleInfo.defaultTeamLeader)!
       await teamLeaderWindow.setForeground()
@@ -332,7 +333,16 @@ async function executePairTask(
         await sleep(3000)
       }
       await sleep(500)
-      await clickGamePoint(`${taskType}-NPC`, 'singleTask')
+      await clickGamePoint(`${taskType}-NPC`, 'singleTask', {
+        callback: async () => {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/singleTask_${randomName()}.jpg`)
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          return !found
+        }
+      })
       await sleep(500)
     } else {
       const city = getCurrentCityByNpc(npc)

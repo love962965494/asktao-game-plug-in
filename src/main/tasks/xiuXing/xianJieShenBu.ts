@@ -205,7 +205,8 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
     
     return position
   })
-
+  await sleep(500)
+  
   for (const teamMemberWindow of teamMemberWindows) {
     await teamMemberWindow.setForeground()
     await talkToNPC(
@@ -236,5 +237,6 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
     })
+    await sleep(500)
   }
 }
