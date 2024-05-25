@@ -39,14 +39,11 @@ export async function yiJianQianDao() {
       await screenCaptureToFile(tempCapturePath)
       position = await findImagePositions(tempCapturePath, templateImagePath)
     }
-    await moveMouseToAndClick(
-      templateImagePath,
-      {
-        buttonName: 'riChangQianDao_fuLi',
-        position,
-        size: [40, 30],
-      },
-    )
+    await moveMouseToAndClick(templateImagePath, {
+      buttonName: 'riChangQianDao_fuLi',
+      position,
+      size: [40, 30],
+    })
     await sleep(500)
     await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {
       callback: () => true,
@@ -124,7 +121,7 @@ export async function meiRiRiChang_DanRen() {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongRenWuPeiZhi.jpg')
           const tempCapturePath = path.join(pythonImagesPath, `temp/meiRiRiChang_DanRen_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath)
-  
+
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
           return found
         },
@@ -134,8 +131,8 @@ export async function meiRiRiChang_DanRen() {
       await clickGamePoint('收藏任务_单人', 'meiRiRiChang_DanRen', {
         tabOptions: {
           isTab: true,
-          activeTabColor: '#785a00'
-        }
+          activeTabColor: '#785a00',
+        },
       })
       await sleep(500)
 
@@ -182,39 +179,44 @@ export async function yiJianRiChang() {
       robotUtils.keyTap('W', ['control'])
     }
   }
-  await xianJieTongJi()
+  const currentHour = new Date().getHours()
+  if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
+    await xianJieTongJi()
+    await sleep(4 * 60 * 60 * 1000)
+    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+      await teamLeaderWindow.setForeground()
 
-  await sleep(4 * 60 * 60 * 1000)
+      await MyPromise<void>((resolve) => {
+        const interval = setInterval(async () => {
+          const inBattle = await isInBattle(teamLeaderWindow)
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhi.jpg')
+          const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-  for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-    await teamLeaderWindow.setForeground()
+          if (inBattle && found) {
+            await clickGamePoint('终止', 'yiJianRiChang', {
+              callback: async () => {
+                const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhiZhanZhou.jpg')
+                const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
+                await screenCaptureToFile(tempCapturePath)
+                const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-    await MyPromise<void>((resolve) => {
-      const interval = setInterval(async () => {
-        const inBattle = await isInBattle(teamLeaderWindow)
+                return found
+              },
+            })
+            await sleep(300)
+            robotUtils.keyTap('enter')
+            clearInterval(interval)
+            resolve()
+          }
+        }, 20 * 1000)
+      })
+    }
 
-        if (inBattle) {
-          await clickGamePoint('终止', 'yiJianRiChang', {
-            callback: async () => {
-              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhiZhanZhou.jpg')
-              const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
-              await screenCaptureToFile(tempCapturePath)
-              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-              return found
-            }
-          })
-          await sleep(300)
-          robotUtils.keyTap('enter')
-          clearInterval(interval)
-          resolve()
-        }
-      }, 20 * 1000)
-    })
-  }
-
-  for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-    await waitFinishZhanDou(teamLeaderWindow)
+    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+      await waitFinishZhanDou(teamLeaderWindow)
+    }
   }
 
   await meiRiRiChang_ZuDui()

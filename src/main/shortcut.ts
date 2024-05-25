@@ -18,7 +18,7 @@ import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
-import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, xianJieTongJi, yiJianRiChang } from './tasks/riChangQianDao'
+import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, yiJianRiChang } from './tasks/riChangQianDao'
 import {
   displayGameWindows,
   findTargetInMap,
@@ -32,6 +32,8 @@ import robotUtils from '../utils/robot'
 import fs from 'fs'
 import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
+import { xianJieTongJi } from './tasks/quanMin'
+import { exec } from 'child_process'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -51,10 +53,6 @@ export function registerGlobalShortcut() {
     const alternateWindow = GameWindowControl.getAlternateWindow()
 
     alternateWindow.hide()
-  })
-
-  globalShortcut.register('CommandOrControl+Alt+Q', () => {
-    global.appContext.isInterrupted = true
   })
 
   // TODO: 截图
@@ -80,7 +78,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [720, 175], [380, 34])
+    await screenCaptureToFile(srcImagePath, [765, 390], [390, 90])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -113,15 +111,20 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
+    console.log(new Date().getHours());
+    
     // monitorGameDiaoXian()
     // meiRiRiChang_DanRen()
-    await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName("☆魔が卓然")
-    await gameWindow?.setForeground()
+    // await xianJieTongJi()
   })
 
   globalShortcut.register('CommandOrControl+Alt+Q', async () => {
-    app.quit()
+    app.exit(0)
+  })
+  
+  globalShortcut.register('CommandOrControl+Alt+P', async () => {
+    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
+    app.exit(0);
   })
 }
 

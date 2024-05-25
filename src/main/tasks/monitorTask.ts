@@ -7,6 +7,9 @@ import { yiJianRiChang } from './riChangQianDao'
 import { ipcMain } from 'electron'
 import { Window as WinControl } from 'win-control'
 import { sleep } from '../../utils/toolkits'
+import { app } from 'electron'
+import { xianJieShenBu } from './xiuXing/xianJieShenBu'
+
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
   // const worker = new Worker(path.join(__dirname, '../workers/monitor.js'))
@@ -25,10 +28,11 @@ export function registerMonitorTasks() {
   ipcMain.on('monitor-game', monitorGameDiaoXian)
 }
 
-async function dianXianResolve() {
+export async function dianXianResolve() {
   await loginGame()
   await getGameWindows()
   const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
+  monitorGameDiaoXian()
 
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
@@ -48,19 +52,23 @@ async function dianXianResolve() {
   await keepZiDong()
 
   await yiJianRiChang()
+  // await xianJieShenBu()
 }
+
 export async function monitorGameDiaoXian() {
   const interval = setInterval(async () => {
     const processes = await getProcessesByName('asktao')
     const gameWindows = processes.map(([_, pId]) => {
       const gameWindow = WinControl.getByPid(+pId)
-      
+
       return gameWindow
     })
 
     if (gameWindows.length !== 10 || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
-      dianXianResolve()
       clearInterval(interval)
+      await sleep(5 * 60 * 1000)
+      app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+      app.exit(0)
     }
-  }, 5 * 1000)
+  }, 5 * 60 * 1000)
 }

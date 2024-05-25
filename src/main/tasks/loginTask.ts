@@ -6,7 +6,7 @@ import robotUtil from '../../utils/robot'
 import { getProcessesByName, killProcessesByName, killProcessesByPid } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../utils/fileOperations'
-import { randomName, sleep } from '../../utils/toolkits'
+import { randomName, randomNum, sleep } from '../../utils/toolkits'
 import { clickGamePoint } from '../../utils/common'
 
 export function registerImageTasks() {
@@ -50,7 +50,7 @@ export async function loginGame() {
 
         _test()
       })
-      
+
       const promise2 = new Promise<number>((resolve) => {
         setTimeout(() => {
           resolve(2)
@@ -101,6 +101,50 @@ export async function loginGame() {
       const [_, pid] = processes.filter(([_, pid]) => !allGameWindows.has(+pid))[0]
       const instance = new GameWindowControl(+pid)
 
+      {
+        const promise1 = new Promise<number>((resolve) => {
+          let hasFound = false
+          async function _test() {
+            const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+            const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginInput.png')
+            await screenCaptureToFile(tempCapturePath)
+            hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+            if (!hasFound) {
+              setTimeout(() => _test(), randomNum(200))
+            } else {
+              resolve(1)
+            }
+          }
+
+          _test()
+        })
+
+        const promise2 = new Promise<number>((resolve) => {
+          let hasFound = false
+          async function _test() {
+            const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+            const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFailed.png')
+            await screenCaptureToFile(tempCapturePath)
+            hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+            if (!hasFound) {
+              setTimeout(() => _test(), 3 * 1000)
+            } else {
+              resolve(2)
+            }
+          }
+
+          _test()
+        })
+        
+        const result = await Promise.race([promise1, promise2])
+
+        if (result === 2) {
+          loginSuccess = false
+          break loginLoop
+        }
+      }
       for (const char of account.toUpperCase()) {
         robotUtil.handleCharKeyTap(char)
       }

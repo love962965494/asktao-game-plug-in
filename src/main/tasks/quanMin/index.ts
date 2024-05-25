@@ -89,6 +89,64 @@ export async function fuMoRenWu() {
   }, 0.5 * 60 * 1000)
 }
 
+export async function xianJieTongJi() {
+  await getGameWindows()
+  const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+  const teamIndexes = [1].concat(gameWindows.length > 5 ? [2] : [])
+  const queue = new AsyncQueue()
+  const teamLeaderWindows: GameWindowControl[] = []
+  for (const teamIndex of teamIndexes) {
+    const [teamLeaderWindow] = await GameWindowControl.getTeamWindowsWithSequence(teamIndex)
+    teamLeaderWindows.push(teamLeaderWindow!)
+  }
+
+  let hasTask1 = false
+  setInterval(() => {
+    if (!hasTask1) {
+      hasTask1 = true
+      queue.enqueue(async () => {
+        for (const teamLeaderWindow of teamLeaderWindows) {
+          await teamLeaderWindow?.setForeground()
+          await moveMouseToBlank()
+          const hasTask = await hasGameTask('仙界通缉')
+  
+          if (!hasTask) {
+            await buChongZhuangTai()
+            await teamLeaderWindow?.setForeground()
+            await goToNPC('无名小镇', 'yuJianShangRen')
+            await sleep(500)
+            await talkToNPC('无名小镇', 'yuJianShangRen', 'haoANaWoJiuZouYiTang')
+          }
+        }
+
+        hasTask1 = false
+      })
+    }
+  }, 3.2 * 60 * 1000)
+
+  let hasTask2 = false
+  setInterval(() => {
+    if (!hasTask2) {
+      hasTask2 = true
+      queue.enqueue(async () => {
+        await keepZiDong()
+        hasTask2 = false
+      })
+    }
+  }, 1.2 * 60 * 1000)
+
+  let hasTask3 = false
+  setInterval(() => {
+    if (!hasTask3) {
+      hasTask3 = true
+      queue.enqueue(async () => {
+        await buChongZhuangTai({ needJueSe: true })
+        hasTask3 = false
+      })
+    }
+  }, 2 * 60 * 1000)
+}
+
 export async function quanMinShengJi() {
   await getGameWindows()
   const gameWindows = [...GameWindowControl.getAllGameWindows().values()]

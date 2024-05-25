@@ -5,11 +5,11 @@ import { resolveHtmlPath } from './util'
 import registerTasks from './tasks'
 import { registerGlobalShortcut, unregisterGloableShortcut } from './shortcut'
 import startServer from '../server'
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import { deleteDir } from '../utils/fileOperations'
 import { pythonImagesPath } from '../paths'
 import registerWorkers from './workers'
 import { ICityMap, IGameConfig, IGamePoints, IGameTask, INPC } from 'constants/types'
+import { dianXianResolve } from './tasks/monitorTask'
 
 // 服务端端口号
 const port = 3000
@@ -27,7 +27,7 @@ global.appContext = {
   ],
   gameConfig: {} as IGameConfig,
   cityMap: {} as ICityMap,
-  hasFoundTarget: false
+  hasFoundTarget: false,
 }
 
 let mainWindow: BrowserWindow | null = null
@@ -117,6 +117,12 @@ app.on('window-all-closed', () => {
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+})
+
+app.on('ready', () => {
+  if (process.argv.includes('--relaunch')) {
+    dianXianResolve()
   }
 })
 
