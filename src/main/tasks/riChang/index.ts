@@ -15,10 +15,12 @@ import { MyPromise } from '../../../utils/customizePromise'
 import { chiXiang } from '../wuPinTask'
 import commonConfig from '../../../constants/config.json'
 import { monitorGameDiaoXian } from '../monitorTask'
+import { waKuang } from './waKuang'
 
 export async function registerYiJianQianDao() {
   ipcMain.on('yi-jian-qian-dao', async () => yiJianQianDao())
   ipcMain.on('yi-jian-ri-chang', async () => yiJianRiChang())
+  ipcMain.on('wa-kuang', async () => waKuang())
 }
 
 // 一键领取每天的日常签到

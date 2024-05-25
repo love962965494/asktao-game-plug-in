@@ -34,13 +34,16 @@ export default function Test() {
       </Space>
     </div>,
     <div style={{ marginTop: '15px' }}>
-      <h3>日常签到：</h3>
+      <h3>日常：</h3>
       <Space>
         <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-qian-dao')}>
           一键签到
         </Button>
         <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-ri-chang')}>
           一键日常
+        </Button>
+        <Button type="primary" onClick={() => ipcRenderer.send('wa-kuang')}>
+          挖矿
         </Button>
       </Space>
     </div>,

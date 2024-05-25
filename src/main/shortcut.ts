@@ -18,7 +18,7 @@ import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
-import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, yiJianRiChang } from './tasks/riChangQianDao'
+import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, yiJianRiChang } from './tasks/riChang'
 import {
   displayGameWindows,
   findTargetInMap,
@@ -78,7 +78,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [765, 390], [390, 90])
+    await screenCaptureToFile(srcImagePath, [423, 350], [138, 34])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)

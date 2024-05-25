@@ -1,7 +1,7 @@
 import { registerImageTasks } from './loginTask'
 import { registerMonitorTasks } from './monitorTask'
 import { registerQuanMin } from './quanMin'
-import { registerYiJianQianDao } from './riChangQianDao'
+import { registerYiJianQianDao } from './riChang'
 import { registerXianShiHuoDong } from './xianShiTasks'
 import { registerXiuXing } from './xiuXing'
 
