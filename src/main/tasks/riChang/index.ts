@@ -10,8 +10,7 @@ import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from
 import { getTeamsInfo, liDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
 import { goToNPCAndTalk, hasGoneToNPC } from '../npcTasks'
-import { isInBattle, waitFinishZhanDou } from '../zhanDouTasks'
-import { MyPromise } from '../../../utils/customizePromise'
+import { waitFinishZhanDou } from '../zhanDouTasks'
 import { chiXiang } from '../wuPinTask'
 import commonConfig from '../../../constants/config.json'
 import { monitorGameDiaoXian } from '../monitorTask'
@@ -185,39 +184,43 @@ export async function yiJianRiChang() {
   if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
     await xianJieTongJi()
     await sleep(4 * 60 * 60 * 1000)
-    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-      await teamLeaderWindow.setForeground()
+    // for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+    //   await teamLeaderWindow.setForeground()
 
-      await MyPromise<void>((resolve) => {
-        const interval = setInterval(async () => {
-          const inBattle = await isInBattle(teamLeaderWindow)
-          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhi.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+    //   await MyPromise<void>((resolve) => {
+    //     const interval = setInterval(async () => {
+    //       const inBattle = await isInBattle(teamLeaderWindow)
+    //       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhi.jpg')
+    //       const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
+    //       await screenCaptureToFile(tempCapturePath)
+    //       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-          if (inBattle && found) {
-            await clickGamePoint('终止', 'yiJianRiChang', {
-              callback: async () => {
-                const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhiZhanZhou.jpg')
-                const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
-                await screenCaptureToFile(tempCapturePath)
-                const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+    //       if (inBattle && found) {
+    //         await clickGamePoint('终止', 'yiJianRiChang', {
+    //           callback: async () => {
+    //             const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zhongZhiZhanZhou.jpg')
+    //             const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianRiChang_${randomName()}.jpg`)
+    //             await screenCaptureToFile(tempCapturePath)
+    //             const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-                return found
-              },
-            })
-            await sleep(300)
-            robotUtils.keyTap('enter')
-            clearInterval(interval)
-            resolve()
-          }
-        }, 20 * 1000)
-      })
-    }
+    //             return found
+    //           },
+    //         })
+    //         await sleep(300)
+    //         robotUtils.keyTap('enter')
+    //         clearInterval(interval)
+    //         resolve()
+    //       }
+    //     }, 20 * 1000)
+    //   })
+    // }
 
     for (const [teamLeaderWindow] of teamWindowsWithGroup) {
       await waitFinishZhanDou(teamLeaderWindow)
+      robotUtils.keyTap('f1')
+      await sleep(200)
+      robotUtils.keyTap('f1')
+      await sleep(3000)
     }
   }
 

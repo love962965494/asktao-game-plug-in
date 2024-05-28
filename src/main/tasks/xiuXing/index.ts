@@ -19,6 +19,7 @@ import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou, waitFin
 import { IGameTask } from 'constants/types'
 import { xianJieShenBu } from './xianJieShenBu'
 import commonConfig from '../../../constants/config.json'
+import { daiRenXiuShan } from './daiRenXiuShan'
 
 export async function registerXiuXing() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
@@ -26,6 +27,7 @@ export async function registerXiuXing() {
   ipcMain.on('xian-jie-shen-bu', xianJieShenBu)
   ipcMain.on('xiu-xing-ren-wu', xiuXingRenWu)
   ipcMain.on('xun-xian-ren-wu', xunXianRenWu)
+  ipcMain.on('dai-ren-xiu-shan', daiRenXiuShan)
 }
 
 async function xianRenZhiLu() {
@@ -276,7 +278,7 @@ async function loopTasks(tasksWithGroup: string[][], taskType: string) {
       await executePairTask(pairTask, taskType, prevPairTask)
     }
     prevPairTask = pairTask
-    tasksWithGroup.map((tasks) => tasks.shift())
+    tasksWithGroup.forEach((tasks) => tasks.shift())
     taskIndex++
   }
 }
