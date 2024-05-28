@@ -316,11 +316,6 @@ async function executePairTask(
       await nowGameWindow.setForeground()
     }
 
-    // 第一个执行任务的
-    // if (taskType !== '十绝阵' && prevPairTask.length === 0) {
-    //   await chiXiang(2)
-    // }
-
     teamLeaderWindows.push(nowGameWindow)
     npcs.push(npc)
 
@@ -343,7 +338,7 @@ async function executePairTask(
           return !found
         }
       })
-      await sleep(500)
+      await hasGoneToNPC(nowGameWindow)
     } else {
       const city = getCurrentCityByNpc(npc)
       await goToNPC(city, npc)
@@ -351,14 +346,20 @@ async function executePairTask(
   }
 
   // 两个队伍都到了NPC处，开始战斗
-  for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
-    const npc = npcs[+index]
-    await hasGoneToNPC(teamLeaderWindow)
-    // await sleep(500)
-    const city = getCurrentCityByNpc(npc)
-    await talkToNPC(city, npc, conversition)
-    await sleep(500)
+  for (const teamLeaderWindow of teamLeaderWindows) {
+    await teamLeaderWindow.setForeground()
+    robotUtils.keyTap('f12')
   }
+
+  // for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
+  //   // const npc = npcs[+index]
+  //   await hasGoneToNPC(teamLeaderWindow)
+  //   robotUtils.keyTap('f12')
+  //   // await sleep(500)
+  //   // const city = getCurrentCityByNpc(npc)
+  //   // await talkToNPC(city, npc, conversition)
+  //   // await sleep(500)
+  // }
 
   // 等待战斗结束
   for (const teamLeaderWindow of teamLeaderWindows) {

@@ -49,6 +49,11 @@ export async function dianXianResolve() {
     }
   }
 
+  // for (const gameWindow of gameWindows) {
+  //   await gameWindow.setForeground()
+  //   // 检查每个角色是否在队伍中，没有暂离
+  // }
+
   await keepZiDong()
 
   await yiJianRiChang()
@@ -66,7 +71,7 @@ export async function monitorGameDiaoXian() {
 
     if (gameWindows.length !== 10 || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
       clearInterval(interval)
-      await sleep(5 * 60 * 1000)
+      await sleep(10 * 60 * 1000)
       app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
       app.exit(0)
     }

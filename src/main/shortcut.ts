@@ -111,10 +111,10 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    console.log(new Date().getHours());
+    // console.log(new Date().getHours());
     
     // monitorGameDiaoXian()
-    // meiRiRiChang_DanRen()
+    meiRiRiChang_DanRen()
     // await xianJieTongJi()
   })
 
