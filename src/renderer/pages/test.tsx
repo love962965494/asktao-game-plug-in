@@ -53,20 +53,20 @@ export default function Test() {
         <Button type="primary" onClick={() => ipcRenderer.send('xian-ren-zhi-lu')}>
           仙人指路
         </Button>
-        <Button type="primary" onClick={() => ipcRenderer.send('shi-jue-zhen')}>
+        {/* <Button type="primary" onClick={() => ipcRenderer.send('shi-jue-zhen')}>
           十绝阵
         </Button>
         <Button type="primary" onClick={() => ipcRenderer.send('xiu-xing-ren-wu')}>
           修行任务
-        </Button>
+        </Button> */}
         <Button type="primary" onClick={() => ipcRenderer.send('xian-jie-shen-bu')}>
           仙界神捕
         </Button>
-        <Button type="primary" onClick={() => ipcRenderer.send('xun-xian-ren-wu')}>
+        {/* <Button type="primary" onClick={() => ipcRenderer.send('xun-xian-ren-wu')}>
           寻仙任务
-        </Button>
-        <Button type="primary" onClick={() => ipcRenderer.send('dai-ren-xiu-shan')}>
-          带人修山
+        </Button> */}
+        <Button type="primary" onClick={() => ipcRenderer.send('shua-dai-jin')}>
+          刷代金
         </Button>
       </Space>
     </div>,

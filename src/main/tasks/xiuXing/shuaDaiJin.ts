@@ -4,59 +4,64 @@ import GameWindowControl from '../../../utils/gameWindowControll'
 import { hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
 import { searchGameTask } from '../gameTask'
 import path from 'path'
-import { pythonImagesPath, staticPath } from '../../../paths'
+import { pythonImagesPath } from '../../../paths'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import { getCurrentCityByNpc, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
+import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
-import playSound from 'play-sound'
 import { chiXiang } from '../wuPinTask'
 
 let taskIndex = 0
-const hasFinishedBgm = path.join(staticPath, '/error.wav')
-const taskType = '十绝阵'
-type ITaskInfo = { teamLeader: string; restTasks: string[] }[]
-const allNpcs = [
-  'hanBingZhenZhu',
-  'hongShuiZhenZhu',
-  'tianQueZhenZhu',
-  'hongShaZhenZhu',
-  'fengHouZhenZhu',
-  'jinGuangZhenZhu',
-  'diLieZhenZhu',
-  'lieYanZhenZhu',
-  'huaXueZhenZhu',
-  'luoPoZhenZhu',
-]
-export async function daiRenXiuShan() {
+type IRestTasks = string[][]
+const allNpcs = {
+  十绝阵: [
+    'hanBingZhenZhu',
+    'hongShuiZhenZhu',
+    'tianQueZhenZhu',
+    'hongShaZhenZhu',
+    'fengHouZhenZhu',
+    'jinGuangZhenZhu',
+    'diLieZhenZhu',
+    'lieYanZhenZhu',
+    'huaXueZhenZhu',
+    'luoPoZhenZhu',
+  ],
+  修行任务: ['leiShen', 'huaShen', 'longShen', 'yanShen', 'shanShen'],
+}
+type ITaskType = keyof typeof allNpcs
+const taskType = commonConfig.shuaDaiJinTaskType as ITaskType
+export async function shuaDaiJin() {
   await getGameWindows()
-  const taskInfo = JSON.parse(await readLog('带人十绝')) as ITaskInfo
+  const npcs = allNpcs[taskType]
+  const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+  let restTasks = JSON.parse(await readLog(taskType)) as IRestTasks
   const teamLeaderWindows = [] as GameWindowControl[]
-  for (const itemInfo of taskInfo) {
-    const teamLeaderWindow = GameWindowControl.getGameWindowByRoleName(itemInfo.teamLeader)!
-    teamLeaderWindows.push(teamLeaderWindow)
+  for (const gameWindow of allGameWindows) {
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      teamLeaderWindows.push(gameWindow)
+    }
   }
-  const hasFinished = taskInfo.every((info) => info.restTasks.length === 0)
+  const hasFinished = restTasks.every((tasks) => tasks.length === 0)
 
   if (hasFinished) {
+    restTasks = []
     for (const teamLeaderWindow of teamLeaderWindows) {
       await lingQuRenWu(teamLeaderWindow)
+      restTasks.push([...npcs])
     }
-    taskInfo.forEach((itemInfo) => (itemInfo.restTasks = [...allNpcs]))
   }
 
-  while (taskIndex < 50) {
-    // for (const teamLeaderWindow of teamLeaderWindows) {
-    //   await teamLeaderWindow.setForeground()
-    //   await chiXiang(1)
+  while (true) {
+    // if (taskType !== '十绝阵') {
+    //   for (const teamLeaderWindow of teamLeaderWindows) {
+    //     await teamLeaderWindow.setForeground()
+    //     await chiXiang(1)
+    //   }
     // }
-    await loopTasks(taskInfo, teamLeaderWindows)
-    await keepZiDong()
-    await daiRenXiuShan()
+    await loopTasks(restTasks, teamLeaderWindows)
+    await shuaDaiJin()
   }
-
-  playSound().play(hasFinishedBgm)
 }
 
 async function lingQuRenWu(teamLeaderWindow: GameWindowControl) {
@@ -98,19 +103,19 @@ async function lingQuRenWu(teamLeaderWindow: GameWindowControl) {
   robotUtils.keyTap('escape')
 }
 
-async function loopTasks(taskInfo: ITaskInfo, teamLeaderWindows: GameWindowControl[]) {
+async function loopTasks(restTasks: IRestTasks, teamLeaderWindows: GameWindowControl[]) {
   while (true) {
-    writeLog('带人十绝', JSON.stringify(taskInfo, undefined, 4), true)
+    writeLog(taskType, JSON.stringify(restTasks, undefined, 4), true)
 
-    const hasFinished = taskInfo.every((info) => info.restTasks.length === 0)
+    const hasFinished = restTasks.every((tasks) => tasks.length === 0)
     if (hasFinished) {
       return
     }
 
-    const pairTask = taskInfo.map((info) => info.restTasks[0])
+    const pairTask = restTasks.map((tasks) => tasks[0])
 
     await executePairTask(pairTask, teamLeaderWindows)
-    taskInfo.forEach((info) => info.restTasks.shift())
+    restTasks.forEach((tasks) => tasks.shift())
     taskIndex++
   }
 }
@@ -140,12 +145,19 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
 
   // 队伍都到了NPC处，开始战斗
   for (const teamLeaderWindow of needExecuteTaskWindows) {
-    // const npc = npcs[+index]
     await hasGoneToNPC(teamLeaderWindow)
     robotUtils.keyTap('f12')
-    // const city = getCurrentCityByNpc(npc)
-    // await talkToNPC(city, npc, conversition)
     await sleep(500)
+  }
+
+  if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
+    const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+    for (const gameWindow of gameWindows) {
+      await gameWindow.setForeground()
+      robotUtils.keyTap('Z', ['alt'])
+      await sleep(50)
+      robotUtils.keyTap('Z', ['alt'])
+    }
   }
 
   // 等待战斗结束
@@ -154,7 +166,6 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
     await hasMeetLaoJun(teamLeaderWindow)
   }
 
-  // 补充自动回合
   // if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
   //   await keepZiDong()
   // }

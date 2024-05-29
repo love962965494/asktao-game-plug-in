@@ -14,20 +14,20 @@ import {
   screenCaptureToFile,
 } from '../../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
-import { getCurrentCity, getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, hasNPCDialog, talkToNPC } from '../npcTasks'
+import { getCurrentCity, getCurrentCityByNpc, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { IGameTask } from 'constants/types'
 import { xianJieShenBu } from './xianJieShenBu'
 import commonConfig from '../../../constants/config.json'
-import { daiRenXiuShan } from './daiRenXiuShan'
+import { shuaDaiJin } from './shuaDaiJin'
 
 export async function registerXiuXing() {
   ipcMain.on('xian-ren-zhi-lu', xianRenZhiLu)
-  ipcMain.on('shi-jue-zhen', shiJueZhen)
+  // ipcMain.on('shi-jue-zhen', shiJueZhen)
   ipcMain.on('xian-jie-shen-bu', xianJieShenBu)
-  ipcMain.on('xiu-xing-ren-wu', xiuXingRenWu)
-  ipcMain.on('xun-xian-ren-wu', xunXianRenWu)
-  ipcMain.on('dai-ren-xiu-shan', daiRenXiuShan)
+  // ipcMain.on('xiu-xing-ren-wu', xiuXingRenWu)
+  // ipcMain.on('xun-xian-ren-wu', xunXianRenWu)
+  ipcMain.on('shua-dai-jin', shuaDaiJin)
 }
 
 async function xianRenZhiLu() {
