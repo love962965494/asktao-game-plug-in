@@ -93,7 +93,7 @@ async function xiuXingTask(taskType: string, isFirst: boolean = true) {
         }
         if (!hasTask || tasks.length === 0) {
           await lingQuRenWu(teamWindows, taskType)
-          tasks = allTask[+index]
+          tasks = [...allTask[+index]]
         }
 
         restTasksWithGroup.push(tasks)

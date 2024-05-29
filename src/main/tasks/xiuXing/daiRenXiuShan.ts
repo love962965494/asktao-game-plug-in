@@ -52,6 +52,7 @@ export async function daiRenXiuShan() {
     //   await chiXiang(1)
     // }
     await loopTasks(taskInfo, teamLeaderWindows)
+    await keepZiDong()
     await daiRenXiuShan()
   }
 
@@ -115,20 +116,16 @@ async function loopTasks(taskInfo: ITaskInfo, teamLeaderWindows: GameWindowContr
 }
 
 async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindows: GameWindowControl[]) {
-  const conversition = 'qingDaShenZhiDian'
   const needExecuteTaskWindows = [] as GameWindowControl[]
-  const npcs = [] as string[]
   for (const [index, npc] of Object.entries(pairTask)) {
     const teamLeaderWindow = teamLeaderWindows[+index]
     if (!npc) {
       continue
     }
     needExecuteTaskWindows.push(teamLeaderWindow)
-    npcs.push(npc)
     await teamLeaderWindow.setForeground()
 
     await searchGameTask(taskType)
-    await sleep(500)
     await clickGamePoint(`${taskType}-NPC`, 'singleTask', {
       callback: async () => {
         const tempCapturePath = path.join(pythonImagesPath, `temp/singleTask_${randomName()}.jpg`)
@@ -139,15 +136,15 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
         return !found
       },
     })
-    await sleep(500)
   }
 
   // 队伍都到了NPC处，开始战斗
-  for (const [index, teamLeaderWindow] of Object.entries(needExecuteTaskWindows)) {
-    const npc = npcs[+index]
+  for (const teamLeaderWindow of needExecuteTaskWindows) {
+    // const npc = npcs[+index]
     await hasGoneToNPC(teamLeaderWindow)
-    const city = getCurrentCityByNpc(npc)
-    await talkToNPC(city, npc, conversition)
+    robotUtils.keyTap('f12')
+    // const city = getCurrentCityByNpc(npc)
+    // await talkToNPC(city, npc, conversition)
     await sleep(500)
   }
 
@@ -158,7 +155,7 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
   }
 
   // 补充自动回合
-  if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
-    await keepZiDong()
-  }
+  // if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
+  //   await keepZiDong()
+  // }
 }
