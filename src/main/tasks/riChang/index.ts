@@ -99,7 +99,8 @@ export async function meiRiRiChang_ZuDui() {
   }
 }
 
-const riChangTasks_DanRen = ['收藏任务_娃娃训练营', '收藏任务_师门任务']
+const riChangTasks_DanRen = ['收藏任务_娃娃训练营']
+// const riChangTasks_DanRenShiMen = ['收藏任务_师门任务']
 export async function meiRiRiChang_DanRen() {
   const teamWindowsWithGroup = await getTeamsInfo()
 
@@ -148,6 +149,38 @@ export async function meiRiRiChang_DanRen() {
       }
 
       await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
+    }
+
+    for (const teamWindows of teamWindowsWithGroup) {
+      for (const teamWindow of teamWindows) {
+        await teamWindow.setForeground()
+        await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
+      }
+    }
+
+    const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
+    const hasFoundQianMianGuai = {} as { [key: string]: boolean }
+    
+    while (true) {
+      for (const teamWindows of teamWindowsWithGroup) {
+        for (const teamWindow of teamWindows) {
+          if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
+            continue
+          }
+          await teamWindow.setForeground()
+          const tempCapturePath = path.join(pythonImagesPath, `temp/shiMen_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          if (found) {
+            hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
+            robotUtils.keyTap('f1')
+            await sleep(200)
+            robotUtils.keyTap('f1')
+          }
+          await sleep(500)
+        }
+      }
     }
   }
 }
@@ -215,11 +248,32 @@ export async function yiJianRiChang() {
     //   })
     // }
 
+    let count = 0
+    while (count < 3) {
+      for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+        await waitFinishZhanDou(teamLeaderWindow)
+        robotUtils.keyTap('f1')
+        await sleep(200)
+        robotUtils.keyTap('f1')
+        await sleep(3000)
+      }
+      count++
+    }
+
     for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-      await waitFinishZhanDou(teamLeaderWindow)
-      robotUtils.keyTap('f1')
-      await sleep(200)
-      robotUtils.keyTap('f1')
+      await teamLeaderWindow.setForeground()
+      await clickGamePoint('换线', 'huanXian', {
+        randomPixNums: [3, 3],
+        callback: async () => {
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/jinRu.jpg')
+          const tempCapturePath = path.join(pythonImagesPath, `temp/huanXian_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          return found
+        },
+      })
+      robotUtils.keyTap('enter')
       await sleep(3000)
     }
   }
