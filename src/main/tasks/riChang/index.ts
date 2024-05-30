@@ -1,4 +1,4 @@
-import { clickGamePoint, hasChecked, matchString, matchStrings, moveMouseTo, moveMouseToAndClick, moveMouseToBlank } from '../../../utils/common'
+import { clickGamePoint, hasChecked, matchString, matchStrings, moveMouseTo, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
 import { pythonImagesPath } from '../../../paths'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import { getGameWindows } from '../../../utils/systemCotroll'
@@ -332,6 +332,7 @@ export async function meiRiRiChang_DanRen() {
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
   const hasFoundQianMianGuai = {} as { [key: string]: boolean }
   
+  writeLog('师门任务', '')
   while (true) {
     for (const teamWindows of teamWindowsWithGroup) {
       for (const teamWindow of teamWindows) {
@@ -348,6 +349,7 @@ export async function meiRiRiChang_DanRen() {
           robotUtils.keyTap('f1')
           await sleep(200)
           robotUtils.keyTap('f1')
+          writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
         }
         await sleep(500)
       }
