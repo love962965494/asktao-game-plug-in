@@ -99,14 +99,29 @@ export async function hasNPCDialog() {
 
 export async function hasGoneToNPC(gameWindow: GameWindowControl, time = 5): Promise<void> {
   return MyPromise((resolve) => {
-    const interval = setInterval(async () => {
-      await gameWindow.setForeground()
-      const found = await hasNPCDialog()
-      if (found) {
-        clearInterval(interval)
-        resolve()
-      }
-    }, time * 1000)
+    function _detect() {
+      setTimeout(async () => {
+        await gameWindow.setForeground()
+        const found = await hasNPCDialog()
+
+        if (found) {
+          resolve()
+          return
+        }
+
+        _detect()
+      }, 1000)
+    }
+
+    _detect()
+
+    // const interval = setInterval(async () => {
+    //   const found = await hasNPCDialog()
+    //   if (found) {
+    //     clearInterval(interval)
+    //     resolve()
+    //   }
+    // }, time * 1000)
   })
 }
 
