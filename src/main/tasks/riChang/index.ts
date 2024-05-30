@@ -277,8 +277,7 @@ export async function meiRiRiChang_ZuDui() {
   }
 }
 
-const riChangTasks_DanRen = ['收藏任务_娃娃训练营']
-// const riChangTasks_DanRenShiMen = ['收藏任务_师门任务']
+const riChangTasks_DanRen = ['收藏任务_娃娃训练营', '收藏任务_师门任务']
 export async function meiRiRiChang_DanRen() {
   const teamWindowsWithGroup = await getTeamsInfo()
 
@@ -328,36 +327,29 @@ export async function meiRiRiChang_DanRen() {
 
       await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
     }
+  }
 
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
+  const hasFoundQianMianGuai = {} as { [key: string]: boolean }
+  
+  while (true) {
     for (const teamWindows of teamWindowsWithGroup) {
       for (const teamWindow of teamWindows) {
-        await teamWindow.setForeground()
-        await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
-      }
-    }
-
-    const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
-    const hasFoundQianMianGuai = {} as { [key: string]: boolean }
-    
-    while (true) {
-      for (const teamWindows of teamWindowsWithGroup) {
-        for (const teamWindow of teamWindows) {
-          if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
-            continue
-          }
-          await teamWindow.setForeground()
-          const tempCapturePath = path.join(pythonImagesPath, `temp/shiMen_${randomName()}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-          if (found) {
-            hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
-            robotUtils.keyTap('f1')
-            await sleep(200)
-            robotUtils.keyTap('f1')
-          }
-          await sleep(500)
+        if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
+          continue
         }
+        await teamWindow.setForeground()
+        const tempCapturePath = path.join(pythonImagesPath, `temp/shiMen_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath)
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        if (found) {
+          hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
+          robotUtils.keyTap('f1')
+          await sleep(200)
+          robotUtils.keyTap('f1')
+        }
+        await sleep(500)
       }
     }
   }

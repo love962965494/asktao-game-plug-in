@@ -112,14 +112,9 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
-    for (const gameWindow of gameWindows) {
-      await gameWindow.setForeground()
-      await fuShengLu(gameWindow)
-    } 
+    
     // monitorGameDiaoXian()
-    // meiRiRiChang_DanRen()
+    meiRiRiChang_DanRen()
     // await xianJieTongJi()
   })
 
