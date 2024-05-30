@@ -48,7 +48,7 @@ export async function isInBattle_1(gameWindow: GameWindowControl) {
   return found1
 }
 
-export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 3): Promise<void> {
+export async function waitFinishZhanDou(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise(async (resolve) => {
     function _detect() {
       setTimeout(async () => {
@@ -64,40 +64,25 @@ export async function waitFinishZhanDou(gameWindow: GameWindowControl, time = 3)
     }
 
     _detect()
-    // while (true) {
-    //   const inBattle = await isInBattle(gameWindow)
-    //   if (!inBattle) {
-    //     resolve()
-    //     return
-    //   }
-    // }
-    // const interval = setInterval(async () => {
-    //   const inBattle = await isInBattle(gameWindow)
-
-    //   if (!inBattle) {
-    //     clearInterval(interval)
-    //     resolve()
-    //   }
-    // }, time * 1000)
   })
 }
 
-export async function waitFinishZhanDou_1(gameWindow: GameWindowControl, time = 5): Promise<void> {
+export async function waitFinishZhanDou_1(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise(async (resolve) => {
-    const inBattle = await isInBattle_1(gameWindow)
+    function _detect() {
+      setTimeout(async () => {
+        const inBattle = await isInBattle_1(gameWindow)
 
-    if (!inBattle) {
-      resolve()
-      return
+        if (!inBattle) {
+          resolve()
+          return
+        }
+
+        _detect()
+      }, 1000)
     }
-    const interval = setInterval(async () => {
-      const inBattle = await isInBattle_1(gameWindow)
 
-      if (!inBattle) {
-        clearInterval(interval)
-        resolve()
-      }
-    }, time * 1000)
+    _detect()
   })
 }
 

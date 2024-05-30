@@ -1,4 +1,4 @@
-import { clickGamePoint, hasChecked, matchString, matchStrings, moveMouseTo, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
+import { clickGamePoint, hasChecked, matchStrings, moveMouseTo, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
 import { pythonImagesPath } from '../../../paths'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import { getGameWindows } from '../../../utils/systemCotroll'

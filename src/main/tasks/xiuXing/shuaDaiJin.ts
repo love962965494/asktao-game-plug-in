@@ -1,13 +1,13 @@
 import { getGameWindows } from '../../../utils/systemCotroll'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
 import GameWindowControl from '../../../utils/gameWindowControll'
-import { hasMeetLaoJun, keepZiDong, waitFinishZhanDou } from '../zhanDouTasks'
+import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { searchGameTask } from '../gameTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
+import { getCurrentCity, goToNPC, goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
 import { chiXiang } from '../wuPinTask'
@@ -28,6 +28,7 @@ const allNpcs = {
     'luoPoZhenZhu',
   ],
   修行任务: ['leiShen', 'huaShen', 'longShen', 'yanShen', 'shanShen'],
+  寻仙任务: ['hanZhongLi', 'lanCaiHe', 'hanXiangZi', 'zhangGuoLao', 'caoGuoJiu', 'lvDongBin',  'heXianGu', 'tieGuaiLi']
 }
 type ITaskType = keyof typeof allNpcs
 const taskType = commonConfig.shuaDaiJinTaskType as ITaskType
@@ -59,6 +60,20 @@ export async function shuaDaiJin() {
     //     await chiXiang(1)
     //   }
     // }
+    if (taskType === '寻仙任务') {
+      for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
+        await teamLeaderWindow.setForeground()
+        if (restTasks[+index].length > 0) {
+          const currentCity = await getCurrentCity()
+          if (currentCity !== '蓬莱岛') {
+            await searchGameTask(taskType)
+            await clickGamePoint('寻仙任务-蓬莱岛', 'xunXianRenWu')
+            await sleep(2 * 60 * 1000)
+          }
+        }
+      }
+    }
+    
     await loopTasks(restTasks, teamLeaderWindows)
     await shuaDaiJin()
   }
@@ -114,7 +129,11 @@ async function loopTasks(restTasks: IRestTasks, teamLeaderWindows: GameWindowCon
 
     const pairTask = restTasks.map((tasks) => tasks[0])
 
-    await executePairTask(pairTask, teamLeaderWindows)
+    if (taskType === '寻仙任务') {
+      await executePairTaskOfXunXian(pairTask, teamLeaderWindows)
+    } else {
+      await executePairTask(pairTask, teamLeaderWindows)
+    }
     restTasks.forEach((tasks) => tasks.shift())
     taskIndex++
   }
@@ -165,6 +184,56 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
     await waitFinishZhanDou(teamLeaderWindow)
     await hasMeetLaoJun(teamLeaderWindow)
   }
+
+  // if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
+  //   await keepZiDong()
+  // }
+}
+
+async function executePairTaskOfXunXian(pairTask: (string | undefined)[], teamLeaderWindows: GameWindowControl[]) {
+  const needExecuteTaskWindows = [] as GameWindowControl[]
+  for (const [index, npc] of Object.entries(pairTask)) {
+    const teamLeaderWindow = teamLeaderWindows[+index]
+    if (!npc) {
+      continue
+    }
+    needExecuteTaskWindows.push(teamLeaderWindow)
+    await teamLeaderWindow.setForeground()
+
+    await goToNPC('蓬莱岛', npc)
+  }
+
+  // 队伍都到了NPC处，开始战斗
+  for (const teamLeaderWindow of needExecuteTaskWindows) {
+    await hasGoneToNPC(teamLeaderWindow)
+    robotUtils.keyTap('f12')
+    await sleep(500)
+    const specialGameWindow = GameWindowControl.getGameWindowByRoleName('せLocustそ')!
+    await specialGameWindow.setForeground()
+    await sleep(200)
+    robotUtils.keyTap('1', ['control'])
+    await sleep(4000)
+    robotUtils.keyTap('2', ['control'])
+    await teamLeaderWindow.setForeground()
+  }
+
+  if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
+    const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+    for (const gameWindow of gameWindows) {
+      await gameWindow.setForeground()
+      robotUtils.keyTap('Z', ['alt'])
+      await sleep(50)
+      robotUtils.keyTap('Z', ['alt'])
+    }
+  }
+
+  // 等待战斗结束
+  for (const teamLeaderWindow of needExecuteTaskWindows) {
+    await waitFinishZhanDou_1(teamLeaderWindow)
+    // await hasMeetLaoJun(teamLeaderWindow)
+  }
+
+  await buChongZhuangTai({ needJueSe: true, needZhongCheng: true })
 
   // if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
   //   await keepZiDong()
