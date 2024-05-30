@@ -147,6 +147,9 @@ export function matchString(paddleOcrStr: string, templateStr: string) {
  * 从模板字符串中找到最符合paddleOcr识别的字符串
  */
 export function matchStrings(paddleOcrStr: string, matchStrings: string[]) {
+  if (matchStrings.includes(paddleOcrStr)) {
+    return paddleOcrStr
+  }
   let prevSimilarity = Number(0).toFixed(2)
   let result = ''
   for (const templateStr of matchStrings) {

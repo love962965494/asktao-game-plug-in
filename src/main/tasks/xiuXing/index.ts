@@ -426,9 +426,11 @@ async function executePairTaskOfXunXian(
   for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
     const npc = npcs[+index]
     await hasGoneToNPC(teamLeaderWindow)
+    robotUtils.keyTap('f12')
+    await sleep(100)
     // await sleep(500)
-    const city = getCurrentCityByNpc(npc)
-    await talkToNPC(city, npc, conversition)
+    // const city = getCurrentCityByNpc(npc)
+    // await talkToNPC(city, npc, conversition)
     const specialGameWindow = GameWindowControl.getGameWindowByRoleName('せLocustそ')!
     await specialGameWindow.setForeground()
     await sleep(200)

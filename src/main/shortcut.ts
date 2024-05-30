@@ -17,8 +17,8 @@ import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { clickGamePoint, moveMouseToBlank, readLog, writeLog } from '../utils/common'
-import { meiRiRiChang_DanRen, meiRiRiChang_ZuDui, yiJianRiChang } from './tasks/riChang'
+import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
+import { fuShengLu, meiRiRiChang_DanRen, meiRiRiChang_ZuDui, openFuLiCenter, wuLeiLing, yiJianRiChang } from './tasks/riChang'
 import {
   displayGameWindows,
   findTargetInMap,
@@ -26,6 +26,7 @@ import {
   getTeamsInfo,
   isGroupedTeam,
   liDui,
+  xunHuanZiDong,
   yiJianZuDui,
 } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
@@ -78,7 +79,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [654, 800], [200, 44])
+    await screenCaptureToFile(srcImagePath, [1185, 280], [70, 28])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -112,20 +113,11 @@ export function registerGlobalShortcut() {
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')
-    await gameWindow?.setForeground()
-    await clickGamePoint('换线', 'huanXian', {
-      randomPixNums: [3, 3],
-      callback: async () => {
-        const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/jinRu.jpg')
-        const tempCapturePath = path.join(pythonImagesPath, `temp/huanXian_${randomName()}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-        return found
-      }
-    })
-    robotUtils.keyTap('enter')
+    const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+    for (const gameWindow of gameWindows) {
+      await gameWindow.setForeground()
+      await fuShengLu(gameWindow)
+    } 
     // monitorGameDiaoXian()
     // meiRiRiChang_DanRen()
     // await xianJieTongJi()

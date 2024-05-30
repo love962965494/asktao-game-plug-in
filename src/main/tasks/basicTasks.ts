@@ -23,6 +23,7 @@ import {
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 import { ICityMap } from 'constants/types'
+import { hasMeetLaoJun, keepZiDong } from './zhanDouTasks'
 
 // 是否组队
 export async function isGroupedTeam(gameWindow: GameWindowControl) {
@@ -423,4 +424,27 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       }
     }
   }
+}
+
+export async function xunHuanZiDong() {
+  await getGameWindows()
+  const gameWindows = [...await GameWindowControl.getAllGameWindows().values()]
+
+  function _loop() {
+    setTimeout(async () => {
+      await keepZiDong()
+
+      for (const gameWindow of gameWindows) {
+        await hasMeetLaoJun(gameWindow)
+      }
+      // for (const gameWindow of gameWindows) {
+      //   await gameWindow.setForeground()
+      //   robotUtils.keyTap('2', ['control'])
+      //   await sleep(500)
+      // }
+      _loop()
+    }, 10 * 1000)
+  }
+  
+  _loop()
 }
