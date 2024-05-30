@@ -332,7 +332,7 @@ export async function meiRiRiChang_DanRen() {
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
   const hasFoundQianMianGuai = {} as { [key: string]: boolean }
   
-  writeLog('师门任务', '')
+  writeLog('师门任务', '', true)
   while (true) {
     for (const teamWindows of teamWindowsWithGroup) {
       for (const teamWindow of teamWindows) {
