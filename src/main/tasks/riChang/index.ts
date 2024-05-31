@@ -406,7 +406,7 @@ export async function yiJianRiChang() {
   for (const teamWindows of teamWindowsWithGroup) {
     for (const teamWindow of teamWindows) {
       await teamWindow.setForeground()
-      robotUtils.keyTap('W', ['control'])
+      robotUtils.keyTap('E', ['control'])
     }
   }
   const currentHour = new Date().getHours()
