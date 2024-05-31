@@ -6,8 +6,8 @@ import path from 'path'
 import { randomName, randomPixelNum, sleep } from '../../../utils/toolkits'
 import { ipcMain } from 'electron'
 import robotUtils from '../../../utils/robot'
-import { findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
-import { getTeamsInfo, liDui } from '../basicTasks'
+import { extractThemeColors, findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
+import { displayGameWindows, getTeamsInfo, liDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
 import { goToNPCAndTalk, hasGoneToNPC } from '../npcTasks'
 import { waitFinishZhanDou } from '../zhanDouTasks'
@@ -77,13 +77,13 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   // 找到邮件
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/haoXiang.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuEmail_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(
       templateImagePath,
       {
-        buttonName: 'fuShengLu',
+        buttonName: 'fuShengLuEmail',
         position,
         size: [72, 36],
       },
@@ -103,19 +103,19 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   // 找到浮生录位置
   { 
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLu.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuLvZi_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(
       templateImagePath,
       {
-        buttonName: 'fuShengLu',
+        buttonName: 'fuShengLuLvZi',
         position,
         size: [102, 36],
       },
       {
         callback: async function () {
-          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/juXiangHua.jpg')
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/chaKan.jpg')
           const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -129,7 +129,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
 
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLuDuiHuaKuang.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDuiHuaKuang_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -140,7 +140,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   
   // 打开对话框
   {
-    await clickGamePoint('浮生录', 'fuShengLu', {
+    await clickGamePoint('浮生录', 'fuShengLuDuiHuaKuang', {
       callback: async () => {
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/hasGoneToNPC.jpg')
         const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
@@ -153,7 +153,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
 
     // 判断是否需要物品
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuiJinJiYong.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDialog_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -167,15 +167,16 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     const { position, size } = global.appContext.gamePoints['浮生录_角色姓名']
     await gameWindow.restoreGameWindow()
     const { left, top } = gameWindow.getDimensions()
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDuiHua_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
     const [name] = await paddleOcr(tempCapturePath)
     const fuShengLuName = matchStrings(name, Object.keys(FuShengLu))
     await gameWindow.maximizGameWindow()
     const [first, second] = FuShengLu[fuShengLuName as keyof typeof FuShengLu]
-    await clickGamePoint(`浮生录_${first}`, 'fuShengLu')
+    await clickGamePoint(`浮生录_${first}`, 'fuShengLuDuiHua')
     await sleep(500)
-    await clickGamePoint(`浮生录_${second}`, 'fuShengLu')
+    await clickGamePoint(`浮生录_${second}`, 'fuShengLuDuiHua')
+    await sleep(500)
   }
 }
 
@@ -214,9 +215,29 @@ export async function openFuLiCenter() {
 
 export async function meiRiBiLing() {
   await openFuLiCenter()
-  await sleep(500)
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/yiJianLingQu.jpg')
+  const tempCapturePath = path.join(pythonImagesPath, `temp/meiRiBiLing_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  if (!found) {
+    return
+  }
+  
+  
   await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {
-    callback: () => true,
+    callback: async () => {
+      const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+      await screenCaptureToFile(tempCapturePath, [870, 475], [100, 20])
+
+      const colors = await extractThemeColors(tempCapturePath)
+
+      if (colors.includes('#e6c8')) {
+        return true
+      }
+
+      return false
+    },
   })
 }
 
@@ -228,8 +249,11 @@ export async function yiJianQianDao() {
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
     await meiRiBiLing()
+    await fuShengLu(gameWindow)
     await wuLeiLing()
   }
+
+  await displayGameWindows()
 }
 
 // 每日日常

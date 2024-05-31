@@ -79,7 +79,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1185, 280], [70, 28])
+    await screenCaptureToFile(srcImagePath, [1167, 582], [195, 62])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -118,7 +118,7 @@ export function registerGlobalShortcut() {
     // await xianJieTongJi()
   })
 
-  globalShortcut.register('CommandOrControl+Alt+Q', async () => {
+  globalShortcut.register('CommandOrControl+Alt+L', async () => {
     app.exit(0)
   })
   
