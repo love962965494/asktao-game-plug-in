@@ -12,7 +12,14 @@ Alt+E物品栏：
 大小：270x26
 
 
-浮生录：
-截取长度：[136, 34]
-1行话: [526, 551] [526, 586]
-2行话：[526, 578] [526, 613]
+十绝阵：
+"hanBingZhenZhu",
+"hongShuiZhenZhu",
+"tianQueZhenZhu",
+"hongShaZhenZhu",
+"fengHouZhenZhu",
+"jinGuangZhenZhu",
+"diLieZhenZhu",
+"lieYanZhenZhu",
+"huaXueZhenZhu",
+"luoPoZhenZhu"
