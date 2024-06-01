@@ -1,4 +1,12 @@
-import { clickGamePoint, hasChecked, matchStrings, moveMouseTo, moveMouseToAndClick, moveMouseToBlank, writeLog } from '../../../utils/common'
+import {
+  clickGamePoint,
+  hasChecked,
+  matchStrings,
+  moveMouseTo,
+  moveMouseToAndClick,
+  moveMouseToBlank,
+  writeLog,
+} from '../../../utils/common'
 import { pythonImagesPath } from '../../../paths'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import { getGameWindows } from '../../../utils/systemCotroll'
@@ -6,10 +14,16 @@ import path from 'path'
 import { randomName, randomPixelNum, sleep } from '../../../utils/toolkits'
 import { ipcMain } from 'electron'
 import robotUtils from '../../../utils/robot'
-import { extractThemeColors, findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
+import {
+  extractThemeColors,
+  findImagePositions,
+  findImageWithinTemplate,
+  paddleOcr,
+  screenCaptureToFile,
+} from '../../../utils/fileOperations'
 import { displayGameWindows, getTeamsInfo, liDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
-import { goToNPCAndTalk, hasGoneToNPC } from '../npcTasks'
+import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { waitFinishZhanDou } from '../zhanDouTasks'
 import { chiXiang } from '../wuPinTask'
 import commonConfig from '../../../constants/config.json'
@@ -101,7 +115,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   }
 
   // 找到浮生录位置
-  { 
+  {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLu.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuLvZi_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
@@ -126,7 +140,6 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     )
   }
 
-
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLuDuiHuaKuang.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDuiHuaKuang_${randomName()}.jpg`)
@@ -137,7 +150,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
       return
     }
   }
-  
+
   // 打开对话框
   {
     await clickGamePoint('浮生录', 'fuShengLuDuiHuaKuang', {
@@ -148,7 +161,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
         const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
         return found
-      }
+      },
     })
 
     // 判断是否需要物品
@@ -223,8 +236,7 @@ export async function meiRiBiLing() {
   if (!found) {
     return
   }
-  
-  
+
   await clickGamePoint('每日必领_一键领取', 'meiRiBiLing_YiJianLingQu', {
     callback: async () => {
       const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
@@ -349,13 +361,22 @@ export async function meiRiRiChang_DanRen() {
         }
       }
 
+      {
+        const isChecked = await hasChecked('收藏任务_玄脉寻矿')
+        if (isChecked) {
+          await clickGamePoint('收藏任务_玄脉寻矿', 'meiRiRiChang_ZuDui', {
+            randomPixNums: [5, 2],
+          })
+        }
+      }
+
       await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
     }
   }
 
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
   const hasFoundQianMianGuai = {} as { [key: string]: boolean }
-  
+
   writeLog('师门任务', '', true)
   while (true) {
     for (const teamWindows of teamWindowsWithGroup) {
@@ -396,6 +417,50 @@ export async function xianJieTongJi() {
     })
 
     await sleep(1000)
+  }
+}
+
+export async function gouMaiYaoPin() {
+  const teamWindowsWithGroup = await getTeamsInfo()
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${commonConfig.gouMaiYaoPin}.jpg`)
+  for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+    await teamLeaderWindow.setForeground()
+    robotUtils.keyTap('B', ['control'])
+    await sleep(300)
+    robotUtils.keyTap('W', ['alt'])
+    await sleep(300)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/gouMaiYaoPin_${randomName()}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
+    const position = await findImagePositions(tempCapturePath, templateImagePath)
+    await moveMouseToAndClick(templateImagePath, {
+      buttonName: 'gouMaiYaoPin',
+      position,
+      size: [371, 34]
+    })
+    await hasGoneToNPC(teamLeaderWindow)
+    await talkToNPC('无名小镇', 'wuMingYaoPuLaoBan', 'maiMai', undefined, 100)
+    await sleep(500)
+    await clickGamePoint('批量购买', 'piLiangGouMai', {
+      callback: async () => true,
+    })
+    robotUtils.keyTap('enter')
+  }
+
+  for (const [_, ...teamMemberWindows] of teamWindowsWithGroup) {
+    for (const teamMemberWindow of teamMemberWindows) {
+      await teamMemberWindow.setForeground()
+      await clickGamePoint('批量购买', 'piLiangGouMai', {
+        callback: async () => true,
+      })
+      robotUtils.keyTap('enter')
+    }
+  }
+
+  for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+    await teamLeaderWindow.setForeground()
+    robotUtils.keyTap('f1')
+    await sleep(500)
+    robotUtils.keyTap('f1')
   }
 }
 
@@ -473,6 +538,8 @@ export async function yiJianRiChang() {
       await sleep(3000)
     }
   }
+
+  await gouMaiYaoPin()
 
   await meiRiRiChang_ZuDui()
 

@@ -167,7 +167,6 @@ export async function quanMinShengJi() {
       await sleep(500)
       await goToNPCAndTalk({
         npcName: 'jieYinDaoTong',
-        intervalTime: 1,
         conversition: 'woYaoHuiTianYongChengBanXieShi',
         gameWindow: teamLeaderWindow,
       })

@@ -108,7 +108,7 @@ export async function moveMouseToAndClick(
 /**
  * 通过点击的按钮或者文字颜色改变
  */
-export async function moveMouseToAndClickUseColor(fileInfo: ImageFileInfo, color: string) {
+export async function moveMouseToAndClickUseColor(fileInfo: ImageFileInfo, color: string, top_n?: number) {
   let isInRange = false
   let lastXPos = fileInfo.position[0] + Math.round(fileInfo.size[0] / 2)
   let lastYPos = fileInfo.position[1] + Math.round(fileInfo.size[1] / 2)
@@ -117,7 +117,7 @@ export async function moveMouseToAndClickUseColor(fileInfo: ImageFileInfo, color
     await sleep(500)
     const srcImagePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName + '_' + randomName()}.jpg`)
     await screenCaptureToFile(srcImagePath, fileInfo.position, fileInfo.size)
-    const colors = await extractThemeColors(srcImagePath)
+    const colors = await extractThemeColors(srcImagePath, top_n)
 
     if (colors.includes(color)) {
       isInRange = true

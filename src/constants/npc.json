@@ -27,7 +27,7 @@
           "position": [527, 654],
           "size": [450, 34]
         },
-        "songWoQuWuMingXizoZhen": {
+        "songWoQuWuMingXiaoZhen": {
           "zh": "送我去无名小镇（1，000文游戏币）",
           "position": [527, 690],
           "size": [485, 34]
@@ -179,6 +179,20 @@
           "zh": "好啊，那我就走一趟（三星模式）",
           "position": [526, 650],
           "size": [492, 34]
+        }
+      }
+    },
+    "wuMingYaoPuLaoBan":{
+      "zh": "无名药铺老板",
+      "search": {
+        "abstract": "wmyplb",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "maiMai": {
+          "zh": "买卖",
+          "position": [526, 550],
+          "size": [68, 34]
         }
       }
     }

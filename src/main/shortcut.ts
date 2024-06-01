@@ -18,7 +18,7 @@ import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
 import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
-import { fuShengLu, meiRiRiChang_DanRen, meiRiRiChang_ZuDui, openFuLiCenter, wuLeiLing, yiJianRiChang } from './tasks/riChang'
+import { fuShengLu, gouMaiYaoPin, meiRiRiChang_DanRen, meiRiRiChang_ZuDui, openFuLiCenter, wuLeiLing, yiJianRiChang } from './tasks/riChang'
 import {
   displayGameWindows,
   findTargetInMap,
@@ -79,7 +79,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [266, 717], [200, 86])
+    await screenCaptureToFile(srcImagePath, [1192, 413], [371, 34])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -114,7 +114,8 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     
     // monitorGameDiaoXian()
-    meiRiRiChang_DanRen()
+    // meiRiRiChang_DanRen()
+    gouMaiYaoPin()
     // await xianJieTongJi()
   })
 

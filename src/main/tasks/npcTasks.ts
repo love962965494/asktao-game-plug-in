@@ -97,7 +97,7 @@ export async function hasNPCDialog() {
   return found1 && found2
 }
 
-export async function hasGoneToNPC(gameWindow: GameWindowControl, time = 5): Promise<void> {
+export async function hasGoneToNPC(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise((resolve) => {
     function _detect() {
       setTimeout(async () => {
@@ -114,24 +114,17 @@ export async function hasGoneToNPC(gameWindow: GameWindowControl, time = 5): Pro
     }
 
     _detect()
-
-    // const interval = setInterval(async () => {
-    //   const found = await hasNPCDialog()
-    //   if (found) {
-    //     clearInterval(interval)
-    //     resolve()
-    //   }
-    // }, time * 1000)
   })
 }
 
-export async function talkToNPC(city: string, npcName: string, conversition: string, calculatePosition?: Function) {
+export async function talkToNPC(city: string, npcName: string, conversition: string, calculatePosition?: Function, top_n?: number) {
   let { position, size } =
     global.appContext.npc?.[city as keyof INPC]?.[npcName as keyof INPC[keyof INPC]]?.['conversitions']?.[
       conversition
     ] as { position: number[]; size: number[]; }
   
   if (calculatePosition) {
+    await moveMouseToBlank()
     position = await calculatePosition()
   }
 
@@ -141,9 +134,10 @@ export async function talkToNPC(city: string, npcName: string, conversition: str
     {
       buttonName: 'talkToNPC',
       position: [position[0] + Math.round(size[0] / 2) - 50, position[1]],
-      size: [Math.min(200, size[0]) , size[1]],
+      size: [Math.min(60, size[0]) , size[1]],
     },
-    '#fa0000'
+    '#fa0000',
+    top_n
   )
 }
 
@@ -151,13 +145,12 @@ export async function goToNPCAndTalk(options: {
   city?: string
   npcName: string
   conversition: string
-  intervalTime?: number
   gameWindow: GameWindowControl
   calculatePosition?: Function
 }) {
-  const { city, npcName, conversition, intervalTime = 5, gameWindow, calculatePosition } = options
+  const { city, npcName, conversition, gameWindow, calculatePosition } = options
   const currentCity = city || (await getCurrentCity())
   await goToNPC(currentCity, npcName)
-  await hasGoneToNPC(gameWindow, intervalTime)
+  await hasGoneToNPC(gameWindow)
   await talkToNPC(currentCity, npcName, conversition, calculatePosition)
 }
