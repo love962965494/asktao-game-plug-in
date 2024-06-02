@@ -262,7 +262,7 @@ export async function yiJianQianDao() {
   
   // 清空浮生录日志
   writeLog('浮生录', '', true)
-  
+
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
     await meiRiBiLing()
@@ -455,7 +455,18 @@ export async function gouMaiYaoPin() {
     for (const teamMemberWindow of teamMemberWindows) {
       await teamMemberWindow.setForeground()
       await clickGamePoint('批量购买', 'piLiangGouMai', {
-        callback: async () => true,
+        callback: async () => {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/piLiangGouMai_${randomName()}.jpg`)
+          await screenCaptureToFile(tempCapturePath, [650, 690], [100, 20])
+
+          const colors = await extractThemeColors(tempCapturePath)
+
+          if (colors.includes('#e6c8')) {
+            return true
+          }
+
+          return false
+        },
       })
       robotUtils.keyTap('enter')
     }

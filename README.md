@@ -23,3 +23,13 @@ Alt+E物品栏：
 "lieYanZhenZhu",
 "huaXueZhenZhu",
 "luoPoZhenZhu"
+
+寻仙任务：
+"hanZhongLi", 
+"lanCaiHe", 
+"hanXiangZi", 
+"zhangGuoLao", 
+"caoGuoJiu", 
+"lvDongBin",  
+"heXianGu", 
+"tieGuaiLi"

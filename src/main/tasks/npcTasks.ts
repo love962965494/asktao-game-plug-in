@@ -30,14 +30,14 @@ export function getCurrentCityByNpc(npc: string) {
   let matchCity = '' as keyof INPC
   for (const city of Object.keys(global.appContext.npc)) {
     const npcs = global.appContext.npc[city as keyof INPC]
-    
+
     if (npcs[npc as keyof INPC[keyof INPC]]) {
       matchCity = city as keyof INPC
 
       break
-    } 
+    }
   }
-  
+
   if (!matchCity) {
     throw new Error('can not found match city by given npc!')
   }
@@ -117,12 +117,17 @@ export async function hasGoneToNPC(gameWindow: GameWindowControl): Promise<void>
   })
 }
 
-export async function talkToNPC(city: string, npcName: string, conversition: string, calculatePosition?: Function, top_n?: number) {
-  let { position, size } =
-    global.appContext.npc?.[city as keyof INPC]?.[npcName as keyof INPC[keyof INPC]]?.['conversitions']?.[
-      conversition
-    ] as { position: number[]; size: number[]; }
-  
+export async function talkToNPC(
+  city: string,
+  npcName: string,
+  conversition: string,
+  calculatePosition?: Function,
+  top_n?: number
+) {
+  let { position, size } = global.appContext.npc?.[city as keyof INPC]?.[npcName as keyof INPC[keyof INPC]]?.[
+    'conversitions'
+  ]?.[conversition] as { position: number[]; size: number[] }
+
   if (calculatePosition) {
     await moveMouseToBlank()
     position = await calculatePosition()
@@ -134,7 +139,7 @@ export async function talkToNPC(city: string, npcName: string, conversition: str
     {
       buttonName: 'talkToNPC',
       position: [position[0] + Math.round(size[0] / 2) - 50, position[1]],
-      size: [Math.min(60, size[0]) , size[1]],
+      size: [Math.min(60, size[0]), size[1]],
     },
     '#fa0000',
     top_n
@@ -153,4 +158,34 @@ export async function goToNPCAndTalk(options: {
   await goToNPC(currentCity, npcName)
   await hasGoneToNPC(gameWindow)
   await talkToNPC(currentCity, npcName, conversition, calculatePosition)
+}
+
+
+export async function hasCityDialog(city: string) {
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${city}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/hasCityDialog_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  return found
+}
+
+export async function hasGoneToCity(gameWindow: GameWindowControl, city: string): Promise<void> {
+  return MyPromise((resolve) => {
+    function _detect() {
+      setTimeout(async () => {
+        await gameWindow.setForeground()
+        const found = await hasCityDialog(city)
+
+        if (found) {
+          resolve()
+          return
+        }
+
+        _detect()
+      }, 1000)
+    }
+
+    _detect()
+  })
 }
