@@ -184,6 +184,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
     const [name] = await paddleOcr(tempCapturePath)
     const fuShengLuName = matchStrings(name, Object.keys(FuShengLu))
+    writeLog('浮生录', `${gameWindow.roleInfo.roleName}: ${fuShengLuName}`)
     await gameWindow.maximizGameWindow()
     const [first, second] = FuShengLu[fuShengLuName as keyof typeof FuShengLu]
     await clickGamePoint(`浮生录_${first}`, 'fuShengLuDuiHua')
@@ -258,6 +259,10 @@ export async function yiJianQianDao() {
   await getGameWindows()
   const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
   await moveMouseToBlank()
+  
+  // 清空浮生录日志
+  writeLog('浮生录', '', true)
+  
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
     await meiRiBiLing()
