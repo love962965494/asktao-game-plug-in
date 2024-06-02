@@ -259,7 +259,7 @@ export async function yiJianQianDao() {
   await getGameWindows()
   const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
   await moveMouseToBlank()
-  
+
   // 清空浮生录日志
   writeLog('浮生录', '', true)
 
@@ -440,13 +440,21 @@ export async function gouMaiYaoPin() {
     await moveMouseToAndClick(templateImagePath, {
       buttonName: 'gouMaiYaoPin',
       position,
-      size: [371, 34]
+      size: [371, 34],
     })
     await hasGoneToNPC(teamLeaderWindow)
     await talkToNPC('无名小镇', 'wuMingYaoPuLaoBan', 'maiMai', undefined, 100)
     await sleep(500)
     await clickGamePoint('批量购买', 'piLiangGouMai', {
-      callback: async () => true,
+      callback: async () => {
+        const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/gouMaiYaoPin.jpg')
+        const tempCapturePath = path.join(pythonImagesPath, `temp/piLiangGouMai_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath)
+
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        return found
+      },
     })
     robotUtils.keyTap('enter')
   }
@@ -456,16 +464,13 @@ export async function gouMaiYaoPin() {
       await teamMemberWindow.setForeground()
       await clickGamePoint('批量购买', 'piLiangGouMai', {
         callback: async () => {
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/gouMaiYaoPin.jpg')
           const tempCapturePath = path.join(pythonImagesPath, `temp/piLiangGouMai_${randomName()}.jpg`)
-          await screenCaptureToFile(tempCapturePath, [650, 690], [100, 20])
+          await screenCaptureToFile(tempCapturePath)
 
-          const colors = await extractThemeColors(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-          if (colors.includes('#e6c8')) {
-            return true
-          }
-
-          return false
+          return found
         },
       })
       robotUtils.keyTap('enter')
@@ -493,7 +498,7 @@ export async function yiJianRiChang() {
   const currentHour = new Date().getHours()
   if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
     await xianJieTongJi()
-    await sleep(4 * 60 * 60 * 1000)
+    await sleep(2.5 * 60 * 60 * 1000)
     // for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     //   await teamLeaderWindow.setForeground()
 
