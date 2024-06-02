@@ -1,5 +1,5 @@
 import { loginGame } from './loginTask'
-import { isGroupedTeam, liDui, yiJianZuDui } from './basicTasks'
+import { displayGameWindows, isGroupedTeam, liDui, yiJianZuDui } from './basicTasks'
 import { keepZiDong } from './zhanDouTasks'
 import { getGameWindows, getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
@@ -30,6 +30,8 @@ export function registerMonitorTasks() {
 }
 
 export async function dianXianResolve() {
+  await displayGameWindows()
+  await sleep(10 * 1000)
   await loginGame()
   await getGameWindows()
   const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
