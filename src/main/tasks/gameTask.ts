@@ -36,6 +36,7 @@ export async function hasGameTask(taskName: string) {
 
 export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('B', ['control'])
+  await sleep(500)
   const { description, pinYin } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
