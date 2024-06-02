@@ -1,7 +1,7 @@
 import { getGameWindows } from '../../../utils/systemCotroll'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
 import GameWindowControl from '../../../utils/gameWindowControll'
-import { buChongZhuangTai, hasMeetLaoJun, keepZiDong, waitFinishZhanDou, waitFinishZhanDou_1 } from '../zhanDouTasks'
+import { buChongZhuangTai, hasMeetLaoJun, waitFinishZhanDou, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { searchGameTask } from '../gameTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
@@ -10,7 +10,6 @@ import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from
 import { getCurrentCity, goToNPC, goToNPCAndTalk, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
-import { chiXiang } from '../wuPinTask'
 
 let taskIndex = 0
 type IRestTasks = string[][]
@@ -72,6 +71,16 @@ export async function shuaDaiJin() {
     }
     
     await loopTasks(restTasks, teamLeaderWindows)
+    // if (taskType === '寻仙任务') {
+    //   const restTasks = []
+    //   for (const gameWindow of teamLeaderWindows) {
+    //     const tasks = await getTaskProgress(gameWindow)
+        
+    //     restTasks.push(tasks)
+    //   }
+
+    //   writeLog('寻仙任务', JSON.stringify(restTasks, undefined, 4), true)
+    // }
     await shuaDaiJin()
   }
 }
@@ -186,27 +195,26 @@ async function executePairTask(pairTask: (string | undefined)[], teamLeaderWindo
     await waitFinishZhanDou(teamLeaderWindow)
     await hasMeetLaoJun(teamLeaderWindow)
   }
-
-  // if (taskIndex && taskIndex % commonConfig.ziDongInterval === 0) {
-  //   await keepZiDong()
-  // }
 }
 
 async function executePairTaskOfXunXian(pairTask: (string | undefined)[], teamLeaderWindows: GameWindowControl[]) {
   const needExecuteTaskWindows = [] as GameWindowControl[]
+  const npcs = []
   for (const [index, npc] of Object.entries(pairTask)) {
     const teamLeaderWindow = teamLeaderWindows[+index]
     if (!npc) {
       continue
     }
     needExecuteTaskWindows.push(teamLeaderWindow)
+    npcs.push(npc)
     await teamLeaderWindow.setForeground()
 
     await goToNPC('蓬莱岛', npc)
   }
 
   // 队伍都到了NPC处，开始战斗
-  for (const teamLeaderWindow of needExecuteTaskWindows) {
+  for (const [index, teamLeaderWindow] of Object.entries(needExecuteTaskWindows)) {
+    const npc = npcs[+index]
     await hasGoneToNPC(teamLeaderWindow)
     robotUtils.keyTap('f12')
     await sleep(500)

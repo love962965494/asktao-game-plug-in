@@ -24,6 +24,8 @@ import {
 } from '../../utils/fileOperations'
 import { ICityMap } from 'constants/types'
 import { hasMeetLaoJun, keepZiDong } from './zhanDouTasks'
+import commonConfig from '../../constants/config.json'
+import { MyPromise } from 'utils/customizePromise'
 
 // 是否组队
 export async function isGroupedTeam(gameWindow: GameWindowControl) {
@@ -196,11 +198,11 @@ export async function liDui() {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuDuiPingTai.jpg')
       const tempCapturePath = path.join(pythonImagesPath, `temp/liDui_${randomName()}.jpg`)
       await screenCaptureToFile(tempCapturePath)
-      
+
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
       return !found
-    }
+    },
   })
 }
 
@@ -376,12 +378,16 @@ export async function getCurrentGamePosition() {
 
   return currentPosition
 }
-export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, targetName: string) {
+export async function findTargetInMap(
+  gameWindow: GameWindowControl,
+  mapName: keyof ICityMap,
+  targetName: string,
+  loop = false
+) {
   await gameWindow.setForeground()
   gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${targetName}.jpg`)
-  findTargetInVideo(templateImagePath)
   const positions = generateMapCoordinates(size)
   const currentPosition = await getCurrentGamePosition()
   let index = positions.findIndex(
@@ -389,38 +395,122 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
       Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
   )
+  return async () => {
+    await gameWindow.setForeground()
 
-  let backToZero = false
-  while (true) {
-    const position = positions[index]
-    robotUtils.keyTap('B', ['control'])
-    await sleep(100)
-    robotUtils.keyTap('W', ['alt'])
-    clipboard.writeText(`${position.x}.${position.y}`)
-    robotUtils.keyTap('V', ['control'])
-    await sleep(100)
-    robotUtils.keyTap('enter')
-    if (backToZero) {
-      await sleep(2 * 60 * 1000)
-    }
-    await sleep(10 * 1000)
-    const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+    findTargetInVideo(templateImagePath)
 
-    if (found) {
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+    let backToZero = false
+    // 1 正方向  -1 反方向
+    let direction = 1
+    // while (!global.appContext.hasFoundTarget) {
+    //   const position = positions[index]
+    //   robotUtils.keyTap('B', ['control'])
+    //   await sleep(100)
+    //   robotUtils.keyTap('W', ['alt'])
+    //   clipboard.writeText(`${position.x}.${position.y}`)
+    //   robotUtils.keyTap('V', ['control'])
+    //   await sleep(100)
+    //   robotUtils.keyTap('enter')
+    //   if (backToZero) {
+    //     await sleep(2 * 60 * 1000)
+    //   }
+    //   await sleep(commonConfig.moveUseTime * 1000)
+    //   if (direction === 1) {
+    //     index++
+    //   } else {
+    //     index--
+    //   }
+    //   if (loop) {
+    //     if (index < 0 || index > positions.length - 1) {
+    //       direction = direction === 1 ? -1 : 1
+    //     }
+    //   } else {
+    //     if (index > positions.length - 1) {
+    //       index = 0
+    //       backToZero = true
+    //     }
+    //   }
+    //   // const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
+    //   // await screenCaptureToFile(tempCapturePath)
+    //   // const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-      await moveMouseTo(position[0] + 3, position[1] - 10)
-      await sleep(200)
-      robotUtils.mouseClick('left')
-      break
-    } else {
-      index++
+    //   // if (found) {
+    //   //   const position = await findImagePositions(tempCapturePath, templateImagePath)
 
-      if (index > positions.length - 1) {
-        index = 0
-        backToZero = true
+    //   //   await moveMouseTo(position[0] + 3, position[1] - 10)
+    //   //   await sleep(200)
+    //   //   robotUtils.mouseClick('left')
+    //   //   break
+    //   // } else {
+    //   //   index++
+
+    //   //   if (index > positions.length - 1) {
+    //   //     index = 0
+    //   //     backToZero = true
+    //   //   }
+    //   // }
+    // }
+
+    let hasFound = false
+    while (!hasFound) {
+      const promise1 = new Promise<number>((resolve) => {
+        async function _inner() {
+          const position = positions[index]
+          robotUtils.keyTap('B', ['control'])
+          await sleep(100)
+          robotUtils.keyTap('W', ['alt'])
+          clipboard.writeText(`${position.x}.${position.y}`)
+          robotUtils.keyTap('V', ['control'])
+          await sleep(100)
+          robotUtils.keyTap('enter')
+          if (backToZero) {
+            await sleep(2 * 60 * 1000)
+          }
+          await sleep(commonConfig.moveUseTime * 1000)
+          if (direction === 1) {
+            index++
+          } else {
+            index--
+          }
+          if (loop) {
+            if (index < 0 || index > positions.length - 1) {
+              direction = direction === 1 ? -1 : 1
+            }
+          } else {
+            if (index > positions.length - 1) {
+              index = 0
+              backToZero = true
+            }
+          }
+
+          resolve(1)
+        }
+
+        _inner()
+      })
+      const promise2 = new Promise<number>((resolve) => {
+        let interval = setInterval(() => {
+          if (global.appContext.hasFoundTarget) {
+            clearInterval(interval)
+            resolve(2)
+          }
+        }, 10)
+      })
+
+      const result = await Promise.race([promise1, promise2])
+
+      if (result === 2) {
+        robotUtils.keyTap('X', ['alt'])
+        await sleep(100)
+        robotUtils.mouseClick('right')
+        await moveMouseToBlank()
+        const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath)
+        const position = await findImagePositions(tempCapturePath, templateImagePath)
+        await moveMouseTo(position[0] + 3, position[1] - 20)
+        robotUtils.mouseClick('left', true)
+        hasFound = true
       }
     }
   }
@@ -428,7 +518,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
 
 export async function xunHuanZiDong() {
   await getGameWindows()
-  const gameWindows = [...await GameWindowControl.getAllGameWindows().values()]
+  const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
 
   function _loop() {
     setTimeout(async () => {
@@ -445,6 +535,6 @@ export async function xunHuanZiDong() {
       _loop()
     }, 10 * 1000)
   }
-  
+
   _loop()
 }

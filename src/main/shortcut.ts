@@ -79,7 +79,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [4, 72], [42, 120])
+    await screenCaptureToFile(srcImagePath, [266, 717], [200, 86])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -112,10 +112,6 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの神龙')
-    await gameWindow?.setForeground()
-    await fuShengLu(gameWindow!)
     
     // monitorGameDiaoXian()
     // meiRiRiChang_DanRen()
