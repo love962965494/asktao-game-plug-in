@@ -9,6 +9,7 @@ import { Window as WinControl } from 'win-control'
 import { sleep } from '../../utils/toolkits'
 import { app } from 'electron'
 import { xianJieShenBu } from './xiuXing/xianJieShenBu'
+import commonConfig from '../../constants/config.json'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
@@ -69,7 +70,7 @@ export async function monitorGameDiaoXian() {
       return gameWindow
     })
 
-    if (gameWindows.length !== 10 || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
+    if (gameWindows.length !== commonConfig.accountsNum || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
       clearInterval(interval)
       await sleep(10 * 60 * 1000)
       app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
