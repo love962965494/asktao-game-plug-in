@@ -7,7 +7,7 @@ import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import { getCurrentCity, goToNPC, goToNPCAndTalk, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
+import { getCurrentCity, goToNPC, goToNPCAndTalk, hasCityDialog, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
 
@@ -57,8 +57,8 @@ export async function shuaDaiJin() {
       for (const [index, teamLeaderWindow] of Object.entries(teamLeaderWindows)) {
         await teamLeaderWindow.setForeground()
         if (restTasks[+index].length > 0) {
-          const currentCity = await getCurrentCity()
-          if (currentCity !== '蓬莱岛') {
+          const has = await hasCityDialog('pengLaiDao')
+          if (!has) {
             await searchGameTask(taskType)
             await clickGamePoint('寻仙任务-蓬莱岛', 'xunXianRenWu')
           }

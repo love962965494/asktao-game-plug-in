@@ -32,7 +32,7 @@ export async function isInBattle(gameWindow: GameWindowControl) {
 
 export async function isInBattle_1(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
-  const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗']
+  const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗1']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle_2.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
