@@ -6,8 +6,8 @@ import { searchGameTask } from '../gameTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { randomName, sleep } from '../../../utils/toolkits'
-import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import { getCurrentCity, goToNPC, goToNPCAndTalk, hasCityDialog, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
+import { findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
+import { goToNPC, goToNPCAndTalk, hasCityDialog, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
 
@@ -71,18 +71,67 @@ export async function shuaDaiJin() {
     }
     
     await loopTasks(restTasks, teamLeaderWindows)
-    // if (taskType === '寻仙任务') {
-    //   const restTasks = []
-    //   for (const gameWindow of teamLeaderWindows) {
-    //     const tasks = await getTaskProgress(gameWindow)
-        
-    //     restTasks.push(tasks)
-    //   }
+    if (taskType === '寻仙任务' && commonConfig.needRecheckTaskProgress) {
+      const restTasks = []
+      for (const teamLeaderWindow of teamLeaderWindows) {
+        await teamLeaderWindow.setForeground()
+        const found = await recheckTaskProgress('taiQingZhenJun')
 
-    //   writeLog('寻仙任务', JSON.stringify(restTasks, undefined, 4), true)
-    // }
+        if (found) {
+          restTasks.push([])
+        } else {
+          const tasks = await getTaskProgress(teamLeaderWindow)
+          restTasks.push(tasks)
+        }
+      }
+
+      writeLog('寻仙任务', JSON.stringify(restTasks, undefined, 4), true)
+    }
     await shuaDaiJin()
   }
+}
+
+async function getTaskProgress(gameWindow: GameWindowControl) {
+  const restTasks = []
+  await searchGameTask(taskType)
+  await gameWindow.restoreGameWindow()
+  const { npcs, content } = global.appContext.gameTask[taskType] as {
+    npcs: { zh: string; pinYin: string }[]
+    content: any
+  }
+  const { position, size } = content.smallWindow
+  const tempCapturePath = path.join(pythonImagesPath, `temp/getTaskProgress_${randomName()}.jpg`)
+  const { left, top } = gameWindow.getDimensions()!
+  await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
+  const taskContent = await paddleOcr(tempCapturePath, false, 'ch')
+  const taskString = taskContent.join('')
+  for (const npc of npcs) {
+    let found = false
+    if (npc.zh === '天阙阵主') {
+      if (taskString.includes('天')) {
+        found = true
+      }
+    } else {
+      if (taskType === '寻仙任务') {
+        if (taskString.includes(npc.zh.slice(0, 2))) {
+          found = true
+        }
+      } else {
+        if (taskString.includes(npc.zh)) {
+          found = true
+        }
+      }
+    }
+
+    if (found) {
+      restTasks.push(npc.pinYin)
+    }
+  }
+  restTasks.sort((a, b) => (allNpcs[taskType].indexOf(a) > allNpcs[taskType].indexOf(b) ? 1 : -1))
+
+  await gameWindow.maximizGameWindow()
+
+  return restTasks
 }
 
 async function lingQuRenWu(teamLeaderWindows: GameWindowControl[]) {
@@ -247,4 +296,17 @@ async function executePairTaskOfXunXian(pairTask: (string | undefined)[], teamLe
   if (commonConfig.buChongZhuangTai) {
     await buChongZhuangTai({ needJueSe: true, needZhongCheng: true })
   }
+}
+
+async function recheckTaskProgress(npcName: string) {
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${npcName}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/recheckTaskProgress_${randomName()}.jpg`)
+  robotUtils.keyTap('B', ['control'])
+  await sleep(300)
+  robotUtils.keyTap('Q', ['alt'])
+  await sleep(300)
+  await screenCaptureToFile(tempCapturePath)
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  return found
 }
