@@ -381,13 +381,11 @@ export async function getCurrentGamePosition() {
 export async function findTargetInMap(
   gameWindow: GameWindowControl,
   mapName: keyof ICityMap,
-  targetName: string,
   loop = false
 ) {
   await gameWindow.setForeground()
   gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
-  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${targetName}.jpg`)
   const positions = generateMapCoordinates(size)
   const currentPosition = await getCurrentGamePosition()
   let index = positions.findIndex(
@@ -395,7 +393,8 @@ export async function findTargetInMap(
       Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
       Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
   )
-  return async () => {
+  return async (targetName: string) => {
+    const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     await gameWindow.setForeground()
 
     findTargetInVideo(templateImagePath)
@@ -453,6 +452,7 @@ export async function findTargetInMap(
     // }
 
     let hasFound = false
+    let targetPosition: number[] = []
     while (!hasFound) {
       const promise1 = new Promise<number>((resolve) => {
         async function _inner() {
@@ -462,7 +462,6 @@ export async function findTargetInMap(
           robotUtils.keyTap('W', ['alt'])
           clipboard.writeText(`${position.x}.${position.y}`)
           robotUtils.keyTap('V', ['control'])
-          await sleep(100)
           robotUtils.keyTap('enter')
           if (backToZero) {
             await sleep(2 * 60 * 1000)
@@ -476,6 +475,7 @@ export async function findTargetInMap(
           if (loop) {
             if (index < 0 || index > positions.length - 1) {
               direction = direction === 1 ? -1 : 1
+              index = index + 2 * direction
             }
           } else {
             if (index > positions.length - 1) {
@@ -493,6 +493,7 @@ export async function findTargetInMap(
         let interval = setInterval(() => {
           if (global.appContext.hasFoundTarget) {
             clearInterval(interval)
+            global.appContext.hasFoundTarget = false
             resolve(2)
           }
         }, 10)
@@ -504,15 +505,16 @@ export async function findTargetInMap(
         robotUtils.keyTap('X', ['alt'])
         await sleep(100)
         robotUtils.mouseClick('right')
+        await sleep(100)
         await moveMouseToBlank()
         const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
         await screenCaptureToFile(tempCapturePath)
-        const position = await findImagePositions(tempCapturePath, templateImagePath)
-        await moveMouseTo(position[0] + 3, position[1] - 20)
-        robotUtils.mouseClick('left', true)
+        targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
         hasFound = true
       }
     }
+
+    return targetPosition
   }
 }
 

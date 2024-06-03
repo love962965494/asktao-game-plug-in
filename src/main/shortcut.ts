@@ -17,8 +17,16 @@ import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import { hasMeetLaoJun, isInBattle, keepZiDong, waitFinishZhanDou } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { moveMouseToBlank, readLog, writeLog } from '../utils/common'
-import { fuShengLu, gouMaiYaoPin, meiRiRiChang_DanRen, meiRiRiChang_ZuDui, openFuLiCenter, wuLeiLing, yiJianRiChang } from './tasks/riChang'
+import { moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../utils/common'
+import {
+  fuShengLu,
+  gouMaiYaoPin,
+  meiRiRiChang_DanRen,
+  meiRiRiChang_ZuDui,
+  openFuLiCenter,
+  wuLeiLing,
+  yiJianRiChang,
+} from './tasks/riChang'
 import {
   displayGameWindows,
   findTargetInMap,
@@ -112,7 +120,70 @@ export function registerGlobalShortcut() {
   // 543 580
   // 543 616
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    
+    await getGameWindows()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
+    const findTarget = await findTargetInMap(gameWindow, '天墉城',  true)
+    LOOP: while (true) {
+      const position = await findTarget('wenQuXing')
+      if (position.length === 2) {
+        const distance = Math.sqrt(Math.pow(960 - position[0], 2) + Math.pow(540 - position[1], 2))
+        if (distance > 400) {
+          robotUtils.moveMouse(Math.round((position[0] + 960) / 2), Math.round((position[1] + 540) / 2))
+          robotUtils.mouseClick('left', true)
+          await sleep(2 * 1000)
+          continue LOOP
+        }
+        robotUtils.keyToggle('shift', 'down')
+        await moveMouseToAndClick(
+          '',
+          {
+            buttonName: '',
+            position: [position[0], position[1] - 200],
+            size: [60, 200],
+          },
+          {
+            callback: async () => {
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/findTarget.png')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetOfCheFu_${randomName()}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+  
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.9)
+  
+              return found
+            },
+          }
+        )
+        robotUtils.keyToggle('shift', 'up')
+        break
+      }
+    }
+
+    {
+      const position = await findTarget('cheFu')
+      if (position.length === 2) {
+        robotUtils.keyToggle('shift', 'down')
+        await moveMouseToAndClick(
+          '',
+          {
+            buttonName: '',
+            position: [position[0], position[1] - 200],
+            size: [60, 200],
+          },
+          {
+            callback: async () => {
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/findTarget.png')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetOfCheFu_${randomName()}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+  
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.9)
+  
+              return found
+            },
+          }
+        )
+        robotUtils.keyToggle('shift', 'up')
+      }
+    }
     // monitorGameDiaoXian()
     meiRiRiChang_DanRen()
     // await xianJieTongJi()
@@ -121,10 +192,10 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
     app.exit(0)
   })
-  
+
   globalShortcut.register('CommandOrControl+Alt+P', async () => {
-    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
-    app.exit(0);
+    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
+    app.exit(0)
   })
 }
 

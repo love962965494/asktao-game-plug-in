@@ -50,6 +50,9 @@ const robotUtils = {
       robotUtils.keyTap(char)
     }
   },
+  keyToggle(key: string, downOrUp: 'down' | 'up') {
+    robotjs.keyToggle(key, downOrUp)
+  }
 }
 
 export default robotUtils
