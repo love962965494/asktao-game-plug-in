@@ -68,11 +68,11 @@ export async function wuLeiLing() {
     count++
   }
 
-  await sleep(100)
+  await sleep(1000)
   robotUtils.keyTap('B', ['control'])
-  await sleep(500)
+  await sleep(1000)
   robotUtils.keyTap('escape')
-  await sleep(500)
+  await sleep(1000)
   await clickGamePoint('收藏任务', 'wuLeiLing', {
     tabOptions: {
       isTab: true,
