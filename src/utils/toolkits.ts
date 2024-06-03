@@ -34,7 +34,7 @@ export function randomPixelNum(num: number) {
 
 let index = 0
 export function randomName() {
-  if (index > 20) {
+  if (index > 50) {
     index = 0
   }
   index++
