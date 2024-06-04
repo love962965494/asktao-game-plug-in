@@ -91,20 +91,20 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   // 找到邮件
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/haoXiang.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuEmail_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu1_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(
-      templateImagePath,
+      '',
       {
-        buttonName: 'fuShengLuEmail',
+        buttonName: 'fuShengLu2',
         position,
         size: [72, 36],
       },
       {
         callback: async function () {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLu.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu2_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -117,11 +117,11 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   // 找到浮生录位置
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLu.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuLvZi_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu3_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(
-      templateImagePath,
+      '',
       {
         buttonName: 'fuShengLuLvZi',
         position,
@@ -130,7 +130,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
       {
         callback: async function () {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/chaKan.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu4_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -142,7 +142,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
 
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLuDuiHuaKuang.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDuiHuaKuang_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu5_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -153,10 +153,10 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
 
   // 打开对话框
   {
-    await clickGamePoint('浮生录', 'fuShengLuDuiHuaKuang', {
+    await clickGamePoint('浮生录', 'fuShengLu6', {
       callback: async () => {
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/hasGoneToNPC.jpg')
-        const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu7_${randomName()}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -166,7 +166,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
 
     // 判断是否需要物品
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuiJinJiYong.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDialog_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu8_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -180,16 +180,16 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     const { position, size } = global.appContext.gamePoints['浮生录_角色姓名']
     await gameWindow.restoreGameWindow()
     const { left, top } = gameWindow.getDimensions()
-    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLuDuiHua_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu9_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
     const [name] = await paddleOcr(tempCapturePath)
     const fuShengLuName = matchStrings(name, Object.keys(FuShengLu))
     writeLog('浮生录', `${gameWindow.roleInfo.roleName}: ${fuShengLuName}`)
     await gameWindow.maximizGameWindow()
     const [first, second] = FuShengLu[fuShengLuName as keyof typeof FuShengLu]
-    await clickGamePoint(`浮生录_${first}`, 'fuShengLuDuiHua')
+    await clickGamePoint(`浮生录_${first}`, 'fuShengLu10')
     await sleep(2000)
-    await clickGamePoint(`浮生录_${second}`, 'fuShengLuDuiHua')
+    await clickGamePoint(`浮生录_${second}`, 'fuShengLu11')
     await sleep(2000)
   }
 }
