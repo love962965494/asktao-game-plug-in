@@ -31,7 +31,7 @@ const allNpcs = {
 }
 type ITaskType = keyof typeof allNpcs
 const taskType = commonConfig.shuaDaiJinTaskType as ITaskType
-export async function shuaDaiJin() {
+export async function shuaDaiJin(isFirst = false) {
   await getGameWindows()
   const npcs = allNpcs[taskType]
   const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
@@ -49,6 +49,16 @@ export async function shuaDaiJin() {
     await lingQuRenWu(teamLeaderWindows)
     for (const _ of teamLeaderWindows) {
       restTasks.push([...npcs])
+    }
+  }
+
+  if (isFirst) {
+    for (const gameWindow of allGameWindows) {
+      await gameWindow.setForeground()
+      robotUtils.keyTap('W', ['control'])
+      await sleep(1000)
+      robotUtils.keyTap('2', 'control')
+      await sleep(500)
     }
   }
 

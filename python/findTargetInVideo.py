@@ -18,7 +18,7 @@ def findTarget(target_img_path):
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         # 如果匹配度足够高，则保存完整的屏幕截图并标注目标位置，然后退出程序
-        threshold = 0.9  # 设置匹配阈值
+        threshold = 0.8 # 设置匹配阈值
         if max_val > threshold:
             # target_width, target_height = target_img.shape[::-1]
             top_left = max_loc
@@ -39,6 +39,6 @@ def findTarget(target_img_path):
     # cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    target_img_path = sys.argv[1]
-    # target_img_path = 'C:/Users/asus/Desktop/wenQuXing.jpg'
+    # target_img_path = sys.argv[1]
+    target_img_path = 'C:/Users/sc/Desktop/chiXueYanJin_1.jpg'
     findTarget(target_img_path)

@@ -48,6 +48,24 @@ export async function isInBattle_1(gameWindow: GameWindowControl) {
   return found1
 }
 
+export async function isInBattleOfSmallScreen(gameWindow: GameWindowControl) {
+  await gameWindow.setForeground()
+  const { position, size } = global.appContext.gamePoints['战斗-小屏幕检测是否还在战斗']
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle_small.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  await screenCaptureToFile(tempCapturePath, position, size)
+  const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  if (!found1) {
+    await sleep(2000)
+    await screenCaptureToFile(tempCapturePath, position, size)
+    const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+    return found2
+  }
+
+  return found1
+}
+
 export async function waitFinishZhanDou(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise(async (resolve) => {
     function _detect() {
@@ -72,6 +90,25 @@ export async function waitFinishZhanDou_1(gameWindow: GameWindowControl): Promis
     function _detect() {
       setTimeout(async () => {
         const inBattle = await isInBattle_1(gameWindow)
+
+        if (!inBattle) {
+          resolve()
+          return
+        }
+
+        _detect()
+      }, 1000)
+    }
+
+    _detect()
+  })
+}
+
+export async function waitFinishZhanDouOfSmallScreen(gameWindow: GameWindowControl): Promise<void> {
+  return MyPromise(async (resolve) => {
+    function _detect() {
+      setTimeout(async () => {
+        const inBattle = await isInBattleOfSmallScreen(gameWindow)
 
         if (!inBattle) {
           resolve()

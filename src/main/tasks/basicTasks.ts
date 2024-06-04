@@ -25,7 +25,6 @@ import {
 import { ICityMap } from 'constants/types'
 import { hasMeetLaoJun, keepZiDong } from './zhanDouTasks'
 import commonConfig from '../../constants/config.json'
-import { MyPromise } from 'utils/customizePromise'
 
 // 是否组队
 export async function isGroupedTeam(gameWindow: GameWindowControl) {
@@ -311,7 +310,7 @@ export async function displayGameWindows() {
 
 // 移动行走找到地图中目标
 // 1920 * 1080分辨率
-const oneScreenSize = [60, 30]
+const oneScreenSize = [40, 20]
 function generateMapCoordinates(size: number[]) {
   const [width, height] = size
   let coordinates = []
@@ -384,15 +383,16 @@ export async function findTargetInMap(
   loop = false
 ) {
   await gameWindow.setForeground()
-  gameWindow.setPosition(0, 0)
+  // gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
-  const currentPosition = await getCurrentGamePosition()
-  let index = positions.findIndex(
-    (item) =>
-      Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
-      Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
-  )
+  let index = Math.round(positions.length * Math.random())
+  // const currentPosition = await getCurrentGamePosition()
+  // let index = positions.findIndex(
+  //   (item) =>
+  //     Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
+  //     Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
+  // )
   return async (targetName: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     await gameWindow.setForeground()
@@ -402,54 +402,6 @@ export async function findTargetInMap(
     let backToZero = false
     // 1 正方向  -1 反方向
     let direction = 1
-    // while (!global.appContext.hasFoundTarget) {
-    //   const position = positions[index]
-    //   robotUtils.keyTap('B', ['control'])
-    //   await sleep(100)
-    //   robotUtils.keyTap('W', ['alt'])
-    //   clipboard.writeText(`${position.x}.${position.y}`)
-    //   robotUtils.keyTap('V', ['control'])
-    //   await sleep(100)
-    //   robotUtils.keyTap('enter')
-    //   if (backToZero) {
-    //     await sleep(2 * 60 * 1000)
-    //   }
-    //   await sleep(commonConfig.moveUseTime * 1000)
-    //   if (direction === 1) {
-    //     index++
-    //   } else {
-    //     index--
-    //   }
-    //   if (loop) {
-    //     if (index < 0 || index > positions.length - 1) {
-    //       direction = direction === 1 ? -1 : 1
-    //     }
-    //   } else {
-    //     if (index > positions.length - 1) {
-    //       index = 0
-    //       backToZero = true
-    //     }
-    //   }
-    //   // const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
-    //   // await screenCaptureToFile(tempCapturePath)
-    //   // const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-    //   // if (found) {
-    //   //   const position = await findImagePositions(tempCapturePath, templateImagePath)
-
-    //   //   await moveMouseTo(position[0] + 3, position[1] - 10)
-    //   //   await sleep(200)
-    //   //   robotUtils.mouseClick('left')
-    //   //   break
-    //   // } else {
-    //   //   index++
-
-    //   //   if (index > positions.length - 1) {
-    //   //     index = 0
-    //   //     backToZero = true
-    //   //   }
-    //   // }
-    // }
 
     let hasFound = false
     let targetPosition: number[] = []
@@ -502,6 +454,7 @@ export async function findTargetInMap(
       const result = await Promise.race([promise1, promise2])
 
       if (result === 2) {
+        robotUtils.moveMouse(500, 300)
         robotUtils.keyTap('X', ['alt'])
         await sleep(100)
         robotUtils.mouseClick('right')

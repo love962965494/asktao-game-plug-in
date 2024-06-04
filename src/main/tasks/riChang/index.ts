@@ -334,8 +334,9 @@ export async function meiRiRiChang_DanRen() {
       robotUtils.keyTap('R', ['control'])
       await chiXiang(2)
       robotUtils.keyTap('B', ['control'])
-      await sleep(500)
+      await sleep(1000)
       robotUtils.keyTap('escape')
+      await sleep(1000)
       await clickGamePoint('收藏任务_图标', 'meiRiRiChang_ZuDui', {
         callback: async () => {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongRenWuPeiZhi.jpg')

@@ -27,7 +27,7 @@ export async function registerXiuXing() {
   ipcMain.on('xian-jie-shen-bu', xianJieShenBu)
   // ipcMain.on('xiu-xing-ren-wu', xiuXingRenWu)
   // ipcMain.on('xun-xian-ren-wu', xunXianRenWu)
-  ipcMain.on('shua-dai-jin', shuaDaiJin)
+  ipcMain.on('shua-dai-jin', () => shuaDaiJin(true))
 }
 
 async function xianRenZhiLu() {
