@@ -188,9 +188,9 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     await gameWindow.maximizGameWindow()
     const [first, second] = FuShengLu[fuShengLuName as keyof typeof FuShengLu]
     await clickGamePoint(`浮生录_${first}`, 'fuShengLuDuiHua')
-    await sleep(500)
+    await sleep(2000)
     await clickGamePoint(`浮生录_${second}`, 'fuShengLuDuiHua')
-    await sleep(500)
+    await sleep(2000)
   }
 }
 
