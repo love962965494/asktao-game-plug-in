@@ -1,6 +1,6 @@
 import { globalShortcut, app } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
-import { getGameWindows } from '../utils/systemCotroll'
+import { getGameWindows, getProcessesByName } from '../utils/systemCotroll'
 import path from 'path'
 import { logPath, pythonImagesPath } from '../paths'
 import {
@@ -43,6 +43,8 @@ import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
 import { xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
+import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates } from 'win-control'
+
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -149,7 +151,11 @@ export function registerGlobalShortcut() {
     //   }
     // }
 
-    await meiRiRiChang_DanRen()
+    // await meiRiRiChang_DanRen()
+    const process = await getProcessesByName('ToDesk')
+    WinControl.getByPid(18304).setPosition(HWND.TOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
+    console.log('process: ', process);
+    
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {

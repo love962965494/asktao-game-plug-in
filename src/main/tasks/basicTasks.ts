@@ -310,41 +310,70 @@ export async function displayGameWindows() {
 
 // 移动行走找到地图中目标
 // 1920 * 1080分辨率
-const oneScreenSize = [40, 20]
+const oneScreenSize = [72, 30]
+// function generateMapCoordinates(size: number[]) {
+//   const [width, height] = size
+//   let coordinates = []
+//   let xStep = oneScreenSize[0]
+//   let yStep = oneScreenSize[1]
+//   let xSteps = Array.from(
+//     { length: Math.floor(width / xStep) },
+//     (_, index) => index * xStep + Math.floor(xStep / 2)
+//   ).concat(width % xStep ? [Math.floor(width / xStep) * xStep + Math.floor((width % xStep) / 2)] : [])
+//   let ySteps = Array.from(
+//     { length: Math.floor(height / yStep) },
+//     (_, index) => index * yStep + Math.floor(yStep / 2)
+//   ).concat(height % yStep ? [Math.floor(height / yStep) * yStep + Math.floor((height % yStep) / 2)] : [])
+
+//   let direction = true // true 向左，false 向右
+//   while (ySteps.length > 0) {
+//     // Along x-axis
+//     const y = ySteps.shift()!
+
+//     if (direction) {
+//       for (let i = 0; i < xSteps.length; i++) {
+//         coordinates.push({ x: xSteps[i], y })
+//       }
+//     } else {
+//       for (let i = xSteps.length - 1; i >= 0; i--) {
+//         coordinates.push({ x: xSteps[i], y })
+//       }
+//     }
+
+//     direction = !direction
+//   }
+
+//   return coordinates
+// }
+
 function generateMapCoordinates(size: number[]) {
   const [width, height] = size
-  let coordinates = []
-  let xStep = oneScreenSize[0]
-  let yStep = oneScreenSize[1]
-  let xSteps = Array.from(
-    { length: Math.floor(width / xStep) },
-    (_, index) => index * xStep + Math.floor(xStep / 2)
-  ).concat(width % xStep ? [Math.floor(width / xStep) * xStep + Math.floor((width % xStep) / 2)] : [])
-  let ySteps = Array.from(
-    { length: Math.floor(height / yStep) },
-    (_, index) => index * yStep + Math.floor(yStep / 2)
-  ).concat(height % yStep ? [Math.floor(height / yStep) * yStep + Math.floor((height % yStep) / 2)] : [])
-
-  let direction = true // true 向左，false 向右
-  while (ySteps.length > 0) {
-    // Along x-axis
-    const y = ySteps.shift()!
-
-    if (direction) {
-      for (let i = 0; i < xSteps.length; i++) {
-        coordinates.push({ x: xSteps[i], y })
-      }
+  const startX = oneScreenSize[0] / 2
+  const endX = width - oneScreenSize[0] / 2
+  const startY = oneScreenSize[1] / 2
+  const endY = height - oneScreenSize[1] / 2
+  const coordinates = [[startX, startY]]
+  let totalCounts =
+    Math.ceil((endY - startY) / oneScreenSize[1]) * 2 + ((endY - startY) % oneScreenSize[1] !== 0 ? 2 : 0)
+  while (coordinates.length < totalCounts) {
+    const [prevX, prevY] = coordinates[coordinates.length - 1]
+    let nextX: number
+    let nextY: number
+    if (coordinates.length % 2 === 0) {
+      // 偶数个点，则y轴偏移一格
+      nextX = prevX
+      nextY = Math.min(prevY + oneScreenSize[1], endY)
     } else {
-      for (let i = xSteps.length - 1; i >= 0; i--) {
-        coordinates.push({ x: xSteps[i], y })
-      }
+      // 奇数个点，则x轴偏移一格
+      nextX = prevX === startX ? endX : startX
+      nextY = prevY
     }
-
-    direction = !direction
+    coordinates.push([nextX, nextY])
   }
 
   return coordinates
 }
+
 export async function getCurrentGamePosition() {
   await sleep(1000)
   robotUtils.keyTap('B', ['control'])
@@ -377,32 +406,26 @@ export async function getCurrentGamePosition() {
 
   return currentPosition
 }
-export async function findTargetInMap(
-  gameWindow: GameWindowControl,
-  mapName: keyof ICityMap,
-  loop = false
-) {
+export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
   await gameWindow.setForeground()
   // gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
-  let index = Math.round(positions.length * Math.random())
   // const currentPosition = await getCurrentGamePosition()
   // let index = positions.findIndex(
   //   (item) =>
   //     Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
   //     Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
   // )
+  let index = 0
   return async (targetName: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     await gameWindow.setForeground()
 
     findTargetInVideo(templateImagePath)
 
-    let backToZero = false
     // 1 正方向  -1 反方向
     let direction = 1
-
     let hasFound = false
     let targetPosition: number[] = []
     while (!hasFound) {
@@ -415,9 +438,6 @@ export async function findTargetInMap(
           clipboard.writeText(`${position.x}.${position.y}`)
           robotUtils.keyTap('V', ['control'])
           robotUtils.keyTap('enter')
-          if (backToZero) {
-            await sleep(2 * 60 * 1000)
-          }
           await sleep(commonConfig.moveUseTime * 1000)
           if (direction === 1) {
             index++
@@ -432,7 +452,6 @@ export async function findTargetInMap(
           } else {
             if (index > positions.length - 1) {
               index = 0
-              backToZero = true
             }
           }
 
