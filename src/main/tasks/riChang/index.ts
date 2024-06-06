@@ -499,7 +499,7 @@ export async function yiJianRiChang() {
   const currentHour = new Date().getHours()
   if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
     await xianJieTongJi()
-    await sleep(2.5 * 60 * 60 * 1000)
+    await sleep(4 * 60 * 60 * 1000)
     // for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     //   await teamLeaderWindow.setForeground()
 
