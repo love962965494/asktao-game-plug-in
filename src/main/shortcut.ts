@@ -121,6 +121,11 @@ export function registerGlobalShortcut() {
   // TODO: 测试用
   // 543 580
   // 543 616
+  async function _setWindowTopMost() {
+    const process = await getProcessesByName('ToDesk')
+    WinControl.getByPid(3124).setPosition(HWND.TOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
+    console.log('process: ', process);
+  }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     // await getGameWindows()
     // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
@@ -152,10 +157,8 @@ export function registerGlobalShortcut() {
     // }
 
     // await meiRiRiChang_DanRen()
-    const process = await getProcessesByName('ToDesk')
-    WinControl.getByPid(18304).setPosition(HWND.TOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
-    console.log('process: ', process);
-    
+
+    _setWindowTopMost()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {

@@ -267,7 +267,7 @@ export async function yiJianQianDao() {
     await gameWindow.setForeground()
     await meiRiBiLing()
     await fuShengLu(gameWindow)
-    await wuLeiLing()
+    // await wuLeiLing()
   }
 
   await displayGameWindows()
