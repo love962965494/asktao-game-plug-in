@@ -14,7 +14,7 @@ def find_matches(large_image_path, small_image_path):
     result = cv2.matchTemplate(large_img, small_img, cv2.TM_CCOEFF_NORMED)
 
     # 设定阈值，获取匹配结果中高于阈值的部分
-    threshold = 0.8
+    threshold = 0.7
     loc = np.where(result >= threshold)
 
     # 获取匹配到的左上角坐标信息

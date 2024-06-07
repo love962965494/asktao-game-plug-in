@@ -304,7 +304,7 @@ async function executePairTaskOfXunXian(pairTask: (string | undefined)[], teamLe
   }
 
   if (commonConfig.buChongZhuangTai) {
-    await buChongZhuangTai({ needJueSe: true, needZhongCheng: true })
+    await buChongZhuangTai({ needJueSe: true })
   }
 }
 
