@@ -3,7 +3,7 @@ import { displayGameWindows, isGroupedTeam, liDui, yiJianZuDui } from './basicTa
 import { keepZiDong } from './zhanDouTasks'
 import { getGameWindows, getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
-import { yiJianRiChang } from './riChang'
+import { bangPaiZuDui, yiJianRiChang } from './riChang'
 import { ipcMain } from 'electron'
 import { Window as WinControl } from 'win-control'
 import { sleep } from '../../utils/toolkits'
@@ -34,23 +34,9 @@ export async function dianXianResolve() {
   await sleep(10 * 1000)
   await loginGame()
   await getGameWindows()
-  const gameWindows = await [...GameWindowControl.getAllGameWindows().values()]
   monitorGameDiaoXian()
 
-  for (const gameWindow of gameWindows) {
-    await gameWindow.setForeground()
-    const isGrouped = await isGroupedTeam(gameWindow)
-    if (isGrouped) {
-      await liDui()
-      await sleep(500)
-    }
-  }
-
-  for (const gameWindow of gameWindows) {
-    if (gameWindow.roleInfo.defaultTeamLeader) {
-      await yiJianZuDui(gameWindow.roleInfo.roleName)
-    }
-  }
+  await bangPaiZuDui()
 
   // for (const gameWindow of gameWindows) {
   //   await gameWindow.setForeground()
