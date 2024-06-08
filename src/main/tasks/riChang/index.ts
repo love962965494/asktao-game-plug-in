@@ -124,6 +124,9 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
     const tempCapturePath = path.join(pythonImagesPath, `temp/fuShengLu1_${randomName()}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
+    if (position.length === 0) {
+      return
+    }
     await moveMouseToAndClick(
       '',
       {
@@ -326,13 +329,24 @@ export async function yiJianQianDao() {
   writeLog('浮生录', '', true)
 
   for (const gameWindow of gameWindows) {
-    await gameWindow.setForeground()
     await meiRiBiLing()
     await fuShengLu(gameWindow)
-    // await wuLeiLing()
   }
 
   await bangPaiZuDui()
+
+  for (const gameWindow of gameWindows) {
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      await gameWindow.setForeground()
+      robotUtils.keyTap('f1')
+      await sleep(1000)
+    }
+  }
+
+  for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+    await wuLeiLing()
+  }
 
   await displayGameWindows()
 }
