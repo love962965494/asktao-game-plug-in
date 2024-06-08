@@ -221,6 +221,11 @@
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
           "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
+          "size": [308, 34]
         }
       }
     }
@@ -236,6 +241,11 @@
         "woYaoHuiTianYongChengBanXieShi" : {
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
+          "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
           "size": [308, 34]
         }
       }
@@ -267,6 +277,11 @@
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
           "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
+          "size": [308, 34]
         }
       }
     },
@@ -296,6 +311,11 @@
         "woYaoHuiTianYongChengBanXieShi" : {
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
+          "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
           "size": [308, 34]
         }
       }
@@ -327,6 +347,11 @@
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
           "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
+          "size": [308, 34]
         }
       }
     },
@@ -356,6 +381,11 @@
         "woYaoHuiTianYongChengBanXieShi" : {
           "zh": "我要回天墉城办些事",
           "position": [528, 551],
+          "size": [308, 34]
+        },
+        "woYaoHuiBangPaiZongTanBangXieShi": {
+          "zh": "我要回帮派总坛办些事",
+          "position": [528, 621],
           "size": [308, 34]
         }
       }

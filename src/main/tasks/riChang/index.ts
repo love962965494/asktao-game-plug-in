@@ -21,7 +21,7 @@ import {
   paddleOcr,
   screenCaptureToFile,
 } from '../../../utils/fileOperations'
-import { displayGameWindows, getTeamsInfo, liDui } from '../basicTasks'
+import { displayGameWindows, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
 import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import { waitFinishZhanDou } from '../zhanDouTasks'
@@ -83,6 +83,36 @@ export async function wuLeiLing() {
 
 // 浮生录
 export async function fuShengLu(gameWindow: GameWindowControl) {
+  robotUtils.keyTap('B', ['control'])
+  await sleep(500)
+  robotUtils.keyTap('N', ['alt'])
+  await sleep(500)
+
+  // 删除所有邮件
+  {
+    await clickGamePoint('浮生录_全选', 'fuShengLuQuanXuan', {
+      callback: async () => true
+    })
+    await sleep(500)
+    await clickGamePoint('浮生录_删除', 'fuShengLuShanChu', {
+      callback: async () => true
+    })
+    await sleep(500)
+    await clickGamePoint('换线', 'huanXian', {
+      randomPixNums: [3, 3],
+      callback: async () => {
+        const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/jinRu.jpg')
+        const tempCapturePath = path.join(pythonImagesPath, `temp/huanXian_${randomName()}.jpg`)
+        await screenCaptureToFile(tempCapturePath)
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        return found
+      },
+    })
+    robotUtils.keyTap('enter')
+    await sleep(3000)
+  }
+
   robotUtils.keyTap('B', ['control'])
   await sleep(500)
   robotUtils.keyTap('N', ['alt'])
@@ -254,6 +284,38 @@ export async function meiRiBiLing() {
   })
 }
 
+export async function bangPaiZuDui() {
+  await getGameWindows()
+  const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+
+  for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+    const isGrouped = await isGroupedTeam(gameWindow)
+    if (isGrouped) {
+      await liDui()
+      await sleep(500)
+    }
+    robotUtils.keyTap('f1')
+    await sleep(1000)
+    await goToNPCAndTalk({
+      npcName: 'jieYinDaoTong',
+      conversition: 'woYaoHuiBangPaiZongTanBangXieShi',
+      gameWindow
+    })
+    await sleep(500)
+    await robotUtils.keyTap('enter')
+    await sleep(1000)
+  }
+
+  for (const gameWindow of gameWindows) {
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      await gameWindow.setForeground()
+      await yiJianZuDui(gameWindow.roleInfo.roleName)
+      await sleep(1000)
+    }
+  }
+}
+
 // 一键领取每天的日常签到
 export async function yiJianQianDao() {
   await getGameWindows()
@@ -269,6 +331,8 @@ export async function yiJianQianDao() {
     await fuShengLu(gameWindow)
     // await wuLeiLing()
   }
+
+  await bangPaiZuDui()
 
   await displayGameWindows()
 }
