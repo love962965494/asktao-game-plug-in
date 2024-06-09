@@ -329,6 +329,7 @@ export async function yiJianQianDao() {
   writeLog('浮生录', '', true)
 
   for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
     await meiRiBiLing()
     await fuShengLu(gameWindow)
   }
