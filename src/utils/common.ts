@@ -97,7 +97,7 @@ export async function moveMouseToAndClick(
 
         return result === -1
       }
-    const success = await callback()
+    const success = await callback(errorCounts)
 
     if (!success) {
       isInRange = false

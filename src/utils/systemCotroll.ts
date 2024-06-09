@@ -77,7 +77,11 @@ function killProcessesByPid(pid: number) {
 }
 
 // 获取游戏窗口
-async function getGameWindows() {
+export const gameWindows = new Map<number, GameWindowControl>()
+async function getGameWindows(refresh = false) {
+  if (refresh) {
+    gameWindows.clear()
+  }
   const processes = await getProcessesByName('asktao')
 
   processes.forEach(([_, pId]) => {

@@ -15,9 +15,18 @@ import robotjs from 'robotjs'
 import { goToNPCAndTalk, hasGoneToNPC, hasNPCDialog, talkToNPC } from './tasks/npcTasks'
 import { randomName, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
-import { hasMeetLaoJun, isInBattle, isInBattleOfSmallScreen, isInBattle_1, keepZiDong, waitFinishZhanDou, waitFinishZhanDouOfSmallScreen, waitFinishZhanDou_1 } from './tasks/zhanDouTasks'
+import {
+  hasMeetLaoJun,
+  isInBattle,
+  isInBattleOfSmallScreen,
+  isInBattle_1,
+  keepZiDong,
+  waitFinishZhanDou,
+  waitFinishZhanDouOfSmallScreen,
+  waitFinishZhanDou_1,
+} from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../utils/common'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import {
   fuShengLu,
   gouMaiYaoPin,
@@ -44,7 +53,6 @@ import { monitorGameDiaoXian } from './tasks/monitorTask'
 import { xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
 import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates } from 'win-control'
-
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -89,7 +97,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [528, 621], [308, 34])
+    await screenCaptureToFile(srcImagePath, [160, 70], [30, 36])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -124,41 +132,59 @@ export function registerGlobalShortcut() {
   async function _setWindowTopMost() {
     const process = await getProcessesByName('ToDesk')
     WinControl.getByPid(3124).setPosition(HWND.TOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
-    console.log('process: ', process);
+    console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    // await getGameWindows()
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    // const findTarget = await findTargetInMap(gameWindow, '天墟境', true)
-    // while (true) {
-    //   const position = await findTarget('chiXueYanJin_1')
-    //   if (position.length === 2) {
-    //     robotUtils.keyToggle('shift', 'down')
-    //     await moveMouseToAndClick(
-    //       '',
-    //       {
-    //         buttonName: '',
-    //         position: [position[0], position[1] - 150],
-    //         size: [80, 150],
-    //       },
-    //       {
-    //         callback: async () => true,
-    //       }
-    //     )
-    //     robotUtils.keyToggle('shift', 'up')
-    //     await sleep(3 * 1000)
-    //     const isInBattle = await isInBattle_1(gameWindow)
+    await getGameWindows()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
+    gameWindow.restoreGameWindow()
+    const findTarget = await findTargetInMap(gameWindow, '天墟秘府', true)
+    let targetTooFar = false
+    while (true) {
+      const position = await findTarget('yanJinCu')
+      if (position.length === 2) {
+        robotUtils.keyToggle('shift', 'down')
+        await moveMouseToAndClick(
+          '',
+          {
+            buttonName: '',
+            position: [position[0], position[1] - 40],
+            size: [40, 40],
+          },
+          {
+            callback: async (errorCounts: number) => {
+              if (errorCounts > 10) {
+                targetTooFar = true
+                return true
+              }
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/dialogLine.jpg')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/findTarget_${randomName()}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-    //     if (isInBattle) {
-    //       await waitFinishZhanDou_1(gameWindow)
-    //       robotUtils.keyTap('B', ['control'])
-    //     }
-    //   }
-    // }
+              return found
+            },
+          }
+        )
+        robotUtils.keyToggle('shift', 'up')
+        if (targetTooFar) {
+          targetTooFar = false
+          continue
+        }
+        await clickGamePoint(`域外_四星难度`, 'yuWaiNanDu')
+        await sleep(3 * 1000)
+        const isInBattle = await isInBattleOfSmallScreen(gameWindow)
+
+        if (isInBattle) {
+          await waitFinishZhanDouOfSmallScreen(gameWindow)
+          robotUtils.keyTap('B', ['control'])
+        }
+      }
+    }
 
     // await meiRiRiChang_DanRen()
 
-    _setWindowTopMost()
+    // _setWindowTopMost()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {

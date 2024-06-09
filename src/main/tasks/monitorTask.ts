@@ -1,6 +1,6 @@
 import { loginGame } from './loginTask'
 import { displayGameWindows, isGroupedTeam, liDui, yiJianZuDui } from './basicTasks'
-import { keepZiDong } from './zhanDouTasks'
+import { buChongZhuangTai, isInBattle_1, keepZiDong, waitFinishZhanDou_1 } from './zhanDouTasks'
 import { getGameWindows, getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { bangPaiZuDui, yiJianRiChang } from './riChang'
@@ -10,6 +10,8 @@ import { sleep } from '../../utils/toolkits'
 import { app } from 'electron'
 import { xianJieShenBu } from './xiuXing/xianJieShenBu'
 import commonConfig from '../../constants/config.json'
+import robotUtils from '../../utils/robot'
+import { clickGamePoint } from '../../utils/common'
 
 export function registerMonitorTasks() {
   // TODO: 当需要循环检测老君查岗时，再把这段代码打开
@@ -33,17 +35,35 @@ export async function dianXianResolve() {
   await displayGameWindows()
   await sleep(10 * 1000)
   await loginGame()
-  await getGameWindows()
+  await getGameWindows(true)
   monitorGameDiaoXian()
 
+  const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
+  for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+    robotUtils.keyTap('2', ['control'])
+    await sleep(1000)
+  }
+
+  for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+
+    await waitFinishZhanDou_1(gameWindow)
+    await sleep(1000)
+  }
+
+  for (const gameWindow of gameWindows) {
+    await gameWindow.setForeground()
+
+    let index = 0
+    while (index < 3) {
+      await clickGamePoint('角色图像', 'buChongZhuangTai', { rightClick: true, notCheck: true })
+      await sleep(500)
+      index++
+    }
+  }
+
   await bangPaiZuDui()
-
-  // for (const gameWindow of gameWindows) {
-  //   await gameWindow.setForeground()
-  //   // 检查每个角色是否在队伍中，没有暂离
-  // }
-
-  await keepZiDong()
 
   await yiJianRiChang()
   // await xianJieShenBu()
@@ -58,7 +78,10 @@ export async function monitorGameDiaoXian() {
       return gameWindow
     })
 
-    if (gameWindows.length !== commonConfig.accountsNum || !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))) {
+    if (
+      gameWindows.length !== commonConfig.accountsNum ||
+      !gameWindows.every((gameWindow) => gameWindow.getTitle().includes('线'))
+    ) {
       clearInterval(interval)
       await sleep(10 * 60 * 1000)
       app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })

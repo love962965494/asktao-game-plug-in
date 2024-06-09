@@ -408,7 +408,7 @@ export async function getCurrentGamePosition() {
 }
 export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
   await gameWindow.setForeground()
-  // gameWindow.setPosition(0, 0)
+  gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
   // const currentPosition = await getCurrentGamePosition()
@@ -435,7 +435,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
           robotUtils.keyTap('B', ['control'])
           await sleep(100)
           robotUtils.keyTap('W', ['alt'])
-          clipboard.writeText(`${position.x}.${position.y}`)
+          clipboard.writeText(`${position[0]}.${position[1]}`)
           robotUtils.keyTap('V', ['control'])
           robotUtils.keyTap('enter')
           await sleep(commonConfig.moveUseTime * 1000)

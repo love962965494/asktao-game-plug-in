@@ -8,8 +8,8 @@ import { randomName, sleep } from './toolkits'
 import { findImagePositions, paddleOcr, screenCaptureToFile } from './fileOperations'
 import { matchStrings, moveMouseToBlank } from './common'
 import { IAccountInfo } from 'constants/types'
+import { gameWindows } from './systemCotroll'
 
-const gameWindows = new Map<number, GameWindowControl>()
 let alternateWindow: BrowserWindow
 
 type IBounds = {
