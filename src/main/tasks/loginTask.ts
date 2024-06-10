@@ -8,7 +8,7 @@ import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from
 import { randomName, randomNum, sleep } from '../../utils/toolkits'
 import { clickGamePoint } from '../../utils/common'
 
-export function registerImageTasks() {
+export function registerLoginTasks() {
   ipcMain.on('start-game', loginGame)
 }
 
@@ -32,16 +32,16 @@ export async function loginGame() {
       robotUtil.moveMouseSmooth(x + 20, y + 20)
       robotUtil.mouseClick('left', true)
 
+      let timeout1
       const promise1 = new Promise<number>((resolve) => {
-        let hasFound = false
         async function _test() {
           const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFlag.jpg')
           await screenCaptureToFile(tempCapturePath)
-          hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+          const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
           if (!hasFound) {
-            setTimeout(() => _test(), 1000)
+            timeout1 = setTimeout(() => _test(), 1000)
           } else {
             resolve(1)
           }
@@ -50,12 +50,16 @@ export async function loginGame() {
         _test()
       })
 
+      let timeout2
       const promise2 = new Promise<number>((resolve) => {
-        setTimeout(() => {
+        timeout2 = setTimeout(() => {
           resolve(2)
         }, 15 * 1000)
       })
+
       const result = await Promise.race([promise1, promise2])
+      clearTimeout(timeout1)
+      clearTimeout(timeout2)
 
       if (result !== 1) {
         // 跳转登录界面失败
@@ -101,16 +105,17 @@ export async function loginGame() {
       const instance = new GameWindowControl(+pid)
 
       {
+        let timeout1
         const promise1 = new Promise<number>((resolve) => {
-          let hasFound = false
+          const { position, size } = global.appContext.gamePoints['登陆-账号输入']
           async function _test() {
             const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
             const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginInput.png')
-            await screenCaptureToFile(tempCapturePath)
-            hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+            await screenCaptureToFile(tempCapturePath, position, size)
+            const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
             if (!hasFound) {
-              setTimeout(() => _test(), randomNum(200))
+              timeout1 = setTimeout(() => _test(), randomNum(200))
             } else {
               resolve(1)
             }
@@ -119,16 +124,16 @@ export async function loginGame() {
           _test()
         })
 
+        let timeout2
         const promise2 = new Promise<number>((resolve) => {
-          let hasFound = false
           async function _test() {
             const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
             const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFailed.png')
             await screenCaptureToFile(tempCapturePath)
-            hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+            const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
             if (!hasFound) {
-              setTimeout(() => _test(), 3 * 1000)
+              timeout2 = setTimeout(() => _test(), 3 * 1000)
             } else {
               resolve(2)
             }
@@ -138,6 +143,8 @@ export async function loginGame() {
         })
         
         const result = await Promise.race([promise1, promise2])
+        clearTimeout(timeout1)
+        clearTimeout(timeout2)
 
         if (result === 2) {
           loginSuccess = false

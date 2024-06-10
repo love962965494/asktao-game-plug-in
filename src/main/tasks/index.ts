@@ -1,4 +1,4 @@
-import { registerImageTasks } from './loginTask'
+import { registerLoginTasks } from './loginTask'
 import { registerMonitorTasks } from './monitorTask'
 import { registerQuanMin } from './quanMin'
 import { registerYiJianQianDao } from './riChang'
@@ -7,7 +7,7 @@ import { registerXiuXing } from './xiuXing'
 
 export default function registerTasks() {
   // 游戏启动
-  registerImageTasks()
+  registerLoginTasks()
 
   // TODO: 监控任务，之后想办法使用一个单独的进程执行这些任务
   registerMonitorTasks()

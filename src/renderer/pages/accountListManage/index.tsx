@@ -50,56 +50,59 @@ const initialState: IState = {
 }
 
 export default function AccountListManage() {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const { expandMap, addModalVisible, captainAccountMap, battlePlanVisible, record } = state
+  // const [state, dispatch] = useReducer(reducer, initialState)
+  // const { expandMap, addModalVisible, captainAccountMap, battlePlanVisible, record } = state
 
-  const addAccount = useAddAccount()
-  const changeCaptainAccount = useChangeCaptainAccount()
-  const changeRoleBattlePlan = useChangeRoleBattlePlan()
-  const { gameAccountList, getGameAccountList } = useGameAccountList()
+  // const addAccount = useAddAccount()
+  // const changeCaptainAccount = useChangeCaptainAccount()
+  // const changeRoleBattlePlan = useChangeRoleBattlePlan()
+  // const { gameAccountList, getGameAccountList } = useGameAccountList()
 
-  const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
-  const hideAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: false } })
+  // const showAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: true } })
+  // const hideAddModal = () => dispatch({ type: 'SET_ADD_MODAL_VISIBLE', payload: { addModalVisible: false } })
 
-  const handleCaptianAccountSelectClick = (groupName: string) =>
-    dispatch({
-      type: 'SET_CAPTAIN_ACCOUNT_MAP',
-      payload: { captainAccountMap: new Map(captainAccountMap).set(groupName, true) },
-    })
+  // const handleCaptianAccountSelectClick = (groupName: string) =>
+  //   dispatch({
+  //     type: 'SET_CAPTAIN_ACCOUNT_MAP',
+  //     payload: { captainAccountMap: new Map(captainAccountMap).set(groupName, true) },
+  //   })
 
-  const handleCaptianAccountSelectChange = async (groupName: string, captainAccount: string) => {
-    await changeCaptainAccount({ groupName, captainAccount })
-    dispatch({
-      type: 'SET_CAPTAIN_ACCOUNT_MAP',
-      payload: { captainAccountMap: new Map(captainAccountMap).set(groupName, false) },
-    })
-    getGameAccountList()
-  }
+  // const handleCaptianAccountSelectChange = async (groupName: string, captainAccount: string) => {
+  //   await changeCaptainAccount({ groupName, captainAccount })
+  //   dispatch({
+  //     type: 'SET_CAPTAIN_ACCOUNT_MAP',
+  //     payload: { captainAccountMap: new Map(captainAccountMap).set(groupName, false) },
+  //   })
+  //   getGameAccountList()
+  // }
 
-  const showBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: true } })
-  const hideBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: false } })
+  // const showBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: true } })
+  // const hideBattlePlan = () => dispatch({ type: 'SET_BATTLE_PLAN_VISIBLE', payload: { battlePlanVisible: false } })
 
-  const handleChangeBattlePlanClick = (record: IRecord) => {
-    showBattlePlan()
-    dispatch({ type: 'SET_RECORD', payload: { record } })
-  }
+  // const handleChangeBattlePlanClick = (record: IRecord) => {
+  //   showBattlePlan()
+  //   dispatch({ type: 'SET_RECORD', payload: { record } })
+  // }
 
-  const handleToggleExpandBtnClick = (groupName: string) => {
-    const newExpandMap = simpleCloneKeep(expandMap)
-    newExpandMap[groupName] = !newExpandMap[groupName]
+  // const handleToggleExpandBtnClick = (groupName: string) => {
+  //   const newExpandMap = simpleCloneKeep(expandMap)
+  //   newExpandMap[groupName] = !newExpandMap[groupName]
 
-    dispatch({ type: 'SET_EXPAND_MAP', payload: { expandMap: newExpandMap } })
-  }
+  //   dispatch({ type: 'SET_EXPAND_MAP', payload: { expandMap: newExpandMap } })
+  // }
 
   return (
     <Form>
       <FormItem>
-        <Button type="primary" onClick={showAddModal}>
+        {/* <Button type="primary" onClick={showAddModal}>
+          添加
+        </Button> */}
+        <Button type="primary">
           添加
         </Button>
       </FormItem>
 
-      {gameAccountList.map((group) => (
+      {/* {gameAccountList.map((group) => (
         <div key={group.groupName} className={styles.groupList}>
           <h3 className="descriptions title">
             <Space size="large">
@@ -223,7 +226,7 @@ export default function AccountListManage() {
           refreshData={getGameAccountList}
           changeRoleBattlePlan={changeRoleBattlePlan}
         />
-      )}
+      )} */}
     </Form>
   )
 }

@@ -97,7 +97,7 @@ function init() {
   createWindow()
 
   // 启动服务端服务
-  startServer(port)
+  // startServer(port)
   // 创建游戏实例
   // createGameInstances()
   // 注册workers
