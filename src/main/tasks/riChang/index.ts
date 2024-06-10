@@ -543,7 +543,17 @@ export async function gouMaiYaoPin() {
     for (const teamMemberWindow of teamMemberWindows) {
       await teamMemberWindow.setForeground()
       await clickGamePoint('批量购买', 'piLiangGouMai', {
-        callback: async () => {
+        callback: async (errorCounts: number) => {
+          if (errorCounts > 10) {
+            await writeLog('errorCountsLog',  `
+              ${teamMemberWindow.roleInfo.roleName}: 
+              function: gouMaiYaoPin
+              gamePoint: 批量购买
+              buttonName: piLiangGouMai
+            `)
+
+            return true
+          }
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/gouMaiYaoPin.jpg')
           const tempCapturePath = path.join(pythonImagesPath, `temp/piLiangGouMai_${randomName()}.jpg`)
           await screenCaptureToFile(tempCapturePath)
@@ -565,7 +575,7 @@ export async function gouMaiYaoPin() {
   }
 }
 
-export async function yiJianRiChang() {
+export async function yiJianRiChang(needGouMaiYaoPin = true) {
   const teamWindowsWithGroup = await getTeamsInfo()
   monitorGameDiaoXian()
 
@@ -573,6 +583,9 @@ export async function yiJianRiChang() {
     for (const teamWindow of teamWindows) {
       await teamWindow.setForeground()
       robotUtils.keyTap('E', ['control'])
+      await sleep(500)
+      robotUtils.keyTap('2', ['control'])
+      await sleep(1000)
     }
   }
   const currentHour = new Date().getHours()
@@ -640,7 +653,9 @@ export async function yiJianRiChang() {
     }
   }
 
-  await gouMaiYaoPin()
+  if (needGouMaiYaoPin) {
+    await gouMaiYaoPin()
+  }
 
   await meiRiRiChang_ZuDui()
 

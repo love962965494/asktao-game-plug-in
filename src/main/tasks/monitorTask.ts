@@ -65,7 +65,7 @@ export async function dianXianResolve() {
 
   await bangPaiZuDui()
 
-  await yiJianRiChang()
+  await yiJianRiChang(false)
   // await xianJieShenBu()
 }
 
