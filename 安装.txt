@@ -14,6 +14,9 @@ pip install opencv-python -i https://mirror.baidu.com/pypi/simple
 6、paddle ocr
   1、安装python3.10.2
 
+  terminal权限打开：
+  Set-ExecutionPolicy Unrestricted
+
   2（方法一）、在vscode中创建虚拟环境
     打开任意一个py文件，右下状态栏点击python版本号，按照提示创建虚拟环境。
 

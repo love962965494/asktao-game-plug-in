@@ -5,7 +5,7 @@ import { hasGameTask } from '../gameTask'
 import { AsyncQueue, moveMouseToBlank } from '../../../utils/common'
 import { getCurrentCity, goToNPC, goToNPCAndTalk, talkToNPC } from '../npcTasks'
 import { ipcMain } from 'electron/main'
-import { buChongZhuangTai, keepZiDong } from '../zhanDouTasks'
+import { buChongZhuangTai, isInBattle, isInBattleOfSmallScreen, isInBattle_1, keepZiDong } from '../zhanDouTasks'
 import robotUtils from '../../../utils/robot'
 
 export async function registerQuanMin() {
@@ -150,44 +150,44 @@ export async function xianJieTongJi() {
 export async function quanMinShengJi() {
   await getGameWindows()
   const gameWindows = [...GameWindowControl.getAllGameWindows().values()]
-  const teamIndexes = [1].concat(gameWindows.length > 5 ? [2] : [])
   const queue = new AsyncQueue()
   const teamLeaderWindows: GameWindowControl[] = []
 
-  for (const teamIndex of teamIndexes) {
-    const [teamLeaderWindow] = await GameWindowControl.getTeamWindowsWithSequence(teamIndex)
-    teamLeaderWindows.push(teamLeaderWindow!)
-  }
-
-  for (const teamLeaderWindow of teamLeaderWindows) {
-    await teamLeaderWindow.setForeground()
-    let city = await getCurrentCity()
-    if (city !== '东海渔村') {
-      robotUtils.keyTap('f1')
-      await sleep(500)
-      await goToNPCAndTalk({
-        npcName: 'jieYinDaoTong',
-        conversition: 'woYaoHuiTianYongChengBanXieShi',
-        gameWindow: teamLeaderWindow,
-      })
-      await sleep(1000)
-      await goToNPCAndTalk({
-        city: '天墉城',
-        npcName: 'cheFu',
-        conversition: 'songWoQuDongHaiYuCun',
-        gameWindow: teamLeaderWindow,
-      })
-      await sleep(1000)
+  for (const gameWindow of gameWindows) {
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      teamLeaderWindows.push(gameWindow)
     }
-
-    // 去东海渔村
-    await goToNPCAndTalk({
-      city: '东海渔村',
-      npcName: 'liuRuYan',
-      conversition: '[quanMinShengJi]ZiDongChuanSong',
-      gameWindow: teamLeaderWindow,
-    })
   }
+
+  // for (const teamLeaderWindow of teamLeaderWindows) {
+  //   await teamLeaderWindow.setForeground()
+  //   let city = await getCurrentCity()
+  //   if (city !== '东海渔村') {
+  //     robotUtils.keyTap('f1')
+  //     await sleep(500)
+  //     await goToNPCAndTalk({
+  //       npcName: 'jieYinDaoTong',
+  //       conversition: 'woYaoHuiTianYongChengBanXieShi',
+  //       gameWindow: teamLeaderWindow,
+  //     })
+  //     await sleep(1000)
+  //     await goToNPCAndTalk({
+  //       city: '天墉城',
+  //       npcName: 'cheFu',
+  //       conversition: 'songWoQuDongHaiYuCun',
+  //       gameWindow: teamLeaderWindow,
+  //     })
+  //     await sleep(1000)
+  //   }
+
+  //   // 去东海渔村
+  //   await goToNPCAndTalk({
+  //     city: '东海渔村',
+  //     npcName: 'liuRuYan',
+  //     conversition: '[quanMinShengJi]ZiDongChuanSong',
+  //     gameWindow: teamLeaderWindow,
+  //   })
+  // }
 
   setInterval(() => {
     queue.enqueue(async () => {
@@ -200,6 +200,16 @@ export async function quanMinShengJi() {
   }, 2 * 60 * 1000)
 
   setInterval(() => {
-    queue.enqueue(async () => await keepZiDong())
-  }, 1 * 60 * 1000)
+    queue.enqueue(async () => {
+      for (const gameWindow of gameWindows) {
+        await gameWindow.setForeground()
+        const inBattle = await isInBattle_1(gameWindow)
+        if (inBattle) {
+          robotUtils.keyTap('Z', ['alt'])
+          await sleep(50)
+          robotUtils.keyTap('Z', ['alt'])
+        }
+      }
+    })
+  }, 0.7 * 60 * 1000)
 }

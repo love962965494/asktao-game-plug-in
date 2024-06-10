@@ -50,9 +50,9 @@ import robotUtils from '../utils/robot'
 import fs from 'fs'
 import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
-import { xianJieTongJi } from './tasks/quanMin'
+import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
-import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates } from 'win-control'
+import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum } from 'win-control'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -129,9 +129,11 @@ export function registerGlobalShortcut() {
   // TODO: 测试用
   // 543 580
   // 543 616
-  async function _setWindowTopMost() {
+  async function _setWindowTopMost() { 
     const process = await getProcessesByName('ToDesk')
-    WinControl.getByPid(3124).setPosition(HWND.TOPMOST, 0, 0, 0, 0, SWP.NOMOVE + SWP.NOSIZE)
+    const instance = WinControl.getByPid(+process[1][1])
+    instance.setShowStatus(WindowStatesTypeEnum.SHOW)
+    instance.setPosition(HWND.TOPMOST, 0, 0, 200, 200)
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {

@@ -498,9 +498,9 @@ export async function xunHuanZiDong() {
     setTimeout(async () => {
       await keepZiDong()
 
-      for (const gameWindow of gameWindows) {
-        await hasMeetLaoJun(gameWindow)
-      }
+      // for (const gameWindow of gameWindows) {
+      //   await hasMeetLaoJun(gameWindow)
+      // }
       // for (const gameWindow of gameWindows) {
       //   await gameWindow.setForeground()
       //   robotUtils.keyTap('2', ['control'])
@@ -511,4 +511,10 @@ export async function xunHuanZiDong() {
   }
 
   _loop()
+}
+
+export async function ruYiKaiQiGuanBi() {
+  robotUtils.keyTap('B', ['control'])
+  await sleep(500)
+  await clickGamePoint('领取图标', 'ruYiKaiQiGuanBi')
 }
