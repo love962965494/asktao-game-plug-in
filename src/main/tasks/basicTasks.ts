@@ -23,7 +23,7 @@ import {
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 import { ICityMap } from 'constants/types'
-import { hasMeetLaoJun, keepZiDong } from './zhanDouTasks'
+import { keepZiDong } from './zhanDouTasks'
 import commonConfig from '../../constants/config.json'
 
 // 是否组队
@@ -34,7 +34,7 @@ export async function isGroupedTeam(gameWindow: GameWindowControl) {
   robotUtils.keyTap('T', ['alt'])
   await moveMouseToBlank()
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuDuiPingTai.jpg')
-  const tempCapturePath = path.join(pythonImagesPath, `temp/isGroupedTeam_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isGroupedTeam')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
 
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -137,7 +137,7 @@ export async function yiJianZuDui(roleName: string) {
   await clickGamePoint('活动图标', 'yiJianZuDui', {
     callback: async () => {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/huoDongZhongXin.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yiJianZuDui1')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.8)
 
@@ -154,7 +154,7 @@ export async function yiJianZuDui(roleName: string) {
 
   if (!zuDuiPosition) {
     await moveMouseToBlank()
-    const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yiJianZuDui2')}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     zuDuiPosition = await findImagePositions(tempCapturePath, templateImagePath)
   }
@@ -167,7 +167,7 @@ export async function yiJianZuDui(roleName: string) {
     },
     {
       callback: async () => {
-        const tempCapturePath = path.join(pythonImagesPath, `temp/yiJianZuDui_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yiJianZuDui3')}.jpg`)
         await screenCaptureToFile(tempCapturePath, [870, 475], [100, 20])
 
         const colors = await extractThemeColors(tempCapturePath)
@@ -195,7 +195,7 @@ export async function liDui() {
   await clickGamePoint('离队', 'liDui', {
     callback: async () => {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/zuDuiPingTai.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/liDui_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('liDui')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
 
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -383,7 +383,7 @@ export async function getCurrentGamePosition() {
   await clickGamePoint('特八-保存', 'getCurrentGamePosition', {
     callback: async () => {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/teBaBaoCun.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/getCurrentGamePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('getCurrentGamePosition1')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
 
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -393,7 +393,7 @@ export async function getCurrentGamePosition() {
   })
 
   const { position, size } = global.appContext.gamePoints['特八-保存坐标']
-  const tempCapturePath = path.join(pythonImagesPath, `temp/getCurrentGamePosition_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('getCurrentGamePosition2')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const result = await paddleOcr(tempCapturePath)
   const currentPosition = result[1].replaceAll(/[^\d]/g, ' ').split(' ').filter(Boolean)
@@ -479,7 +479,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
         robotUtils.mouseClick('right')
         await sleep(100)
         await moveMouseToBlank()
-        const tempCapturePath = path.join(pythonImagesPath, `temp/findTargetInMap_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
         hasFound = true

@@ -16,7 +16,7 @@ export async function isInBattle(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
   const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isInBattle1')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   if (!found1) {
@@ -34,7 +34,7 @@ export async function isInBattle_1(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
   const { position, size } = global.appContext.gamePoints['战斗-检测是否还在战斗1']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle_2.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isInBattle_1')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   if (!found1) {
@@ -52,7 +52,7 @@ export async function isInBattleOfSmallScreen(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
   const { position, size } = global.appContext.gamePoints['战斗-小屏幕检测是否还在战斗']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/isInBattle_small.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/isInBattle_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isInBattleOfSmallScreen')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   if (!found1) {
@@ -154,7 +154,7 @@ export async function buChongZhuangTai(
 // 判断是否遇到老君
 export async function hasMeetLaoJun(gameWindow: GameWindowControl) {
   await gameWindow.setForeground()
-  const filePath = path.join(pythonImagesPath, `temp/LaoJun_${randomName()}.jpg`)
+  const filePath = path.join(pythonImagesPath, `temp/${randomName('LaoJun')}.jpg`)
   await screenCaptureToFile(filePath)
   const pinTu = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/pinTu.jpg')
   const xuanZe = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/xuanZe.jpg')

@@ -35,7 +35,7 @@ export async function loginGame() {
       let timeout1
       const promise1 = new Promise<number>((resolve) => {
         async function _test() {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('loginGame1')}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFlag.jpg')
           await screenCaptureToFile(tempCapturePath)
           const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -63,7 +63,7 @@ export async function loginGame() {
 
       if (result !== 1) {
         // 跳转登录界面失败
-        const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('loginGame2')}.jpg`)
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginMenu.jpg')
         await screenCaptureToFile(tempCapturePath)
         const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -109,7 +109,7 @@ export async function loginGame() {
         const promise1 = new Promise<number>((resolve) => {
           const { position, size } = global.appContext.gamePoints['登陆-账号输入']
           async function _test() {
-            const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+            const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('loginGame3')}.jpg`)
             const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginInput.png')
             await screenCaptureToFile(tempCapturePath, position, size)
             const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -127,7 +127,7 @@ export async function loginGame() {
         let timeout2
         const promise2 = new Promise<number>((resolve) => {
           async function _test() {
-            const tempCapturePath = path.join(pythonImagesPath, `temp/loginGame_${randomName()}.jpg`)
+            const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('loginGame4')}.jpg`)
             const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFailed.png')
             await screenCaptureToFile(tempCapturePath)
             const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)

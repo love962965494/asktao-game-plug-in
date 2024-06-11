@@ -53,7 +53,7 @@ export async function getCurrentCity() {
 
   await moveMouseToBlank()
 
-  let tempCapturePath = path.join(pythonImagesPath, `temp/${'currentCity_' + randomName() + '_1'}.jpg`)
+  let tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('currentCity')}.jpg`)
   const { position, size } = global.appContext.gamePoints['当前地图']
   await screenCaptureToFile(tempCapturePath, position, size)
   // 获取当前地图名称
@@ -88,7 +88,7 @@ export async function goToNPC(city: string, npcName: string) {
 export async function hasNPCDialog() {
   const { position, size } = global.appContext.gamePoints['NPC对话-蓝色框框']
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/hasGoneToNPC.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/hasGoneToNPC_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasGoneToNPC')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   await sleep(1000)
@@ -163,7 +163,7 @@ export async function goToNPCAndTalk(options: {
 
 export async function hasCityDialog(city: string) {
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${city}.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/hasCityDialog_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasCityDialog')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 

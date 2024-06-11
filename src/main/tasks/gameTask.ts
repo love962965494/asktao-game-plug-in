@@ -16,7 +16,7 @@ import {
 export async function hasGameTask(taskName: string) {
   await searchGameTask(taskName)
 
-  const tempCapturePath = path.join(pythonImagesPath, `temp/hasGameTask_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasGameTask')}.jpg`)
   const { position, size } = global.appContext.gamePoints['当前任务-列表框']
   const { description } = global.appContext.gameTask[taskName as keyof IGameTask]
   await screenCaptureToFile(tempCapturePath, position, size)
@@ -41,7 +41,7 @@ export async function searchGameTask(taskName: string) {
   robotUtils.keyTap('Q', 'alt')
 
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}Task.jpg`)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/searchGameTask_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('searchGameTask')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
   if (found) {
@@ -88,13 +88,13 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
       activeTabColor: '#1e140a',
     },
   })
-  const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu1')}.jpg`)
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const position = await findImagePositions(tempCapturePath, templateImagePath)
   let hasFinished = false
   {
-    const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu2')}.jpg`)
     await screenCaptureToFile(
       tempCapturePath,
       [position[0], position[1] + escTaskBarSize[1] + 5],
@@ -109,7 +109,7 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
     return hasFinished
   }
   {
-    const tempCapturePath = path.join(pythonImagesPath, `temp/shouCangRenWu_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu3')}.jpg`)
     await screenCaptureToFile(tempCapturePath, position, taskBarSize)
     await moveMouseToAndClick(tempCapturePath, {
       buttonName: 'shouCangRenWu',

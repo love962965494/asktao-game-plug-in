@@ -26,7 +26,7 @@ export async function baiBaoFanPai() {
       await sleep(200)
       await clickGamePoint(`百宝翻牌-采用${commonConfig.baiBaoFanPai}`, 'baiBaoFanPai', {
         callback: async () => {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/baiBaoFanPai_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('baiBaoFanPai1')}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/baiBaoFanPai.jpg')
           await screenCaptureToFile(tempCapturePath)
 
@@ -45,7 +45,7 @@ export async function baiBaoFanPai() {
       await gameWindow.setForeground()
       await clickGamePoint('百宝翻牌-分享得积分', 'baiBaoFanPai', {
         callback: async () => {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/baiBaoFanPai_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('baiBaoFanPai2')}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/baiBaoFanPai.jpg')
           await screenCaptureToFile(tempCapturePath)
 

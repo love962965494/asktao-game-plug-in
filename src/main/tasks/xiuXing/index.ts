@@ -153,7 +153,7 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
     taskNpc: { city: string; position: number[]; size: number[]; npcName: string; conversitions: string[] }
   }
   await moveMouseToBlank()
-  const tempCapturePath = path.join(pythonImagesPath, `temp/lingQuRenWu_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('lingQuRenWu')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   await moveMouseToAndClick(tempCapturePath, {
     buttonName: 'lingQuRenWu',
@@ -169,7 +169,7 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
     calculatePosition: async () => {
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
@@ -185,7 +185,7 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
     await talkToNPC(city, npcName, conversitions[0], async () => {
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
@@ -219,7 +219,7 @@ export async function getTaskProgress(gameWindows: GameWindowControl[], allTask:
       }
 
       const { position, size } = content.smallWindow
-      const tempCapturePath = path.join(pythonImagesPath, `temp/getTaskProgress_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('getTaskProgress')}.jpg`)
       const { left, top } = gameWindow.getDimensions()!
       await screenCaptureToFile(tempCapturePath, [left + position[0], top + position[1]], size)
       const taskContent = await paddleOcr(tempCapturePath, false, 'ch')
@@ -332,7 +332,7 @@ async function executePairTask(
       await sleep(500)
       await clickGamePoint(`${taskType}-NPC`, 'singleTask', {
         callback: async () => {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/singleTask_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('singleTask')}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -469,7 +469,7 @@ async function recheckHasFinishNpcTask(taskName: string, taskType: string, gameW
   await sleep(200)
   robotUtils.keyTap('Q', ['alt'])
   await sleep(200)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/recheckHasFinishNpcTask_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('recheckHasFinishNpcTask')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const npcTemplatePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${npc}.jpg`)
   const notFinished = await findImageWithinTemplate(tempCapturePath, npcTemplatePath, 0.65)

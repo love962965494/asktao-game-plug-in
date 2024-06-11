@@ -35,7 +35,7 @@ export async function waKuang() {
           await sleep(500)
           robotUtils.keyTap('W', ['alt'])
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/lianQiZhangLao.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/waKuang_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('waKuang')}.jpg`)
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -50,7 +50,7 @@ export async function waKuang() {
           await clickGamePoint('收藏任务_图标', 'waKuang', {
             callback: async () => {
               const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongRenWuPeiZhi.jpg')
-              const tempCapturePath = path.join(pythonImagesPath, `temp/meiRiRiChang_DanRen_${randomName()}.jpg`)
+              const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('meiRiRiChang_DanRen')}.jpg`)
               await screenCaptureToFile(tempCapturePath)
 
               const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)

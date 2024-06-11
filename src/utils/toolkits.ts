@@ -32,16 +32,20 @@ export function randomPixelNum(num: number) {
   return Math.ceil(Math.random() * num) * (Math.random() > 0.5 ? 1 : -1)
 }
 
-let index = 0
-export function randomName() {
-  if (index > 50) {
-    index = 0
+let indexMap = new Map<string, number>()
+export function randomName(name: string) {
+  if (!indexMap.get(name)) {
+    indexMap.set(name, 1)
   }
-  index++
-  console.log('currentIndex: ', index);
+  let index = indexMap.get(name)!
+  if (index > 30) {
+    index = 1
+  } else {
+    index++
+  }
   
-  return index
-  // return Math.random().toString(16).slice(3)
+  indexMap.set(name, index)
+  return `${name}_${index}`
 }
 
 export function randomNum(num: number) {

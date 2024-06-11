@@ -77,7 +77,7 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
         pythonImagesPath,
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
       )
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
@@ -97,7 +97,7 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
           pythonImagesPath,
           `GUIElements/common/${teamMemberWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
         )
-        const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         const position = await findImagePositions(tempCapturePath, templateImagePath)
         return position
@@ -114,7 +114,7 @@ async function getTaskProgress(teamWindows: GameWindowControl[]) {
   await teamLeaderWindow.setForeground()
   await searchGameTask(taskName)
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/xuanShangLing.jpg')
-  const tempCapturePath = path.join(pythonImagesPath, `temp/executePairTask_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('executePairTask1')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const positions = await findMultiMatchPositions(tempCapturePath, templateImagePath)
 
@@ -143,7 +143,7 @@ async function executePairTask(pairPosition: (number[] | undefined)[], teamLeade
     }
     await teamLeaderWindow.setForeground()
     await searchGameTask(taskName)
-    const tempCapturePath = path.join(pythonImagesPath, `temp/executePairTask_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('executePairTask2')}.jpg`)
     await screenCaptureToFile(tempCapturePath, position, xuanShangLingSize)
     await moveMouseToAndClick(tempCapturePath, {
       buttonName: 'executePairTask',
@@ -184,7 +184,7 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
         pythonImagesPath,
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
       )
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position
@@ -199,7 +199,7 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
       pythonImagesPath,
       `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['奖励模式']}.jpg`
     )
-    const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templateImagePath)
     
@@ -219,7 +219,7 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
           pythonImagesPath,
           `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
         )
-        const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition3')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         const position = await findImagePositions(tempCapturePath, templateImagePath)
         return position
@@ -232,7 +232,7 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
         pythonImagesPath,
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['奖励模式']}.jpg`
       )
-      const tempCapturePath = path.join(pythonImagesPath, `temp/calculatePosition_${randomName()}.jpg`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition4')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const position = await findImagePositions(tempCapturePath, templateImagePath)
       return position

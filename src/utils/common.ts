@@ -7,7 +7,6 @@ import { compareTwoImages, extractThemeColors, findImageWithinTemplate, screenCa
 import { IGamePoints } from 'constants/types'
 import fs from 'fs'
 import { MyPromise } from './customizePromise'
-import playSound from 'play-sound'
 
 export async function moveMouseTo(x: number, y: number) {
   const alternateWindow = GameWindowControl.getAlternateWindow()
@@ -31,7 +30,7 @@ export async function clickButton(
 ) {
   await moveMouseToBlank()
   await sleep(200)
-  const tempCapturePath = path.join(pythonImagesPath, `temp/${options.buttonName}__${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(options.buttonName)}.jpg`)
   await screenCaptureToFile(tempCapturePath, options.position, options.size)
   await moveMouseToAndClick(tempCapturePath, options, {
     needPreProcessing,
@@ -89,7 +88,7 @@ export async function moveMouseToAndClick(
     const callback =
       otherOptions.callback ||
       async function defaultCallback() {
-        const tempCapturePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName}_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(fileInfo.buttonName)}.jpg`)
         await screenCaptureToFile(tempCapturePath, fileInfo.position, fileInfo.size)
         const [result] = await compareTwoImages(tempCapturePath, templateImagePath, {
           threshold: otherOptions.threshold,
@@ -115,7 +114,7 @@ export async function moveMouseToAndClickUseColor(fileInfo: ImageFileInfo, color
   while (!isInRange) {
     await moveMouseTo(lastXPos + randomPixelNum(20), lastYPos + randomPixelNum(10))
     await sleep(500)
-    const srcImagePath = path.join(pythonImagesPath, `temp/${fileInfo.buttonName + '_' + randomName()}.jpg`)
+    const srcImagePath = path.join(pythonImagesPath, `temp/${randomName(fileInfo.buttonName)}.jpg`)
     await screenCaptureToFile(srcImagePath, fileInfo.position, fileInfo.size)
     const colors = await extractThemeColors(srcImagePath, top_n)
 
@@ -180,7 +179,7 @@ export async function hasChecked(name: string) {
 
   await sleep(200)
   const smallImagePath = path.join(pythonImagesPath, 'GUIElements/common/checkedCheckbox.jpg')
-  const bigImagePath = path.join(pythonImagesPath, `temp/hasChecked_${randomName()}.jpg`)
+  const bigImagePath = path.join(pythonImagesPath, `temp/${randomName('hasChecked')}.jpg`)
   await screenCaptureToFile(bigImagePath, position, size)
 
   const found = await findImageWithinTemplate(bigImagePath, smallImagePath)
@@ -211,13 +210,13 @@ export async function clickGamePoint(
     await moveMouseToBlank()
   }
   const { position, size } = global.appContext.gamePoints[gamePoint as keyof IGamePoints]
-  const tempCapturePath = path.join(pythonImagesPath, `temp/${captureName}_${randomName()}.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(captureName)}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   if (otherOptions?.tabOptions?.isTab) {
     otherOptions.callback =
       otherOptions.callback ||
       async function defaultCallback() {
-        const tempCapturePath = path.join(pythonImagesPath, `temp/${captureName}_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(captureName)}.jpg`)
         await screenCaptureToFile(tempCapturePath, position, size)
 
         const colors = await extractThemeColors(tempCapturePath)

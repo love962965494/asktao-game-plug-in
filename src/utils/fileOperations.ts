@@ -78,7 +78,7 @@ function findImagePositions(bigImagePath: string, smallImagePath: string): Promi
 async function paddleOcr(sourceImagePath: string, needPreProcessing = true, lang: string = 'ch'): Promise<string[]> {
   let targetImagePath = sourceImagePath
   if (needPreProcessing) {
-    targetImagePath = path.join(pythonImagesPath, `temp/${randomName()}.jpg`)
+    targetImagePath = path.join(pythonImagesPath, `temp/${randomName('preProcessing')}.jpg`)
     targetImagePath = await prePorcessingImage(sourceImagePath, targetImagePath)
   }
 
@@ -126,7 +126,7 @@ async function compareTwoImages(
   let targetImagePath1 = captureImagePath
   let targetImagePath2 = templateImagePath
   if (otherOptions.needPreProcessing) {
-    const name = randomName()
+    const name = randomName('preProcessing')
     targetImagePath1 = path.join(pythonImagesPath, `temp/preProcessing_${name + '_1'}.jpg`)
     targetImagePath2 = path.join(pythonImagesPath, `temp/preProcessing_${name + '_2'}.jpg`)
     targetImagePath1 = await prePorcessingImage(captureImagePath, targetImagePath1)

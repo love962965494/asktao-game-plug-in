@@ -107,7 +107,7 @@ export default class GameWindowControl {
     //   await sleep(500)
     // }
 
-    let srcImagePath = path.join(pythonImagesPath, `temp/getTeamLeader_${randomName()}.jpg`)
+    let srcImagePath = path.join(pythonImagesPath, `temp/${randomName('getTeamLeader')}.jpg`)
     const { position, size } = global.appContext.gamePoints['组队-队员姓名']
     const { left, top } = tempGameWindow.getDimensions()
     await screenCaptureToFile(srcImagePath, [left + position[0], top + position[1]], size)
@@ -278,7 +278,7 @@ export default class GameWindowControl {
     robotUtils.keyTap('B', ['control'])
     await sleep(200)
     const templatePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDou.jpg')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/getZiDongZhanDouPosition_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('getZiDongZhanDouPosition')}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const position = await findImagePositions(tempCapturePath, templatePath)
 

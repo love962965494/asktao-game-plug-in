@@ -30,7 +30,7 @@ export async function shiChen() {
       await clickGamePoint('时辰', 'shiChenButton', {
         callback: async () => {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/shiChenYunShi.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/shiChenButton_${randomName()}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiChenButton')}.jpg`)
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -40,7 +40,7 @@ export async function shiChen() {
 
       {
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/gaiYun.jpg')
-        const tempCapturePath = path.join(pythonImagesPath, `temp/shiChenGaiYun_${randomName()}.jpg`)
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiChenGaiYun')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -60,7 +60,7 @@ export async function shiChen() {
 }
 
 async function hasUsefulShiChen() {
-  const filePath = path.join(pythonImagesPath, `temp/LaoJun_${randomName()}.jpg`)
+  const filePath = path.join(pythonImagesPath, `temp/${randomName('LaoJun')}.jpg`)
   await screenCaptureToFile(filePath)
   const chaoJiBaoZang = path.join(pythonImagesPath, '/GUIElements/shiChenRelative/chaoJiBaoZang.jpg')
   // const xuanZe = path.join(pythonImagesPath, '/GUIElements/laoJunRelative/xuanZe.jpg')

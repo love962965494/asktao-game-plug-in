@@ -22,7 +22,7 @@ export async function findWuPinPosition(name: string) {
     {
       await moveMouseToBlank()
       const { position, size } = global.appContext.gamePoints['装备-物品框框']
-      let tempCapturePath = path.join(pythonImagesPath, `temp/hasWuPin_${randomName()}.jpg`)
+      let tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasWuPin')}.jpg`)
       await screenCaptureToFile(tempCapturePath, position, size)
       const wuPinPosition = await findImagePositions(tempCapturePath, wuPinImagePath)
 
@@ -42,7 +42,7 @@ export async function useWuPin(name: string, times: number = 1) {
   const position = await findWuPinPosition(name)
 
   if (position.length > 0) {
-    const tempCapturePath = path.join(pythonImagesPath, `temp/useWuPin_${randomName()}.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('useWuPin')}.jpg`)
     await screenCaptureToFile(tempCapturePath, position, wuPinSize)
     let i = 0
     while (i < times) {
