@@ -7,6 +7,7 @@ import robotjs from 'robotjs'
 import {
   clickButton,
   clickGamePoint,
+  hasChecked,
   moveMouseTo,
   moveMouseToAndClick,
   moveMouseToAndClickUseColor,
@@ -406,18 +407,24 @@ export async function getCurrentGamePosition() {
 
   return currentPosition
 }
+export async function hasGoneToPosition() {
+  const { position, size } = global.appContext.gamePoints['地图坐标']
+  let color = ''
+  while (!color.includes('#8282ff')) {
+    robotjs.moveMouse(96, 29)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetAndExtractThemeColor')}`)
+    await screenCaptureToFile(tempCapturePath, position, size)
+    color = await extractThemeColors(tempCapturePath)
+    await sleep(500)
+  }
+  
+}
 export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
   await gameWindow.setForeground()
   gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
-  // const currentPosition = await getCurrentGamePosition()
-  // let index = positions.findIndex(
-  //   (item) =>
-  //     Math.abs(item.x - +currentPosition[0]) <= oneScreenSize[0] / 2 &&
-  //     Math.abs(item.y - +currentPosition[1]) <= oneScreenSize[1] / 2
-  // )
-  let index = 0
+  let index = 10
   return async (targetName: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     await gameWindow.setForeground()
@@ -513,8 +520,40 @@ export async function xunHuanZiDong() {
   _loop()
 }
 
-export async function ruYiKaiQiGuanBi() {
+const ruYiKaiQiGuanBiItems = ['领取-三倍点数', '领取-如意点数', '领取-紫气点数', '领取-宠物三倍']
+export async function ruYiKaiQiGuanBi(kaiQi: boolean) {
   robotUtils.keyTap('B', ['control'])
   await sleep(500)
-  await clickGamePoint('领取图标', 'ruYiKaiQiGuanBi')
+  await clickGamePoint('领取图标', 'ruYiKaiQiGuanBi', {
+    callback: async () => {
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/xiaoLvDianShu.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('xiaoLvDianShu')}`)
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return found
+    },
+  })
+
+  if (kaiQi) {
+    for (const item of ruYiKaiQiGuanBiItems) {
+      const checked = await hasChecked(item)
+
+      if (!checked) {
+        await clickGamePoint(item, 'kaiQiRuYiDianShu', {
+          randomPixNums: [5, 2],
+        })
+      }
+    }
+  } else {
+    for (const item of ruYiKaiQiGuanBiItems) {
+      const checked = await hasChecked(item)
+
+      if (checked) {
+        await clickGamePoint(item, 'kaiQiRuYiDianShu', {
+          randomPixNums: [5, 2],
+        })
+      }
+    }
+  }
 }

@@ -4,6 +4,7 @@ import { getGameWindows, getProcessesByName } from '../utils/systemCotroll'
 import path from 'path'
 import { logPath, pythonImagesPath } from '../paths'
 import {
+  extractThemeColors,
   findImagePositions,
   findImageWithinTemplate,
   findMultiMatchPositions,
@@ -43,6 +44,7 @@ import {
   getTeamsInfo,
   isGroupedTeam,
   liDui,
+  ruYiKaiQiGuanBi,
   xunHuanZiDong,
   yiJianZuDui,
 } from './tasks/basicTasks'
@@ -52,7 +54,7 @@ import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
 import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
-import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum } from 'win-control'
+import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum, SWPTypeEnum } from 'win-control'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -97,7 +99,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [864, 394], [200, 40])
+    await screenCaptureToFile(srcImagePath, [43, 29], [48, 12])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -132,59 +134,57 @@ export function registerGlobalShortcut() {
   async function _setWindowTopMost() { 
     const process = await getProcessesByName('ToDesk')
     const instance = WinControl.getByPid(+process[1][1])
-    instance.setShowStatus(WindowStatesTypeEnum.SHOW)
-    instance.setPosition(HWND.TOPMOST, 0, 0, 200, 200)
+    instance.setShowStatus(WindowStates.SHOW)
+    instance.setPosition(HWND.TOPMOST, 1620, 0, 200, 200, SWP.SHOWWINDOW)
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    // await getGameWindows()
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    // gameWindow.restoreGameWindow()
-    // const findTarget = await findTargetInMap(gameWindow, '天墟秘府', true)
-    // let targetTooFar = false
-    // while (true) {
-    //   const position = await findTarget('yanJinCu')
-    //   if (position.length === 2) {
-    //     robotUtils.keyToggle('shift', 'down')
-    //     await moveMouseToAndClick(
-    //       '',
-    //       {
-    //         buttonName: '',
-    //         position: [position[0], position[1] - 40],
-    //         size: [40, 40],
-    //       },
-    //       {
-    //         callback: async (errorCounts: number) => {
-    //           if (errorCounts > 10) {
-    //             targetTooFar = true
-    //             return true
-    //           }
-    //           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/dialogLine.jpg')
-    //           const tempCapturePath = path.join(pythonImagesPath, `temp/findTarget_${randomName()}.jpg`)
-    //           await screenCaptureToFile(tempCapturePath)
-    //           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+    await getGameWindows()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
+    gameWindow.restoreGameWindow()
+    const findTarget = await findTargetInMap(gameWindow, '天墉城', true)
+    while (true) {
+      const position = await findTarget('cheFu')
+      const distance = Math.sqrt(Math.pow(position[0] - 960, 2) + Math.pow(position[1] - 540, 2))
+      if (distance > 500) {
+        const x = Math.round((position[0] + 960) / 2)
+        const y = Math.round((position[1] + 540) / 2)
+        robotjs.moveMouse(x, y)
+        robotjs.mouseClick('left')
+      }
+      if (position.length === 2) {
+        robotUtils.keyToggle('shift', 'down')
+        await moveMouseToAndClick(
+          '',
+          {
+            buttonName: '',
+            position: [position[0], position[1] - 40],
+            size: [40, 40],
+          },
+          {
+            callback: async () => {
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/dialogLine.jpg')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTarget')}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-    //           return found
-    //         },
-    //       }
-    //     )
-    //     robotUtils.keyToggle('shift', 'up')
-    //     if (targetTooFar) {
-    //       targetTooFar = false
-    //       continue
-    //     }
-    //     await clickGamePoint(`域外_四星难度`, 'yuWaiNanDu')
-    //     await sleep(3 * 1000)
-    //     const isInBattle = await isInBattleOfSmallScreen(gameWindow)
+              return found
+            },
+          }
+        )
+        robotUtils.keyToggle('shift', 'up')
+        await clickGamePoint(`域外_四星难度`, 'yuWaiNanDu')
+        await sleep(3 * 1000)
+        const isInBattle = await isInBattleOfSmallScreen(gameWindow)
 
-    //     if (isInBattle) {
-    //       await waitFinishZhanDouOfSmallScreen(gameWindow)
-    //       robotUtils.keyTap('B', ['control'])
-    //     }
-    //   }
-    // }
+        if (isInBattle) {
+          await waitFinishZhanDouOfSmallScreen(gameWindow)
+          robotUtils.keyTap('B', ['control'])
+        }
+      }
+    }
 
-    await meiRiRiChang_DanRen()
+    // await meiRiRiChang_DanRen()
 
     // _setWindowTopMost()
   })
@@ -196,6 +196,23 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Alt+P', async () => {
     app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
     app.exit(0)
+  })
+
+  globalShortcut.register('CommandOrControl+Shift+C', async () => {
+    await getGameWindows()
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
+    gameWindow.setForeground()
+    gameWindow.setPosition(0, 0)
+    await sleep(2000)
+    const { position, size } = global.appContext.gamePoints['地图坐标']
+    let color = ''
+    while (!color.includes('#8282ff')) {
+      robotjs.moveMouse(96, 29)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetAndExtractThemeColor')}`)
+      await screenCaptureToFile(tempCapturePath, position, size)
+      color = await extractThemeColors(tempCapturePath)
+      await sleep(500)
+    }
   })
 }
 

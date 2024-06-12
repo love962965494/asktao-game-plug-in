@@ -62,31 +62,64 @@ export async function fuMoRenWu() {
     teamLeaderWindows.push(teamLeaderWindow!)
   }
 
+  let hasTask1 = false
   setInterval(() => {
-    queue.enqueue(async () => {
-      for (const teamLeaderWindow of teamLeaderWindows) {
-        await teamLeaderWindow?.setForeground()
-        await moveMouseToBlank()
-        const hasTask = await hasGameTask('伏魔任务')
-
-        if (!hasTask) {
-          await buChongZhuangTai()
+    if (!hasTask1) {
+      hasTask1 = true
+      queue.enqueue(async () => {
+        for (const teamLeaderWindow of teamLeaderWindows) {
           await teamLeaderWindow?.setForeground()
-          await goToNPC('轩辕庙', 'luYaZhenRen')
-          await sleep(500)
-          await talkToNPC('轩辕庙', 'luYaZhenRen', 'woZheJiuQu')
+          await moveMouseToBlank()
+          const hasTask = await hasGameTask('伏魔任务')
+
+          if (!hasTask) {
+            await buChongZhuangTai()
+            await teamLeaderWindow?.setForeground()
+            await goToNPC('轩辕庙', 'luYaZhenRen')
+            await sleep(500)
+            await talkToNPC('轩辕庙', 'luYaZhenRen', 'woZheJiuQu')
+          }
         }
-      }
-    })
+      })
+
+      hasTask1 = false
+    }
   }, 3.2 * 60 * 1000)
 
+  let hasTask2 = false
   setInterval(() => {
-    queue.enqueue(async () => await keepZiDong())
-  }, 1.8 * 60 * 1000)
+    if (!hasTask2) {
+      hasTask2 = true
+      queue.enqueue(async () => {
+        // for (const gameWindow of gameWindows) {
+        //   await gameWindow.setForeground()
+        //   const inBattle = await isInBattle_1(gameWindow)
 
+        //   if (inBattle) {
+        //     robotUtils.keyTap('Z', ['alt'])
+        //     await sleep(200)
+        //     robotUtils.keyTap('Z', ['alt'])
+        //     await sleep(1000)
+        //   }
+        // }
+
+        await keepZiDong()
+
+        hasTask2 = false
+      })
+    }
+  }, 0.7 * 60 * 1000)
+
+  let hasTask3 = false
   setInterval(() => {
-    queue.enqueue(async () => await buChongZhuangTai())
-  }, 0.5 * 60 * 1000)
+    if (!hasTask3) {
+      hasTask3 = true
+      queue.enqueue(async () => {
+        await buChongZhuangTai()
+        hasTask3 = false
+      })
+    }
+  }, 1.3 * 60 * 1000)
 }
 
 export async function xianJieTongJi() {
@@ -109,7 +142,7 @@ export async function xianJieTongJi() {
           await teamLeaderWindow?.setForeground()
           await moveMouseToBlank()
           const hasTask = await hasGameTask('仙界通缉')
-  
+
           if (!hasTask) {
             await buChongZhuangTai()
             await teamLeaderWindow?.setForeground()
@@ -129,11 +162,22 @@ export async function xianJieTongJi() {
     if (!hasTask2) {
       hasTask2 = true
       queue.enqueue(async () => {
+        // for (const gameWindow of gameWindows) {
+        //   await gameWindow.setForeground()
+        //   const inBattle = await isInBattle_1(gameWindow)
+
+        //   if (inBattle) {
+        //     robotUtils.keyTap('Z', ['alt'])
+        //     await sleep(200)
+        //     robotUtils.keyTap('Z', ['alt'])
+        //     await sleep(1000)
+        //   }
+        // }
         await keepZiDong()
         hasTask2 = false
       })
     }
-  }, 1.2 * 60 * 1000)
+  }, 0.7 * 60 * 1000)
 
   let hasTask3 = false
   setInterval(() => {
@@ -144,7 +188,7 @@ export async function xianJieTongJi() {
         hasTask3 = false
       })
     }
-  }, 2 * 60 * 1000)
+  }, 1.3 * 60 * 1000)
 }
 
 export async function quanMinShengJi() {
@@ -189,27 +233,42 @@ export async function quanMinShengJi() {
   //   })
   // }
 
+  let hasTask1 = false
   setInterval(() => {
-    queue.enqueue(async () => {
-      for (const teamLeaderWindow of teamLeaderWindows) {
-        await teamLeaderWindow.setForeground()
-        robotUtils.keyTap('enter')
-        await sleep(500)
-      }
-    })
+    if (!hasTask1) {
+      hasTask1 = true
+
+      queue.enqueue(async () => {
+        for (const teamLeaderWindow of teamLeaderWindows) {
+          await teamLeaderWindow.setForeground()
+          robotUtils.keyTap('enter')
+          await sleep(500)
+        }
+
+        hasTask1 = false
+      })
+    }
   }, 2 * 60 * 1000)
 
+  let hasTask2 = false
   setInterval(() => {
-    queue.enqueue(async () => {
-      for (const gameWindow of gameWindows) {
-        await gameWindow.setForeground()
-        const inBattle = await isInBattle_1(gameWindow)
-        if (inBattle) {
-          robotUtils.keyTap('Z', ['alt'])
-          await sleep(50)
-          robotUtils.keyTap('Z', ['alt'])
+    if (!hasTask2) {
+      hasTask2 = true
+
+      queue.enqueue(async () => {
+        for (const gameWindow of gameWindows) {
+          await gameWindow.setForeground()
+          const inBattle = await isInBattle_1(gameWindow)
+          if (inBattle) {
+            robotUtils.keyTap('Z', ['alt'])
+            await sleep(50)
+            robotUtils.keyTap('Z', ['alt'])
+          }
         }
-      }
-    })
+
+        hasTask2 = false
+      })
+    }
+    
   }, 0.7 * 60 * 1000)
 }
