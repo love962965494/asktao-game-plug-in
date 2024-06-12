@@ -55,13 +55,13 @@ export async function isInBattleOfSmallScreen(gameWindow: GameWindowControl) {
   const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isInBattleOfSmallScreen')}.jpg`)
   await screenCaptureToFile(tempCapturePath, position, size)
   const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-  if (!found1) {
-    await sleep(2000)
-    await screenCaptureToFile(tempCapturePath, position, size)
-    const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  // if (!found1) {
+  //   await sleep(2000)
+  //   await screenCaptureToFile(tempCapturePath, position, size)
+  //   const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-    return found2
-  }
+  //   return found2
+  // }
 
   return found1
 }

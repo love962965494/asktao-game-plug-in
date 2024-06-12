@@ -222,7 +222,7 @@ async function findMultiMatchPositions(bigImagePath: string, smallImagePath: str
 }
 
 // 不停监控屏幕，直到找到目标
-async function findTargetInVideo(targetImagePath: string) {
+async function findTargetInVideo(targetImagePath: string, roleName: string) {
   const filePath = path.join(pythonPath, 'findTargetInVideo.py')
 
   return MyPromise((resolve, reject) => {
@@ -234,7 +234,7 @@ async function findTargetInVideo(targetImagePath: string) {
 
       const result = stdout.trim() === 'True'
       if (result) {
-        global.appContext.hasFoundTarget = true
+        global.appContext.hasFoundTarget[roleName] = true
       }
 
       resolve(result)

@@ -424,12 +424,12 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
   gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
-  let index = 10
+  let index = 0
   return async (targetName: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     await gameWindow.setForeground()
 
-    findTargetInVideo(templateImagePath)
+    findTargetInVideo(templateImagePath, gameWindow.roleInfo.roleName)
 
     // 1 正方向  -1 反方向
     let direction = 1
@@ -469,9 +469,11 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       })
       const promise2 = new Promise<number>((resolve) => {
         let interval = setInterval(() => {
-          if (global.appContext.hasFoundTarget) {
+          console.log('gameWindow.roleInfo.roleName: ', global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName]);
+          
+          if (global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName]) {
             clearInterval(interval)
-            global.appContext.hasFoundTarget = false
+            global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName] = false
             resolve(2)
           }
         }, 10)
@@ -480,7 +482,6 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       const result = await Promise.race([promise1, promise2])
 
       if (result === 2) {
-        robotUtils.moveMouse(500, 300)
         robotUtils.keyTap('X', ['alt'])
         await sleep(100)
         robotUtils.mouseClick('right')

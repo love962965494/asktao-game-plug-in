@@ -27,7 +27,7 @@ global.appContext = {
   ],
   gameConfig: {} as IGameConfig,
   cityMap: {} as ICityMap,
-  hasFoundTarget: false,
+  hasFoundTarget: {},
 }
 
 let mainWindow: BrowserWindow | null = null

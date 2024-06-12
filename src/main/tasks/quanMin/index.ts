@@ -3,9 +3,9 @@ import GameWindowControl from '../../../utils/gameWindowControll'
 import { getGameWindows } from '../../../utils/systemCotroll'
 import { hasGameTask } from '../gameTask'
 import { AsyncQueue, moveMouseToBlank } from '../../../utils/common'
-import { getCurrentCity, goToNPC, goToNPCAndTalk, talkToNPC } from '../npcTasks'
+import { goToNPC, talkToNPC } from '../npcTasks'
 import { ipcMain } from 'electron/main'
-import { buChongZhuangTai, isInBattle, isInBattleOfSmallScreen, isInBattle_1, keepZiDong } from '../zhanDouTasks'
+import { buChongZhuangTai, isInBattle_1, keepZiDong } from '../zhanDouTasks'
 import robotUtils from '../../../utils/robot'
 
 export async function registerQuanMin() {

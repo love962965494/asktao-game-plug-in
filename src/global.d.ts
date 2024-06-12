@@ -1,4 +1,4 @@
-import { IAllAccounts, ICityMap, IGameConfig, IGamePoints, IGameTask, INPC } from "constants/types"
+import { IAllAccounts, ICityMap, IGameConfig, IGamePoints, IGameTask, INPC } from 'constants/types'
 
 declare module '*.module.scss' {
   const classes: { [key: string]: string }
@@ -9,13 +9,13 @@ declare global {
   var appContext: {
     isInterrupted: boolean
     accounts: IAllAccounts
-    npc: INPC,
+    npc: INPC
     gameTask: IGameTask
     gamePoints: IGamePoints
     mousePositions: { position: [number, number]; size: [number, number] }[]
     gameConfig: IGameConfig
     cityMap: ICityMap
-    hasFoundTarget: boolean
+    hasFoundTarget: { [key: string]: boolean }
   }
 }
 

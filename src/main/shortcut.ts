@@ -140,50 +140,9 @@ export function registerGlobalShortcut() {
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
-    gameWindow.restoreGameWindow()
-    const findTarget = await findTargetInMap(gameWindow, '天墉城', true)
-    while (true) {
-      const position = await findTarget('cheFu')
-      const distance = Math.sqrt(Math.pow(position[0] - 960, 2) + Math.pow(position[1] - 540, 2))
-      if (distance > 500) {
-        const x = Math.round((position[0] + 960) / 2)
-        const y = Math.round((position[1] + 540) / 2)
-        robotjs.moveMouse(x, y)
-        robotjs.mouseClick('left')
-      }
-      if (position.length === 2) {
-        robotUtils.keyToggle('shift', 'down')
-        await moveMouseToAndClick(
-          '',
-          {
-            buttonName: '',
-            position: [position[0], position[1] - 40],
-            size: [40, 40],
-          },
-          {
-            callback: async () => {
-              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/dialogLine.jpg')
-              const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTarget')}.jpg`)
-              await screenCaptureToFile(tempCapturePath)
-              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-              return found
-            },
-          }
-        )
-        robotUtils.keyToggle('shift', 'up')
-        await clickGamePoint(`域外_四星难度`, 'yuWaiNanDu')
-        await sleep(3 * 1000)
-        const isInBattle = await isInBattleOfSmallScreen(gameWindow)
-
-        if (isInBattle) {
-          await waitFinishZhanDouOfSmallScreen(gameWindow)
-          robotUtils.keyTap('B', ['control'])
-        }
-      }
-    }
-
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Clannadの')!
+    await gameWindow.setForeground()
+    await fuShengLu(gameWindow)
     // await meiRiRiChang_DanRen()
 
     // _setWindowTopMost()

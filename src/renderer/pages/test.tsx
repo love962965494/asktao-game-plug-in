@@ -73,6 +73,9 @@ export default function Test() {
     <div style={{ marginTop: '15px' }}>
     <h3>限时活动</h3>
     <Space>
+      <Button type="primary" onClick={() => ipcRenderer.send('yu-wai-feng-yun')}>
+        域外风云
+      </Button>
       <Button type="primary" onClick={() => ipcRenderer.send('bai-bao-fan-pai')}>
         百宝翻牌
       </Button>

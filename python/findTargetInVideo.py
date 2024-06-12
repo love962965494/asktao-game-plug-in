@@ -40,5 +40,5 @@ def findTarget(target_img_path):
 
 if __name__ == "__main__":
     target_img_path = sys.argv[1]
-    # target_img_path = 'C:/Users/sc/Desktop/chiXueYanJin_1.jpg'
+    # target_img_path = 'C:/Users/sc/Desktop/chiXueYanJin.jpg'
     findTarget(target_img_path)
