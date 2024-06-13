@@ -131,5 +131,9 @@
         "size": [308, 60]
       }
     }
+  },
+  "黄金罗盘": {
+    "pinYin": "huangJinLuoPan",
+    "description": "[HJLP]"
   }
 }

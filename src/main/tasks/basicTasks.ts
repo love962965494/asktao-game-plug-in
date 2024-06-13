@@ -24,7 +24,6 @@ import {
   screenCaptureToFile,
 } from '../../utils/fileOperations'
 import { ICityMap } from 'constants/types'
-import { keepZiDong } from './zhanDouTasks'
 import commonConfig from '../../constants/config.json'
 
 // 是否组队
@@ -495,66 +494,5 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
     }
 
     return targetPosition
-  }
-}
-
-export async function xunHuanZiDong() {
-  await getGameWindows()
-  const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
-
-  function _loop() {
-    setTimeout(async () => {
-      await keepZiDong()
-
-      // for (const gameWindow of gameWindows) {
-      //   await hasMeetLaoJun(gameWindow)
-      // }
-      // for (const gameWindow of gameWindows) {
-      //   await gameWindow.setForeground()
-      //   robotUtils.keyTap('2', ['control'])
-      //   await sleep(500)
-      // }
-      _loop()
-    }, 10 * 1000)
-  }
-
-  _loop()
-}
-
-const ruYiKaiQiGuanBiItems = ['领取-三倍点数', '领取-如意点数', '领取-紫气点数', '领取-宠物三倍']
-export async function ruYiKaiQiGuanBi(kaiQi: boolean) {
-  robotUtils.keyTap('B', ['control'])
-  await sleep(500)
-  await clickGamePoint('领取图标', 'ruYiKaiQiGuanBi', {
-    callback: async () => {
-      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/xiaoLvDianShu.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('xiaoLvDianShu')}`)
-      await screenCaptureToFile(tempCapturePath)
-      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-      return found
-    },
-  })
-
-  if (kaiQi) {
-    for (const item of ruYiKaiQiGuanBiItems) {
-      const checked = await hasChecked(item)
-
-      if (!checked) {
-        await clickGamePoint(item, 'kaiQiRuYiDianShu', {
-          randomPixNums: [5, 2],
-        })
-      }
-    }
-  } else {
-    for (const item of ruYiKaiQiGuanBiItems) {
-      const checked = await hasChecked(item)
-
-      if (checked) {
-        await clickGamePoint(item, 'kaiQiRuYiDianShu', {
-          randomPixNums: [5, 2],
-        })
-      }
-    }
   }
 }

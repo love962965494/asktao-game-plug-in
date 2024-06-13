@@ -55,6 +55,7 @@ import { monitorGameDiaoXian } from './tasks/monitorTask'
 import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
 import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum, SWPTypeEnum } from 'win-control'
+import { shiChen } from './tasks/basicFunction/shiChen'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -99,7 +100,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [43, 29], [48, 12])
+    await screenCaptureToFile(srcImagePath, [1146, 193], [108, 80])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -139,11 +140,12 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Clannadの')!
-    await gameWindow.setForeground()
-    await fuShengLu(gameWindow)
+    // await getGameWindows()
+    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Clannadの')!
+    // await gameWindow.setForeground()
+    // await fuShengLu(gameWindow)
     // await meiRiRiChang_DanRen()
+    await shiChen()
 
     // _setWindowTopMost()
   })

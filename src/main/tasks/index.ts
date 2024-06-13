@@ -4,7 +4,7 @@ import { registerQuanMin } from './quanMin'
 import { registerYiJianQianDao } from './riChang'
 import { registerXianShiHuoDong } from './xianShiTasks'
 import { registerXiuXing } from './xiuXing'
-import { registerShiShiFindTarget } from './shiShiFindTarget'
+import { registerBasicFunction } from './basicFunction'
 
 export default function registerTasks() {
   // 游戏启动
@@ -25,6 +25,6 @@ export default function registerTasks() {
   // 限时活动
   registerXianShiHuoDong()
 
-  // 地图中实时找到目标位置活动
-  registerShiShiFindTarget()
+  // 基础功能
+  registerBasicFunction()
 }
