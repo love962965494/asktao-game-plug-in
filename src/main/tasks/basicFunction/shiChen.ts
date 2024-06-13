@@ -106,14 +106,14 @@ export async function shiChen() {
 
   for (const gameWindow of gameWindows) {
     await gameWindow.setForeground()
-    await hasUsefulShiChen()
+    await hasUsefulShiChen(gameWindow.roleInfo.roleName)
     robotUtils.keyTap('B', ['control'])
   }
 
   await displayGameWindows()
 }
 
-async function hasUsefulShiChen() {
+async function hasUsefulShiChen(roleName: string) {
   const filePath = path.join(pythonImagesPath, `temp/${randomName('LaoJun')}.jpg`)
   await screenCaptureToFile(filePath)
   const chaoJiBaoZang = path.join(pythonImagesPath, '/GUIElements/shiChenRelative/chaoJiBaoZang.jpg')
@@ -125,6 +125,9 @@ async function hasUsefulShiChen() {
     findImageWithinTemplate(filePath, xiangXing, 0.7),
   ]).then(async (results) => {
     if (results.filter(Boolean).length > 0) {
+      const data = JSON.parse(await readLog('时辰'))
+      data.roles.push(roleName)
+      await writeLog('时辰', JSON.stringify(data, undefined, 4), true)
       playSound().play(laoJunMp3)
       await waitShiChenSelect()
       return true
