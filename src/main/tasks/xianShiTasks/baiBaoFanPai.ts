@@ -24,7 +24,8 @@ export async function baiBaoFanPai() {
         },
       })
       await sleep(200)
-      await clickGamePoint(`百宝翻牌-采用${commonConfig.baiBaoFanPai}`, 'baiBaoFanPai', {
+      const number = Math.ceil(Math.random() * 6)
+      await clickGamePoint(`百宝翻牌-采用${number}`, 'baiBaoFanPai', {
         callback: async () => {
           const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('baiBaoFanPai1')}.jpg`)
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/baiBaoFanPai.jpg')
