@@ -56,6 +56,8 @@ import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
 import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum, SWPTypeEnum } from 'win-control'
 import { shiChen } from './tasks/basicFunction/shiChen'
+import { getDirection, huangJinLuoPan } from './tasks/xianShiTasks/huangJinLuoPan'
+import { gouMaiPingTai } from './tasks/basicFunction/gouMaiPingTai'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -100,7 +102,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1146, 193], [108, 80])
+    await screenCaptureToFile(srcImagePath, [1108, 204], [183, 55])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -141,12 +143,12 @@ export function registerGlobalShortcut() {
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     // await getGameWindows()
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Clannadの')!
-    // await gameWindow.setForeground()
+    // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
+    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('LittleBuster')!
     // await fuShengLu(gameWindow)
-    // await meiRiRiChang_DanRen()
-    await shiChen()
+    await meiRiRiChang_DanRen()
 
+    // await huangJinLuoPan(gameWindow, teamLeaderWindow)
     // _setWindowTopMost()
   })
 

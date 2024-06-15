@@ -174,7 +174,7 @@ async function lingQuRenWu(teamLeaderWindows: GameWindowControl[]) {
       gameWindow: teamLeaderWindow,
       calculatePosition: async () => {
         await moveMouseToBlank()
-        const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
+        const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${pinYin}.jpg`)
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
         const position = await findImagePositions(tempCapturePath, templateImagePath)

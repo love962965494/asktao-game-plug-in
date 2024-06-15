@@ -135,5 +135,9 @@
   "黄金罗盘": {
     "pinYin": "huangJinLuoPan",
     "description": "[HJLP]"
+  },
+  "修炼法宝": {
+    "pinYin": "xiuLianFaBao",
+    "description": "[XLFB]"
   }
 }

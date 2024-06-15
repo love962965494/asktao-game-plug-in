@@ -59,6 +59,11 @@ export async function hasExecutedShiChen(today: number, executedHours: number[])
   const date = new Date()
 
   if (today !== date.getDate()) {
+    await writeLog(
+      '时辰',
+      JSON.stringify({ today: date.getDate(), hours: [] }, undefined, 4),
+      true
+    )
     return false
   }
 

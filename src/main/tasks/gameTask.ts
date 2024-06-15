@@ -40,7 +40,7 @@ export async function searchGameTask(taskName: string) {
   const { description, pinYin } = global.appContext.gameTask[taskName as keyof IGameTask]
   robotUtils.keyTap('Q', 'alt')
 
-  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}Task.jpg`)
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${pinYin}Task.jpg`)
   const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('searchGameTask')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)

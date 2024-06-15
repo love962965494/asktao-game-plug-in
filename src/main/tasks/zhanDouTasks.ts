@@ -66,6 +66,7 @@ export async function isInBattleOfSmallScreen(gameWindow: GameWindowControl) {
   return found1
 }
 
+// 通过宠物心法校验是否结束战斗
 export async function waitFinishZhanDou(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise(async (resolve) => {
     function _detect() {
@@ -85,6 +86,7 @@ export async function waitFinishZhanDou(gameWindow: GameWindowControl): Promise<
   })
 }
 
+// 通过左侧宠物栏检测是否结束战斗
 export async function waitFinishZhanDou_1(gameWindow: GameWindowControl): Promise<void> {
   return MyPromise(async (resolve) => {
     function _detect() {
