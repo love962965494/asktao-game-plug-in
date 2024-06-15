@@ -144,8 +144,8 @@ export function registerGlobalShortcut() {
     // const gameWindow = await GameWindowControl.getGameWindowByRoleName('Clannadの')!
     // await gameWindow.setForeground()
     // await fuShengLu(gameWindow)
-    // await meiRiRiChang_DanRen()
-    await shiChen()
+    await meiRiRiChang_DanRen()
+    // await shiChen()
 
     // _setWindowTopMost()
   })
