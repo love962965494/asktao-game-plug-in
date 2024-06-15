@@ -147,7 +147,7 @@ export function registerGlobalShortcut() {
     await meiRiRiChang_DanRen()
     // await shiChen()
 
-    // _setWindowTopMost()
+    _setWindowTopMost()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
