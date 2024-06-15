@@ -44,8 +44,6 @@ import {
   getTeamsInfo,
   isGroupedTeam,
   liDui,
-  ruYiKaiQiGuanBi,
-  xunHuanZiDong,
   yiJianZuDui,
 } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
