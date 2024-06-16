@@ -7,7 +7,7 @@ import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import {
   extractThemeColors,
-  findImagePositions,
+  findImagePositionsWithErrorHandle,
   findImageWithinTemplate,
   paddleOcr,
   screenCaptureToFile,
@@ -90,8 +90,7 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
   })
   const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu1')}.jpg`)
   const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)
-  await screenCaptureToFile(tempCapturePath)
-  const position = await findImagePositions(tempCapturePath, templateImagePath)
+  const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
   let hasFinished = false
   {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu2')}.jpg`)

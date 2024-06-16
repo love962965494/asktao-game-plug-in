@@ -17,7 +17,7 @@ import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import {
   extractThemeColors,
-  findImagePositions,
+  findImagePositionsWithErrorHandle,
   findImageWithinTemplate,
   findTargetInVideo,
   paddleOcr,
@@ -155,8 +155,7 @@ export async function yiJianZuDui(roleName: string) {
   if (!zuDuiPosition) {
     await moveMouseToBlank()
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yiJianZuDui2')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    zuDuiPosition = await findImagePositions(tempCapturePath, templateImagePath)
+    zuDuiPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
   }
   await moveMouseToAndClick(
     templateImagePath,
@@ -487,8 +486,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
         await sleep(100)
         await moveMouseToBlank()
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
+        targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
         hasFound = true
       }
     }

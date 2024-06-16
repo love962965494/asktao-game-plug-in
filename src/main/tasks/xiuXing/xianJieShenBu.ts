@@ -5,7 +5,11 @@ import { randomName, sleep } from '../../../utils/toolkits'
 import path from 'path'
 import { moveMouseToAndClick, moveMouseToBlank } from '../../../utils/common'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositions, findMultiMatchPositions, screenCaptureToFile } from '../../../utils/fileOperations'
+import {
+  findImagePositionsWithErrorHandle,
+  findMultiMatchPositions,
+  screenCaptureToFile,
+} from '../../../utils/fileOperations'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import { waitFinishZhanDou } from '../zhanDouTasks'
 import { chiXiang } from '../wuPinTask'
@@ -78,8 +82,7 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
       )
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
     },
   })
@@ -98,8 +101,7 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
           `GUIElements/common/${teamMemberWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
         )
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        const position = await findImagePositions(tempCapturePath, templateImagePath)
+        const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
         return position
       }
     )
@@ -185,8 +187,7 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
       )
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
     },
   })
@@ -200,13 +201,12 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
       `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['奖励模式']}.jpg`
     )
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const position = await findImagePositions(tempCapturePath, templateImagePath)
-    
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+
     return position
   })
   await sleep(500)
-  
+
   for (const teamMemberWindow of teamMemberWindows) {
     await teamMemberWindow.setForeground()
     await talkToNPC(
@@ -220,8 +220,8 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
           `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']}.jpg`
         )
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition3')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        const position = await findImagePositions(tempCapturePath, templateImagePath)
+        const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+
         return position
       }
     )
@@ -233,8 +233,8 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
         `GUIElements/common/${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['奖励模式']}.jpg`
       )
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition4')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+
       return position
     })
     await sleep(500)

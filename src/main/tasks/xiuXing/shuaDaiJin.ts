@@ -6,7 +6,12 @@ import { searchGameTask } from '../gameTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { randomName, sleep } from '../../../utils/toolkits'
-import { findImagePositions, findImageWithinTemplate, paddleOcr, screenCaptureToFile } from '../../../utils/fileOperations'
+import {
+  findImagePositionsWithErrorHandle,
+  findImageWithinTemplate,
+  paddleOcr,
+  screenCaptureToFile,
+} from '../../../utils/fileOperations'
 import { goToNPC, goToNPCAndTalk, hasCityDialog, hasGoneToCity, hasGoneToNPC, talkToNPC } from '../npcTasks'
 import robotUtils from '../../../utils/robot'
 import commonConfig from '../../../constants/config.json'
@@ -27,7 +32,7 @@ const allNpcs = {
     'luoPoZhenZhu',
   ],
   修行任务: ['leiShen', 'huaShen', 'longShen', 'yanShen', 'shanShen'],
-  寻仙任务: ['hanZhongLi', 'lanCaiHe', 'hanXiangZi', 'zhangGuoLao', 'caoGuoJiu', 'lvDongBin',  'heXianGu', 'tieGuaiLi']
+  寻仙任务: ['hanZhongLi', 'lanCaiHe', 'hanXiangZi', 'zhangGuoLao', 'caoGuoJiu', 'lvDongBin', 'heXianGu', 'tieGuaiLi'],
 }
 type ITaskType = keyof typeof allNpcs
 const taskType = commonConfig.shuaDaiJinTaskType as ITaskType
@@ -79,7 +84,7 @@ export async function shuaDaiJin(isFirst = false) {
         await hasGoneToCity(teamLeaderWindow, 'pengLaiDao')
       }
     }
-    
+
     await loopTasks(restTasks, teamLeaderWindows)
     if (taskType === '寻仙任务' && commonConfig.needRecheckTaskProgress) {
       const restTasks = []
@@ -176,8 +181,7 @@ async function lingQuRenWu(teamLeaderWindows: GameWindowControl[]) {
         await moveMouseToBlank()
         const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${pinYin}.jpg`)
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        const position = await findImagePositions(tempCapturePath, templateImagePath)
+        const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
         return position
       },
     })

@@ -5,7 +5,7 @@ import path from 'path'
 import { mainPath, pythonImagesPath, rendererPath } from '../paths'
 import robotUtils from './robot'
 import { randomName, sleep } from './toolkits'
-import { findImagePositions, paddleOcr, screenCaptureToFile } from './fileOperations'
+import { findImagePositionsWithErrorHandle, paddleOcr, screenCaptureToFile } from './fileOperations'
 import { matchStrings, moveMouseToBlank } from './common'
 import { IAccountInfo } from 'constants/types'
 import { gameWindows } from './systemCotroll'
@@ -277,11 +277,9 @@ export default class GameWindowControl {
     await moveMouseToBlank()
     robotUtils.keyTap('B', ['control'])
     await sleep(200)
-    const templatePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDou.jpg')
+    const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongZhanDou.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('getZiDongZhanDouPosition')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const position = await findImagePositions(tempCapturePath, templatePath)
-
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
     this.#ziDongZhanDou = position
     return this.#ziDongZhanDou
   }

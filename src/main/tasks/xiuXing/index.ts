@@ -8,7 +8,7 @@ import { chiXiang } from '../wuPinTask'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import {
-  findImagePositions,
+  findImagePositionsWithErrorHandle,
   findImageWithinTemplate,
   paddleOcr,
   screenCaptureToFile,
@@ -170,8 +170,7 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
     },
   })
@@ -186,8 +185,7 @@ export async function lingQuRenWu(teamWindows: GameWindowControl[], taskType: st
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${pinYin}.jpg`)
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition2')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
     })
     await sleep(500)

@@ -8,7 +8,7 @@ import { moveMouseToAndClick } from '../../../utils/common'
 import { isInBattleOfSmallScreen, waitFinishZhanDouOfSmallScreen } from '../zhanDouTasks'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositions, screenCaptureToFile } from '../../../utils/fileOperations'
+import { findImagePositionsWithErrorHandle } from '../../../utils/fileOperations'
 
 export default async function yuWaiFengYun() {
   await getGameWindows()
@@ -44,8 +44,7 @@ export default async function yuWaiFengYun() {
         await sleep(1000)
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/npcRelative/chiXueYanJin.jpg')
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        position = await findImagePositions(tempCapturePath, templateImagePath)
+        position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       }
 
       if (position.length === 2) {

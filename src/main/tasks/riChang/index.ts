@@ -16,7 +16,7 @@ import { ipcMain } from 'electron'
 import robotUtils from '../../../utils/robot'
 import {
   extractThemeColors,
-  findImagePositions,
+  findImagePositionsWithErrorHandle,
   findImageWithinTemplate,
   paddleOcr,
   screenCaptureToFile,
@@ -122,8 +122,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/haoXiang.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('fuShengLu1')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const position = await findImagePositions(tempCapturePath, templateImagePath)
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
     if (position.length === 0) {
       return
     }
@@ -151,8 +150,7 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   {
     const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/fuShengLu.jpg')
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('fuShengLu3')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const position = await findImagePositions(tempCapturePath, templateImagePath)
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(
       '',
       {
@@ -237,8 +235,7 @@ export async function openFuLiCenter() {
   await sleep(500)
   if (!fuLiTuBiaoPosition) {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('openFuLiCenter1')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    fuLiTuBiaoPosition = await findImagePositions(tempCapturePath, fuLiTemplateImagePath)
+    fuLiTuBiaoPosition = await findImagePositionsWithErrorHandle(tempCapturePath, fuLiTemplateImagePath)
   }
   await moveMouseToAndClick(
     fuLiTemplateImagePath,
@@ -515,8 +512,7 @@ export async function gouMaiYaoPin() {
     robotUtils.keyTap('W', ['alt'])
     await sleep(300)
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('gouMaiYaoPin')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const position = await findImagePositions(tempCapturePath, templateImagePath)
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
     await moveMouseToAndClick(templateImagePath, {
       buttonName: 'gouMaiYaoPin',
       position,

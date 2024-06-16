@@ -5,7 +5,7 @@ import child_process from 'child_process'
 import { pythonEnvPath, pythonImagesPath, pythonPath } from '../paths'
 import sharp from 'sharp'
 import robotjs from 'robotjs'
-import { randomName } from './toolkits'
+import { randomName, sleep } from './toolkits'
 import { MyPromise } from './customizePromise'
 import commonConfig from '../constants/config.json'
 
@@ -58,6 +58,18 @@ function screenCaptureToFile(filePath: string, position: number[] = [], size: nu
 }
 
 // 从图片中找到目标图片的坐标位置
+async function findImagePositionsWithErrorHandle(bigImagePath: string, smallImagePath: string, options?: { position: number[], size: number[] }) {
+  await screenCaptureToFile(bigImagePath, options?.position, options?.size)
+  let position = await findImagePositions(bigImagePath, smallImagePath)
+  let count = 0
+  while (position.length === 0 && count < 3) {
+    await sleep(10 * 1000)
+    await screenCaptureToFile(bigImagePath, options?.position, options?.size)
+    position = await findImagePositions(bigImagePath, smallImagePath)
+    count++
+  }
+  return position
+}
 function findImagePositions(bigImagePath: string, smallImagePath: string): Promise<number[]> {
   const filePath = path.join(pythonPath, 'findPositionWithinTemplate.py')
 
@@ -246,6 +258,7 @@ export {
   deleteDir,
   screenCaptureToFile,
   findImagePositions,
+  findImagePositionsWithErrorHandle,
   paddleOcr,
   prePorcessingImage,
   extractThemeColors,

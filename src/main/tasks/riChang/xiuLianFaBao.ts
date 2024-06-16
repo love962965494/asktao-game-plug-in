@@ -5,7 +5,7 @@ import { randomName, sleep } from '../../../utils/toolkits'
 import { goToNPCAndTalk, talkToNPC } from '../npcTasks'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositions, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
+import { findImagePositionsWithErrorHandle, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../../utils/common'
 import { searchGameTask } from '../gameTask'
 import { waitFinishZhanDou_1 } from '../zhanDouTasks'
@@ -49,8 +49,7 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
       await moveMouseToBlank()
       const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${pinYin}.jpg`)
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(pinYin)}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const position = await findImagePositions(tempCapturePath, templateImagePath)
+      const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
 
       return position
     }
