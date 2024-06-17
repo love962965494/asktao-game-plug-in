@@ -415,7 +415,6 @@ export async function hasGoneToPosition() {
     color = await extractThemeColors(tempCapturePath)
     await sleep(500)
   }
-  
 }
 export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
   await gameWindow.setForeground()
@@ -426,10 +425,10 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
   return async (targetName: string, roleAccount: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     const roleNamePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${roleAccount}.jpg`)
-    
+
     await gameWindow.setForeground()
 
-    findTargetInVideo(templateImagePath, gameWindow.roleInfo.roleName)
+    findTargetInVideo(templateImagePath, roleAccount)
 
     // 1 正方向  -1 反方向
     let direction = 1
@@ -469,15 +468,19 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
         _inner()
       })
       const promise2 = new Promise<number>((resolve) => {
-        let interval = setInterval(() => {
-          console.log('gameWindow.roleInfo.roleName: ', global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName]);
-          
-          if (global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName]) {
-            clearInterval(interval)
-            global.appContext.hasFoundTarget[gameWindow.roleInfo.roleName] = false
-            resolve(2)
-          }
-        }, 10)
+        function _loop() {
+          let timeout =setTimeout(() => {
+            if (global.appContext.hasFoundTarget[roleAccount]) {
+              global.appContext.hasFoundTarget[roleAccount] = false
+              clearTimeout(timeout)
+              resolve(2)
+            }
+
+            _loop()
+          }, 10)
+        }
+
+        _loop()
       })
 
       const result = await Promise.race([promise1, promise2])
@@ -491,7 +494,9 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
         targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
         rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
-        let distance = Math.sqrt(Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2))
+        let distance = Math.sqrt(
+          Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
+        )
 
         while (distance > 400) {
           const x = Math.round((targetPosition[0] + rolePosition[0]) / 2)
@@ -502,7 +507,9 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
           const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
           targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
           rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
-          distance = Math.sqrt(Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2))
+          distance = Math.sqrt(
+            Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
+          )
         }
         hasFound = true
       }

@@ -68,6 +68,28 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     if (found1 && found2) {
       if (!gameWindow.roleInfo.defaultTeamLeader) {
         await liDui()
+
+        do {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
+          const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
+
+          if (found1 && found2) {
+            break
+          }
+
+          await screenCaptureToFile(tempCapturePath, [1093, 155], [210, 155])
+          const direction = await getDirection(tempCapturePath)
+          ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, true)
+          robotUtils.keyTap('B', ['control'])
+          await sleep(500)
+          robotUtils.keyTap('W', ['alt'])
+          clipboard.writeText(`${center[0]}.${center[1]}`)
+          robotUtils.keyTap('V', ['control'])
+          robotUtils.keyTap('enter')
+          await sleep(Math.max(Math.round(time / Math.pow(2, count)), 2000))
+        } while(true)
       }
       await clickGamePoint('黄金罗盘', `${taskName}_success`)
       const inBattle = await isInBattle_1(gameWindow)
@@ -84,6 +106,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
       await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
       break
     }
+
     await screenCaptureToFile(tempCapturePath, [1093, 155], [210, 155])
     const direction = await getDirection(tempCapturePath)
     
