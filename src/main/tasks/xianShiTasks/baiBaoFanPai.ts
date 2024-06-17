@@ -6,7 +6,6 @@ import robotUtils from '../../../utils/robot'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
-import commonConfig from '../../../constants/config.json'
 
 // 需要所有游戏页面都先把百宝翻牌页面打开
 export async function baiBaoFanPai() {
