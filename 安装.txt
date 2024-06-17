@@ -17,14 +17,9 @@ pip install opencv-python -i https://mirror.baidu.com/pypi/simple
   terminal权限打开：
   Set-ExecutionPolicy Unrestricted
 
-  2（方法一）、在vscode中创建虚拟环境
+  2、在vscode中创建虚拟环境
     打开任意一个py文件，右下状态栏点击python版本号，按照提示创建虚拟环境。
 
-  2（方法二）、使用 virtualenv 创建虚拟环境：
-    安装 virtualenv（如果尚未安装）：
-    pip install virtualenv -i https://mirror.baidu.com/pypi/simple
-    创建虚拟环境：
-    virtualenv paddle_env
     激活虚拟环境：
     paddle_env\Scripts\activate
 
@@ -37,5 +32,5 @@ pip install opencv-python -i https://mirror.baidu.com/pypi/simple
   5、测试
   python -c "import paddleocr; print(paddleocr.__version__)"
 
-  6、修改fileOperation.ts中的paddleOcr方法，改路径
-
+7、安装pyautogui
+pip install pyautogui -i https://mirror.baidu.com/pypi/simple
