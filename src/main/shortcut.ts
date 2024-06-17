@@ -5,7 +5,6 @@ import path from 'path'
 import { logPath, pythonImagesPath } from '../paths'
 import {
   extractThemeColors,
-  findImagePositions,
   findImageWithinTemplate,
   findMultiMatchPositions,
   prePorcessingImage,

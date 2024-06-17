@@ -71,18 +71,18 @@ export async function fuMoRenWu() {
           await teamLeaderWindow?.setForeground()
           await moveMouseToBlank()
           const hasTask = await hasGameTask('伏魔任务')
-
+          robotUtils.keyTap('B', ['control'])
           if (!hasTask) {
-            await buChongZhuangTai()
             await teamLeaderWindow?.setForeground()
             await goToNPC('轩辕庙', 'luYaZhenRen')
             await sleep(500)
             await talkToNPC('轩辕庙', 'luYaZhenRen', 'woZheJiuQu')
           }
         }
+        
+        hasTask1 = false
       })
 
-      hasTask1 = false
     }
   }, 3.2 * 60 * 1000)
 
@@ -91,24 +91,15 @@ export async function fuMoRenWu() {
     if (!hasTask2) {
       hasTask2 = true
       queue.enqueue(async () => {
-        // for (const gameWindow of gameWindows) {
-        //   await gameWindow.setForeground()
-        //   const inBattle = await isInBattle_1(gameWindow)
-
-        //   if (inBattle) {
-        //     robotUtils.keyTap('Z', ['alt'])
-        //     await sleep(200)
-        //     robotUtils.keyTap('Z', ['alt'])
-        //     await sleep(1000)
-        //   }
-        // }
-
-        await keepZiDong()
+        for (const gameWindow of gameWindows) {
+          await gameWindow.setForeground()
+          robotUtils.keyTap('2', ['control'])
+        }
 
         hasTask2 = false
       })
     }
-  }, 0.7 * 60 * 1000)
+  }, 0.2 * 60 * 1000)
 
   let hasTask3 = false
   setInterval(() => {
