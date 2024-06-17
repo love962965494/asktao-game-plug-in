@@ -3,7 +3,7 @@ import robotUtils from '../../utils/robot'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../utils/common'
-import { findImagePositionsWithErrorHandle, screenCaptureToFile } from '../../utils/fileOperations'
+import { findImagePositions, findImagePositionsWithErrorHandle, screenCaptureToFile } from '../../utils/fileOperations'
 import { hasGameTask } from './gameTask'
 
 const packages = ['装备-包裹', '装备-行囊1', '装备-行囊2', '装备-坐骑']
@@ -23,7 +23,8 @@ export async function findWuPinPosition(name: string) {
       await moveMouseToBlank()
       const { position, size } = global.appContext.gamePoints['装备-物品框框']
       let tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasWuPin')}.jpg`)
-      const wuPinPosition = await findImagePositionsWithErrorHandle(tempCapturePath, wuPinImagePath, { position, size })
+      await screenCaptureToFile(tempCapturePath, position, size)
+      const wuPinPosition = await findImagePositions(tempCapturePath, wuPinImagePath)
 
       if (wuPinPosition.length > 0) {
         return [position[0] + wuPinPosition[0], position[1] + wuPinPosition[1]]

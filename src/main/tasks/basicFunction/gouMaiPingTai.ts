@@ -1,9 +1,8 @@
 import robotUtils from '../../../utils/robot'
-import GameWindowControl from '../../../utils/gameWindowControll'
-import { clickGamePoint } from '../../../utils/common'
+import { clickGamePoint, moveMouseToBlank } from '../../../utils/common'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { randomName, sleep } from '../../../utils/toolkits'
+import { randomName, randomNum, sleep } from '../../../utils/toolkits'
 import { extractThemeColors, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 import { clipboard } from 'electron'
 
@@ -20,14 +19,12 @@ export interface SouSuoZhuangBei {
 }
 
 export async function gouMaiPingTai(
-  gameWindow: GameWindowControl,
   options: {
     type: keyof GouMaiPingTaiType
     subType: keyof GouMaiPingTaiType[keyof GouMaiPingTaiType]
     targetName: string
   }
 ) {
-  await gameWindow.setForeground()
   robotUtils.keyTap('B', ['control'])
   await clickGamePoint('互动图标', 'huDongTuBiao', {
     callback: async () => {
@@ -113,7 +110,16 @@ async function souSuoZhuangBei(type: keyof SouSuoZhuangBei, targetName: string) 
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
     if (!found) {
-      await clickGamePoint('摆摊购买平台-搜索装备-类型选择', 'souSuoZhuangBei-typeSelect')
+      await clickGamePoint('摆摊购买平台-搜索装备-类型选择', 'souSuoZhuangBei-typeSelect', {
+        callback: async () => {
+          await moveMouseToBlank()
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('souSuoZhuangBei-typeSelect')},jpg`)
+          await screenCaptureToFile(tempCapturePath, [710, 170], [40, 34])
+          const colors = await extractThemeColors(tempCapturePath)
+
+          return colors.includes('#faf')
+        }
+      })
       await sleep(500)
       robotUtils.keyTap('down')
       await sleep(100)
@@ -127,6 +133,7 @@ async function souSuoZhuangBei(type: keyof SouSuoZhuangBei, targetName: string) 
         robotUtils.keyTap('A', ['control'])
         await sleep(100)
         robotUtils.keyTap('delete')
+        await sleep(randomNum(500))
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/inputLogo.jpg')
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('souSuoZhuangBei-typeInput')}.jpg`)
         await screenCaptureToFile(tempCapturePath, position, size)

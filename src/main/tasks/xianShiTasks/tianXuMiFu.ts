@@ -4,14 +4,19 @@ import { findTargetInMap } from '../basicTasks'
 import robotjs from 'robotjs'
 import { randomName, sleep } from '../../../utils/toolkits'
 import robotUtils from '../../../utils/robot'
-import { moveMouseToAndClick } from '../../../utils/common'
+import { clickGamePoint, moveMouseToAndClick } from '../../../utils/common'
 import { isInBattleOfSmallScreen, waitFinishZhanDouOfSmallScreen } from '../zhanDouTasks'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
-import { findImagePositionsWithErrorHandle } from '../../../utils/fileOperations'
+import {
+  findImagePositionsWithErrorHandle,
+  findImageWithinTemplate,
+  screenCaptureToFile,
+} from '../../../utils/fileOperations'
+import commonConfig from '../../../constants/config.json'
 
-export default async function yuWaiFengYun() {
-  const { targetSize } = global.appContext.cityMap['天墟境']
+export default async function tianXuMiFu() {
+  const { targetSize } = global.appContext.cityMap['天墟秘府']
   await getGameWindows()
   const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
   const teamLeaderWindows: GameWindowControl[] = []
@@ -26,7 +31,7 @@ export default async function yuWaiFengYun() {
   for (const teamLeaderWindow of teamLeaderWindows) {
     await teamLeaderWindow.setForeground()
     teamLeaderWindow.restoreGameWindow()
-    const findTarget = await findTargetInMap(teamLeaderWindow, '天墟境', true)
+    const findTarget = await findTargetInMap(teamLeaderWindow, '天墟秘府', true)
     findTargets.push(findTarget)
   }
 
@@ -35,7 +40,7 @@ export default async function yuWaiFengYun() {
       const teamLeaderWindow = teamLeaderWindows[i]
       await teamLeaderWindow.setForeground()
       const findTarget = findTargets[i]
-      let position = await findTarget('chiXueYanJin', teamLeaderWindow.roleInfo.account)
+      let position = await findTarget('yanJinCu', teamLeaderWindow.roleInfo.account)
 
       if (position.length === 2) {
         robotUtils.keyToggle('shift', 'down')
@@ -49,13 +54,20 @@ export default async function yuWaiFengYun() {
           },
           {
             callback: async () => {
-              return true
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/npcRelative/tianXuMiFu.jpg')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('tianXuMiFu')}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+              return found
             },
           }
         )
         await sleep(500)
         robotUtils.keyToggle('shift', 'up')
         await sleep(500)
+
+        await clickGamePoint(`域外_${commonConfig.yuWaiDiffcultLevel}`, 'yuwaiNanDu')
       }
     }
 
@@ -63,12 +75,23 @@ export default async function yuWaiFengYun() {
       const teamLeaderWindow = teamLeaderWindows[i]
       await teamLeaderWindow.setForeground()
       await sleep(3 * 1000)
-      const isInBattle = await isInBattleOfSmallScreen(teamLeaderWindow)
+    }
 
-      if (isInBattle) {
-        await waitFinishZhanDouOfSmallScreen(teamLeaderWindow)
+    for (let i = 0; i < teamLeaderWindows.length; i++) {
+      const teamLeaderWindow = teamLeaderWindows[i]
+      await teamLeaderWindow.setForeground()
+      let isInBattle = await isInBattleOfSmallScreen(teamLeaderWindow)
+
+      while (isInBattle) {
+        await sleep(3000)
+        for (const gameWindow of allGameWindows) {
+          await gameWindow.setForeground()
+          robotUtils.keyTap('2', ['control'])
+        }
+        isInBattle = await isInBattleOfSmallScreen(teamLeaderWindow)
       }
     }
+
   }
 
   function _loop() {
@@ -77,6 +100,24 @@ export default async function yuWaiFengYun() {
       _loop()
     }, 1000)
   }
-  
+
   _loop()
+}
+
+function getDirection(position: number[]) {
+  const [x, y] = position
+
+  if (x <= 960) {
+    if (y <= 540) {
+      return 'leftTop'
+    } else {
+      return 'leftBottom'
+    }
+  } else {
+    if (y <= 540) {
+      return 'rightTop'
+    } else {
+      return 'rightBottom'
+    }
+  }
 }

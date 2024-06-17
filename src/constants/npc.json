@@ -226,6 +226,20 @@
           "size": [173, 34]
         }
       }
+    },
+    "baiHu": {
+      "zh": "白虎",
+      "search": {
+        "abstract": "bh",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhunBeiHaoLe,qingCiJiaoBa": {
+          "zh": "我准备好了，请赐教吧",
+          "position": [526, 578],
+          "size": [340, 34]
+        }
+      }
     }
   },
   "万妖岭": {
@@ -238,12 +252,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -259,12 +273,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -278,7 +292,7 @@
       "conversitions": {
         "qingLingShenDuoDuoZhiJiao": {
           "zh": "请灵神多多指教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [236, 34]
         }
       }
@@ -294,12 +308,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -313,8 +327,22 @@
       "conversitions": {
         "qingLingShenDuoDuoZhiJiao": {
           "zh": "请灵神多多指教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [236, 34]
+        }
+      }
+    },
+    "qingLong": {
+      "zh": "青龙",
+      "search": {
+        "abstract": "ql",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhunBeiHaoLe,qingCiJiaoBa": {
+          "zh": "我准备好了，请赐教吧",
+          "position": [526, 578],
+          "size": [340, 34]
         }
       }
     }
@@ -329,12 +357,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -348,7 +376,7 @@
       "conversitions": {
         "qingLingShenDuoDuoZhiJiao": {
           "zh": "请灵神多多指教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [236, 34]
         }
       }
@@ -364,12 +392,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -383,7 +411,7 @@
       "conversitions": {
         "qingLingShenDuoDuoZhiJiao": {
           "zh": "请灵神多多指教",
-          "position": [528, 579],
+          "position": [526, 579],
           "size": [236, 34]
         }
       }
@@ -399,12 +427,12 @@
       "conversitions": {
         "woYaoHuiTianYongChengBanXieShi": {
           "zh": "我要回天墉城办些事",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [308, 34]
         },
         "woYaoHuiBangPaiZongTanBangXieShi": {
           "zh": "我要回帮派总坛办些事",
-          "position": [528, 621],
+          "position": [526, 621],
           "size": [308, 34]
         }
       }
@@ -418,7 +446,7 @@
       "conversitions": {
         "qingLingShenDuoDuoZhiJiao": {
           "zh": "请灵神多多指教",
-          "position": [528, 579],
+          "position": [526, 579],
           "size": [236, 34]
         }
       }
@@ -434,7 +462,7 @@
       "conversitions": {
         "qingXianRenCiJiao": {
           "zh": "请仙人赐教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [168, 34]
         }
       }
@@ -450,7 +478,7 @@
       "conversitions": {
         "qingXianRenCiJiao": {
           "zh": "请仙人赐教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [168, 34]
         }
       }
@@ -466,7 +494,7 @@
       "conversitions": {
         "qingXianRenCiJiao": {
           "zh": "请仙人赐教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [168, 34]
         }
       }
@@ -482,7 +510,7 @@
       "conversitions": {
         "qingXianRenCiJiao": {
           "zh": "请仙人赐教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [168, 34]
         }
       }
@@ -512,7 +540,7 @@
       "conversitions": {
         "qingXianRenCiJiao": {
           "zh": "请仙人赐教",
-          "position": [528, 551],
+          "position": [526, 551],
           "size": [168, 34]
         }
       }
@@ -528,7 +556,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -542,7 +570,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -558,7 +586,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -572,7 +600,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -588,7 +616,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -602,7 +630,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -618,7 +646,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -632,7 +660,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -648,7 +676,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -662,7 +690,7 @@
       "conversitions": {
         "qingDaShenZhiDian": {
           "zh": "请大神指点",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -678,12 +706,12 @@
       "conversitions": {
         "woZhengYouCiYi": {
           "zh": "我正有此意",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         },
         "woZheJiuQianQu": {
           "zh": "我这就前去",
-          "position": [528, 578],
+          "position": [526, 578],
           "size": [170, 34]
         }
       }
@@ -699,7 +727,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -713,7 +741,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -727,7 +755,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -741,7 +769,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -755,7 +783,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -769,7 +797,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -783,7 +811,7 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
           "size": [370, 34]
         }
       }
@@ -797,7 +825,26 @@
       "conversitions": {
         "woXiangYuXianZhangQieCuoYiXiaXianFa": {
           "zh": "我想与仙长切磋一下仙法",
-          "position": [528, 649],
+          "position": [526, 649],
+          "size": [370, 34]
+        }
+      }
+    },
+    "duoBaoDaoRen": {
+      "zh": "多宝道人",
+      "search": {
+        "abstract": "dbdr",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "dongXiZhaoLaiLeMa": {
+          "zh": "东西找来了吗",
+          "position": [526, 720],
+          "size": [206, 34]
+        },
+        "dongXiGeiNi,gaoSuWoFangFaBa": {
+          "zh": "东西给你，告诉我方法吧",
+          "position": [526, 550],
           "size": [370, 34]
         }
       }
@@ -815,6 +862,43 @@
           "zh": "我已准备好接受考研，请赐教吧",
           "position": [526, 550],
           "size": [475, 34]
+        },
+        "woXianZaiJiuBaSiLingZhiQiZhuRuBaoWu": {
+          "zh": "我现在就把四灵之气注入宝物",
+          "position": [526, 522],
+          "size": [438, 34]
+        }
+      }
+    }
+  },
+  "卧龙坡": {
+    "xuanWu": {
+      "zh": "玄武",
+      "search": {
+        "abstract": "xw",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhunBeiHaoLe,qingCiJiaoBa": {
+          "zh": "我准备好了，请赐教吧",
+          "position": [526, 635],
+          "size": [340, 34]
+        }
+      }
+    }
+  },
+  "风月谷": {
+    "zhuQue": {
+      "zh": "朱雀",
+      "search": {
+        "abstract": "zq",
+        "steps": ["up", "enter"]
+      },
+      "conversitions": {
+        "woZhunBeiHaoLe,qingCiJiaoBa": {
+          "zh": "我准备好了，请赐教吧",
+          "position": [526, 607],
+          "size": [340, 34]
         }
       }
     }

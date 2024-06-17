@@ -423,8 +423,10 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
   let index = 0
-  return async (targetName: string) => {
+  return async (targetName: string, roleAccount: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
+    const roleNamePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${roleAccount}.jpg`)
+    
     await gameWindow.setForeground()
 
     findTargetInVideo(templateImagePath, gameWindow.roleInfo.roleName)
@@ -433,6 +435,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
     let direction = 1
     let hasFound = false
     let targetPosition: number[] = []
+    let rolePosition: number[] = []
     while (!hasFound) {
       const promise1 = new Promise<number>((resolve) => {
         async function _inner() {
@@ -481,12 +484,26 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
 
       if (result === 2) {
         robotUtils.keyTap('X', ['alt'])
-        await sleep(100)
+        await sleep(500)
         robotUtils.mouseClick('right')
-        await sleep(100)
+        await sleep(500)
         await moveMouseToBlank()
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
         targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+        rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+        let distance = Math.sqrt(Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2))
+
+        while (distance > 400) {
+          const x = Math.round((targetPosition[0] + rolePosition[0]) / 2)
+          const y = Math.round((targetPosition[1] + rolePosition[1]) / 2)
+          robotjs.moveMouse(x, y)
+          robotjs.mouseClick('left')
+          await sleep(2000)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
+          targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+          rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+          distance = Math.sqrt(Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2))
+        }
         hasFound = true
       }
     }

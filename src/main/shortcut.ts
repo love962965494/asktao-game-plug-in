@@ -1,6 +1,6 @@
 import { globalShortcut, app } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
-import { getGameWindows, getProcessesByName } from '../utils/systemCotroll'
+import { gameWindows, getGameWindows, getProcessesByName } from '../utils/systemCotroll'
 import path from 'path'
 import { logPath, pythonImagesPath } from '../paths'
 import {
@@ -51,10 +51,19 @@ import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
 import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
-import { HWND, SWP, WinControlInstance, Window as WinControl, WindowStates, WindowStatesTypeEnum, SWPTypeEnum } from 'win-control'
+import {
+  HWND,
+  SWP,
+  WinControlInstance,
+  Window as WinControl,
+  WindowStates,
+  WindowStatesTypeEnum,
+  SWPTypeEnum,
+} from 'win-control'
 import { shiChen } from './tasks/basicFunction/shiChen'
 import { getDirection, huangJinLuoPan } from './tasks/xianShiTasks/huangJinLuoPan'
 import { gouMaiPingTai } from './tasks/basicFunction/gouMaiPingTai'
+import { useWuPin } from './tasks/wuPinTask'
 
 export function registerGlobalShortcut() {
   for (let i = 0; i < 9; i++) {
@@ -99,7 +108,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1108, 204], [183, 55])
+    await screenCaptureToFile(srcImagePath, [1757, 886], [60, 40])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -131,7 +140,7 @@ export function registerGlobalShortcut() {
   // TODO: 测试用
   // 543 580
   // 543 616
-  async function _setWindowTopMost() { 
+  async function _setWindowTopMost() {
     const process = await getProcessesByName('ToDesk')
     const instance = WinControl.getByPid(+process[1][1])
     instance.setShowStatus(WindowStates.SHOW)
@@ -139,11 +148,12 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    // await getGameWindows()
-    // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('LittleBuster')!
+    await getGameWindows()
+    const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+    const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
+    const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
     // await fuShengLu(gameWindow)
-    await meiRiRiChang_DanRen()
+    // await meiRiRiChang_DanRen()
 
     // await huangJinLuoPan(gameWindow, teamLeaderWindow)
     // _setWindowTopMost()

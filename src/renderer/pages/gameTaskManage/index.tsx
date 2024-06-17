@@ -84,6 +84,12 @@ export default function GameTaskManage() {
           <Button type="primary" onClick={() => ipcRenderer.send('bai-bao-fan-pai')}>
             百宝翻牌
           </Button>
+          <Button type="primary" onClick={() => ipcRenderer.send('tian-xu-mi-fu')}>
+            天墟秘府
+          </Button>
+          <Button type="primary" onClick={() => ipcRenderer.send('huang-jin-luo-pan')}>
+            黄金罗盘
+          </Button>
         </Space>
       </div>
     </>

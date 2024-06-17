@@ -8,6 +8,7 @@ import robotjs from 'robotjs'
 import { randomName, sleep } from './toolkits'
 import { MyPromise } from './customizePromise'
 import commonConfig from '../constants/config.json'
+import robotUtils from './robot'
 
 /**
  * 删除目录和下边所有文件

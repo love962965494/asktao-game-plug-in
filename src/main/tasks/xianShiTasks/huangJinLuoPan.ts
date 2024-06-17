@@ -6,13 +6,32 @@ import robotUtils from '../../../utils/robot'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
 import { clickGamePoint } from '../../../utils/common'
+import { searchGameTask } from '../gameTask'
+import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
+import { getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
+import { useWuPin } from '../wuPinTask'
 
 const taskName = 'huangJinLuoPan'
-export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow?: GameWindowControl) {
+
+export async function huangJinLuoPanLoop() {
+  const teamWindowsWithGroup = await getTeamsInfo()
+
+  for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
+    await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow)
+
+    for (const teamMemberWindow of teamMemberWindows) {
+      await huangJinLuoPan(teamMemberWindow, teamLeaderWindow)
+    }
+  }
+}
+
+export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl) {
   await gameWindow.setForeground()
+  robotUtils.keyTap('B', ['control'])
 
   const { size } = global.appContext.cityMap['风月谷']
-  const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success.jpg`)
+  const templateImagePath1 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success1.jpg`)
+  const templateImagePath2 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success2.jpg`)
 
   let leftTop = [0, 0]
   let rightBottom = [size[0], size[1]]
@@ -20,7 +39,15 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
   let count = 1
   let center = [Math.round((leftTop[0] + rightBottom[0]) / 2), Math.round((leftTop[1] + rightBottom[1]) / 2)]
   let nearlyGoneTo = false
-  while (true) {
+  let hasTask = await searchGameTask('黄金罗盘')
+  if (hasTask) {
+    if (!gameWindow.roleInfo.defaultTeamLeader) {
+      await liDui()
+    }
+    await useWuPin('huangJinLuoPan')
+    await yiJianZuDui(teamLeaderWindow?.roleInfo.roleName)
+  }
+  while (hasTask) {
     if (!gameWindow.roleInfo.defaultTeamLeader) {
       await teamLeaderWindow?.setForeground()
     }
@@ -31,21 +58,38 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     robotUtils.keyTap('V', ['control'])
     robotUtils.keyTap('enter')
     await gameWindow.setForeground()
+    robotUtils.keyTap('B', ['control'])
     await sleep(Math.max(Math.round(time / Math.pow(2, count)), 2000))
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
     await screenCaptureToFile(tempCapturePath)
-    // const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.9)
+    const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
+    const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
 
-    // if (found) {
-    //   // await clickGamePoint('黄金罗盘', `${taskName}_success`)
-    //   break
-    // }
-    const direction = await getDirection(tempCapturePath)
-    if (!direction) {
+    if (found1 && found2) {
+      if (!gameWindow.roleInfo.defaultTeamLeader) {
+        await liDui()
+      }
+      await clickGamePoint('黄金罗盘', `${taskName}_success`)
+      const inBattle = await isInBattle_1(gameWindow)
+
+      if (inBattle) {
+        await waitFinishZhanDou_1(gameWindow)
+      }
+
+      hasTask = await searchGameTask('黄金罗盘')
+      if (hasTask) {
+        await useWuPin('huangJinLuoPan')
+      }
+
+      await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
       break
     }
+    await screenCaptureToFile(tempCapturePath, [1093, 155], [210, 155])
+    const direction = await getDirection(tempCapturePath)
+    
+    let prevCenter = [...center]
     ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, nearlyGoneTo)
-    if (!nearlyGoneTo && center.join('') === leftTop.join('') && center.join('') === rightBottom.join('')) {
+    if (!nearlyGoneTo && center.join('') === prevCenter.join('')) {
       nearlyGoneTo = true
     }
     count++
@@ -66,7 +110,7 @@ export async function getDirection(tempCapturePath: string) {
   }
 
   if (!direction) {
-    return ''
+    throw new Error('getDirection error')
   }
   return direction
 }
