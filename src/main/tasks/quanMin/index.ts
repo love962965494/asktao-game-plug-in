@@ -135,7 +135,6 @@ export async function xianJieTongJi() {
           const hasTask = await hasGameTask('仙界通缉')
 
           if (!hasTask) {
-            await buChongZhuangTai()
             await teamLeaderWindow?.setForeground()
             await goToNPC('无名小镇', 'yuJianShangRen')
             await sleep(500)
@@ -153,22 +152,14 @@ export async function xianJieTongJi() {
     if (!hasTask2) {
       hasTask2 = true
       queue.enqueue(async () => {
-        // for (const gameWindow of gameWindows) {
-        //   await gameWindow.setForeground()
-        //   const inBattle = await isInBattle_1(gameWindow)
-
-        //   if (inBattle) {
-        //     robotUtils.keyTap('Z', ['alt'])
-        //     await sleep(200)
-        //     robotUtils.keyTap('Z', ['alt'])
-        //     await sleep(1000)
-        //   }
-        // }
-        await keepZiDong()
+        for (const gameWindow of gameWindows) {
+          await gameWindow.setForeground()
+          robotUtils.keyTap('2', ['control'])
+        }
         hasTask2 = false
       })
     }
-  }, 0.7 * 60 * 1000)
+  }, 0.2 * 60 * 1000)
 
   let hasTask3 = false
   setInterval(() => {
