@@ -94,11 +94,11 @@ export async function fuShengLu(gameWindow: GameWindowControl) {
   // 删除所有邮件
   {
     await clickGamePoint('浮生录_全选', 'fuShengLuQuanXuan', {
-      callback: async () => true
+      callback: async () => true,
     })
     await sleep(500)
     await clickGamePoint('浮生录_删除', 'fuShengLuShanChu', {
-      callback: async () => true
+      callback: async () => true,
     })
     await sleep(500)
     await clickGamePoint('换线', 'huanXian', {
@@ -303,7 +303,7 @@ export async function bangPaiZuDui() {
     await goToNPCAndTalk({
       npcName: 'jieYinDaoTong',
       conversition: 'woYaoHuiBangPaiZongTanBangXieShi',
-      gameWindow
+      gameWindow,
     })
     await sleep(500)
     await robotUtils.keyTap('enter')
@@ -436,7 +436,7 @@ export async function meiRiRiChang_DanRen() {
       })
       await sleep(500)
 
-      for (const task of riChangTasks_DanRen) {
+      for (const task of riChangTasks_DanRen.concat(commonConfig.danDuShiMen ? [] : ['收藏任务_师门任务'])) {
         const isChecked = await hasChecked(task)
 
         if (!isChecked) {
@@ -459,30 +459,61 @@ export async function meiRiRiChang_DanRen() {
     }
   }
 
+  if (!commonConfig.danDuShiMen) {
+    const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
+    const hasFoundQianMianGuai = {} as { [key: string]: boolean }
+
+    writeLog('师门任务', '', true)
+    while (true) {
+      for (const teamWindows of teamWindowsWithGroup) {
+        for (const teamWindow of teamWindows) {
+          if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
+            continue
+          }
+          await teamWindow.setForeground()
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiMen')}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          if (found) {
+            hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
+            robotUtils.keyTap('f1')
+            await sleep(200)
+            robotUtils.keyTap('f1')
+            writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
+          }
+          await sleep(500)
+        }
+      }
+    }
+  }
+}
+
+export async function shiMenRenWu() {
+  await getGameWindows()
+  const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
   const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
   const hasFoundQianMianGuai = {} as { [key: string]: boolean }
 
   writeLog('师门任务', '', true)
   while (true) {
-    for (const teamWindows of teamWindowsWithGroup) {
-      for (const teamWindow of teamWindows) {
-        if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
-          continue
-        }
-        await teamWindow.setForeground()
-        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiMen')}.jpg`)
-        await screenCaptureToFile(tempCapturePath)
-        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-        if (found) {
-          hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
-          robotUtils.keyTap('f1')
-          await sleep(200)
-          robotUtils.keyTap('f1')
-          writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
-        }
-        await sleep(500)
+    for (const gameWindow of allGameWindows) {
+      if (hasFoundQianMianGuai[gameWindow.roleInfo.roleName]) {
+        continue
       }
+      await gameWindow.setForeground()
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiMen')}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      if (found) {
+        hasFoundQianMianGuai[gameWindow.roleInfo.roleName] = true
+        robotUtils.keyTap('f1')
+        await sleep(200)
+        robotUtils.keyTap('f1')
+        writeLog('师门任务', `${gameWindow.roleInfo.roleName}`)
+      }
+      await sleep(500)
     }
   }
 }
@@ -544,12 +575,15 @@ export async function gouMaiYaoPin() {
       await clickGamePoint('批量购买', 'piLiangGouMai', {
         callback: async (errorCounts: number) => {
           if (errorCounts > 10) {
-            await writeLog('errorCountsLog',  `
+            await writeLog(
+              'errorCountsLog',
+              `
               ${teamMemberWindow.roleInfo.roleName}: 
               function: gouMaiYaoPin
               gamePoint: 批量购买
               buttonName: piLiangGouMai
-            `)
+            `
+            )
 
             return true
           }

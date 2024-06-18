@@ -45,6 +45,9 @@ export default function GameTaskManage() {
           <Button type="primary" onClick={() => ipcRenderer.send('yi-jian-ri-chang')}>
             一键日常
           </Button>
+          <Button type="primary" onClick={() => ipcRenderer.send('shi-men-ren-wu')}>
+            师门任务
+          </Button>
           <Button type="primary" onClick={() => ipcRenderer.send('wa-kuang')}>
             挖矿
           </Button>
