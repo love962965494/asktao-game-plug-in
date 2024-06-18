@@ -149,7 +149,6 @@ export function registerGlobalShortcut() {
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     await getGameWindows()
-<<<<<<< Updated upstream
     const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
     const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
     const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
@@ -159,56 +158,6 @@ export function registerGlobalShortcut() {
     // await meiRiRiChang_DanRen()
 
     // await huangJinLuoPan(gameWindow, teamLeaderWindow)
-=======
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    gameWindow.restoreGameWindow()
-    const findTarget = await findTargetInMap(gameWindow, '天墟境', true)
-    let targetTooFar = false
-    while (true) {
-      const position = await findTarget('chiXueYanJie_1')
-      if (position.length === 2) {
-        robotUtils.keyToggle('shift', 'down')
-        await moveMouseToAndClick(
-          '',
-          {
-            buttonName: '',
-            position: [position[0], position[1] - 40],
-            size: [40, 40],
-          },
-          {
-            callback: async (errorCounts: number) => {
-              if (errorCounts > 10) {
-                targetTooFar = true
-                return true
-              }
-              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/dialogLine.jpg')
-              const tempCapturePath = path.join(pythonImagesPath, `temp/findTarget_${randomName()}.jpg`)
-              await screenCaptureToFile(tempCapturePath)
-              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-              return found
-            },
-          }
-        )
-        robotUtils.keyToggle('shift', 'up')
-        if (targetTooFar) {
-          targetTooFar = false
-          continue
-        }
-        await clickGamePoint(`域外_四星难度`, 'yuWaiNanDu')
-        await sleep(3 * 1000)
-        const isInBattle = await isInBattleOfSmallScreen(gameWindow)
-
-        if (isInBattle) {
-          await waitFinishZhanDouOfSmallScreen(gameWindow)
-          robotUtils.keyTap('B', ['control'])
-        }
-      }
-    }
-
-    // await meiRiRiChang_DanRen()
-
->>>>>>> Stashed changes
     // _setWindowTopMost()
   })
 
