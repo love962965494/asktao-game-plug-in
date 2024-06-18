@@ -65,7 +65,7 @@ export async function xianJieShenBu() {
 async function lingQuRenWu(teamWindows: GameWindowControl[]) {
   const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
   await teamLeaderWindow.setForeground()
-  const hasFinished = await escShouCangTasks('xuanShangBOSS')
+  const hasFinished = await escShouCangTasks('xuanShangBOSS', false, true)
   if (hasFinished) {
     return hasFinished
   }
@@ -173,7 +173,7 @@ async function executePairTask(pairPosition: (number[] | undefined)[], teamLeade
 async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
   const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
   await teamLeaderWindow.setForeground()
-  await escShouCangTasks('xuanShangBOSS')
+  await escShouCangTasks('xuanShangBOSS', false, true)
   await hasGoneToNPC(teamLeaderWindow)
   await goToNPCAndTalk({
     city,

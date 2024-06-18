@@ -47,12 +47,14 @@ export async function moveMouseToAndClick(
     callback?: Function
     threshold?: number
     notCheck?: boolean
-    randomPixNums?: number[]
+    randomPixNums?: number[],
+    quicklyClick?: boolean
   } = {
     needPreProcessing: false,
     rightClick: false,
     notCheck: false,
     randomPixNums: [20, 5],
+    quicklyClick: false
   }
 ) {
   let isInRange = false
@@ -80,7 +82,15 @@ export async function moveMouseToAndClick(
       return
     }
 
-    robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
+    if (otherOptions.quicklyClick) {
+      robotUtils.keyToggle('control', 'down')
+      await sleep(500)
+      robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
+      await sleep(500)
+      robotUtils.keyToggle('control', 'up')
+    } else {
+      robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
+    }
     isInRange = true
     await sleep(1000)
     await moveMouseToBlank()

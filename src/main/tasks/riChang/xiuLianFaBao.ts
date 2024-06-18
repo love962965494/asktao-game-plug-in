@@ -17,6 +17,7 @@ import { gouMaiPingTai } from '../basicFunction/gouMaiPingTai'
 import { liDui, yiJianZuDui } from '../basicTasks'
 import { useWuPin } from '../wuPinTask'
 
+const taskName = '修炼法宝'
 export async function xiuLianFaBao() {
   await getGameWindows()
   const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
@@ -71,8 +72,8 @@ export async function xiuLianFaBao() {
     await sleep(500)
     await talkToNPC('蓬莱岛', 'duoBaoDaoRen', 'dongXiGeiNi,gaoSuWoFangFaBa')
     await sleep(500)
-    await useWuPin('panChiJie')
-    await useWuPin('xueHunSiLian')
+    await useWuPin('panChiJie', 1, true)
+    await useWuPin('xueHunSiLian', 1, true)
     await clickGamePoint('修炼法宝-多宝道人-提交', 'duoBaoDaoRen_tiJiao')
 
     let index = 0
@@ -92,7 +93,7 @@ export async function xiuLianFaBao() {
   const { pinYin } = global.appContext.gameTask['修炼法宝']
   for (const teamLeaderWindow of teamLeaderWindows) {
     await teamLeaderWindow.setForeground()
-    await searchGameTask(pinYin)
+    await searchGameTask(taskName)
     robotUtils.keyToggle('control', 'down')
     await sleep(100)
     await clickGamePoint('修炼法宝-小花仙', `${pinYin}_xiaoHuaXian`)
@@ -118,7 +119,7 @@ export async function xiuLianFaBao() {
   for (const [place, shenShou] of siShenShou) {
     for (const teamLeaderWindow of teamLeaderWindows) {
       await teamLeaderWindow.setForeground()
-      await searchGameTask(pinYin)
+      await searchGameTask(taskName)
       robotUtils.keyToggle('control', 'down')
       await sleep(100)
       await clickGamePoint('修炼法宝-四神兽', `${pinYin}_siShenShou`)
@@ -142,7 +143,7 @@ export async function xiuLianFaBao() {
   // 回龙宫，找龙王
   for (const teamLeaderWindow of teamLeaderWindows) {
     await teamLeaderWindow.setForeground()
-    await searchGameTask(pinYin)
+    await searchGameTask(taskName)
     robotUtils.keyToggle('control', 'down')
     await sleep(100)
     await clickGamePoint('修炼法宝-龙王', `${pinYin}_longWang`)
@@ -176,7 +177,7 @@ export async function xiuLianFaBao() {
 }
 
 async function lingQuRenWu(gameWindow: GameWindowControl) {
-  const { pinYin } = global.appContext.gameTask['修炼法宝']
+  const { pinYin } = global.appContext.gameTask[taskName]
   await gameWindow.setForeground()
 
   robotUtils.keyTap('B', ['control'])
@@ -229,7 +230,7 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
   await sleep(500)
 
   // 找龙王
-  await searchGameTask(pinYin)
+  await searchGameTask(taskName)
   robotUtils.keyToggle('control', 'down')
   await sleep(100)
   await clickGamePoint('修炼法宝-龙王', `${pinYin}_longWang`)
@@ -243,7 +244,7 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
   await waitFinishZhanDou_1(gameWindow)
 
   // 找多宝道人
-  await searchGameTask(pinYin)
+  await searchGameTask(taskName)
   robotUtils.keyToggle('control', 'down')
   await sleep(100)
   await clickGamePoint('修炼法宝-多宝道人', `${pinYin}_duoBaoDaoRen`)

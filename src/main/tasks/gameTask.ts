@@ -1,7 +1,7 @@
 import { IGameTask } from 'constants/types'
 import { clickGamePoint, matchString, moveMouseToAndClick } from '../../utils/common'
 import robotUtils from '../../utils/robot'
-import { randomName, sleep } from '../../utils/toolkits'
+import { randomName, randomNum, sleep } from '../../utils/toolkits'
 import { clipboard } from 'electron'
 import path from 'path'
 import { pythonImagesPath } from '../../paths'
@@ -56,7 +56,15 @@ export async function searchGameTask(taskName: string) {
   })
   await sleep(500)
   await clickGamePoint('当前任务-搜索框', 'searchGameTask', {
-    threshold: 1,
+    callback: async () => {
+      await sleep(randomNum(500))
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/inputLogo.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('serachGameTask')}.jpg`)
+      await screenCaptureToFile(tempCapturePath, [1179, 208], [152, 45])
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return found
+    }
   })
   await sleep(500)
 
@@ -77,7 +85,7 @@ export async function searchGameTask(taskName: string) {
 export const escTaskBarSize = [250, 28]
 // 任务框框size
 const taskBarSize = [250, 60]
-export async function escShouCangTasks(taskName: string, ignoreHasFinished = false) {
+export async function escShouCangTasks(taskName: string, ignoreHasFinished = false, quicklyClick = false) {
   robotUtils.keyTap('B', ['control'])
   await sleep(300)
   robotUtils.keyTap('escape')
@@ -114,6 +122,8 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
       buttonName: 'shouCangRenWu',
       position,
       size: taskBarSize,
+    }, {
+      quicklyClick
     })
   }
 

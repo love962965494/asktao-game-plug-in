@@ -7,12 +7,14 @@ import { findImagePositions, findImagePositionsWithErrorHandle, screenCaptureToF
 import { hasGameTask } from './gameTask'
 
 const packages = ['装备-包裹', '装备-行囊1', '装备-行囊2', '装备-坐骑']
-export async function findWuPinPosition(name: string) {
+export async function findWuPinPosition(name: string, hasOpenedWuPinLan: boolean) {
   const wuPinImagePath = path.join(pythonImagesPath, `GUIElements/wuPinRelative/${name}.jpg`)
-  robotUtils.keyTap('B', ['control'])
-  await sleep(200)
-  robotUtils.keyTap('E', ['alt'])
-  await sleep(200)
+  if (!hasOpenedWuPinLan) {
+    robotUtils.keyTap('B', ['control'])
+    await sleep(200)
+    robotUtils.keyTap('E', ['alt'])
+    await sleep(200)
+  }
 
   for (const packageName of packages) {
     await clickGamePoint(packageName, 'hasWuPin', { tabOptions: { isTab: true, activeTabColor: '#785a00' } })
@@ -38,8 +40,8 @@ export async function findWuPinPosition(name: string) {
 export const wuPinSize = [120, 90]
 
 // 使用物品
-export async function useWuPin(name: string, times: number = 1) {
-  const position = await findWuPinPosition(name)
+export async function useWuPin(name: string, times: number = 1, hasOpenedWuPinLan = false) {
+  const position = await findWuPinPosition(name, hasOpenedWuPinLan)
 
   if (position.length > 0) {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('useWuPin')}.jpg`)

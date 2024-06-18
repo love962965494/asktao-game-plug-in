@@ -9,7 +9,7 @@ import {
 } from '../../../utils/common'
 import { pythonImagesPath } from '../../../paths'
 import GameWindowControl from '../../../utils/gameWindowControll'
-import { getGameWindows } from '../../../utils/systemCotroll'
+import { gameWindows, getGameWindows } from '../../../utils/systemCotroll'
 import path from 'path'
 import { randomName, randomPixelNum, sleep } from '../../../utils/toolkits'
 import { ipcMain } from 'electron'
@@ -30,11 +30,14 @@ import commonConfig from '../../../constants/config.json'
 import { monitorGameDiaoXian } from '../monitorTask'
 import { waKuang } from './waKuang'
 import FuShengLu from '../../../constants/fuShengLu.json'
+import { xiuLianFaBao } from './xiuLianFaBao'
+import { xianJieShenBu } from '../xiuXing/xianJieShenBu'
 
 export async function registerYiJianQianDao() {
   ipcMain.on('yi-jian-qian-dao', async () => yiJianQianDao())
   ipcMain.on('yi-jian-ri-chang', async () => yiJianRiChang())
   ipcMain.on('wa-kuang', async () => waKuang())
+  ipcMain.on('xiu-lian-fa-bao', async () => xiuLianFaBao())
 }
 
 // 五雷令
@@ -394,7 +397,7 @@ export async function meiRiRiChang_ZuDui() {
   }
 }
 
-const riChangTasks_DanRen = ['收藏任务_娃娃训练营', '收藏任务_师门任务']
+const riChangTasks_DanRen = ['收藏任务_娃娃训练营']
 export async function meiRiRiChang_DanRen() {
   const teamWindowsWithGroup = await getTeamsInfo()
 
@@ -635,5 +638,15 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
   }
 
   await sleep(5000)
+
+  await xianJieShenBu()
+
+  for (const teamWindows of teamWindowsWithGroup) {
+    for (const teamWindow of teamWindows) {
+      await teamWindow.setForeground()
+      robotUtils.keyTap('B', ['control'])
+    }
+  }
+
   await meiRiRiChang_DanRen()
 }

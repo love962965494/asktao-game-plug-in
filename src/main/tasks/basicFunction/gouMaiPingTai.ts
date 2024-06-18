@@ -29,7 +29,7 @@ export async function gouMaiPingTai(
   await clickGamePoint('互动图标', 'huDongTuBiao', {
     callback: async () => {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/huDongZhongXin.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huDongZhongXin')}`)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huDongZhongXin')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
@@ -104,7 +104,7 @@ async function souSuoZhuangBei(type: keyof SouSuoZhuangBei, targetName: string) 
     )
     const tempCapturePath = path.join(
       pythonImagesPath,
-      `temp/${randomName(`souSuoZhuangBei-${targetNameEnum[type as keyof typeof targetNameEnum]}`)}`
+      `temp/${randomName(`souSuoZhuangBei-${targetNameEnum[type as keyof typeof targetNameEnum]}`)}.jpg`
     )
     await screenCaptureToFile(tempCapturePath)
     const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
@@ -113,7 +113,7 @@ async function souSuoZhuangBei(type: keyof SouSuoZhuangBei, targetName: string) 
       await clickGamePoint('摆摊购买平台-搜索装备-类型选择', 'souSuoZhuangBei-typeSelect', {
         callback: async () => {
           await moveMouseToBlank()
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('souSuoZhuangBei-typeSelect')},jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('souSuoZhuangBei-typeSelect')}.jpg`)
           await screenCaptureToFile(tempCapturePath, [710, 170], [40, 34])
           const colors = await extractThemeColors(tempCapturePath)
 

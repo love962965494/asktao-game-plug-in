@@ -108,7 +108,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [901, 559], [70, 16])
+    await screenCaptureToFile(srcImagePath, [526, 606], [475, 34])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -152,6 +152,8 @@ export function registerGlobalShortcut() {
     const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
     const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
     const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
+    await teamLeaderWindow.setForeground()
+    await escShouCangTasks('quanMinShuaDao', true, true)
     // await fuShengLu(gameWindow)
     // await meiRiRiChang_DanRen()
 

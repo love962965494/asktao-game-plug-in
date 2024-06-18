@@ -48,6 +48,9 @@ export default function GameTaskManage() {
           <Button type="primary" onClick={() => ipcRenderer.send('wa-kuang')}>
             挖矿
           </Button>
+          <Button type="primary" onClick={() => ipcRenderer.send('xiu-lian-fa-bao')}>
+            修炼法宝
+          </Button>
         </Space>
       </div>
 
