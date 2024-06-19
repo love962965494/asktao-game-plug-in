@@ -23,11 +23,11 @@ def findTarget(target_img_path):
         screen_gray = preprocess_image(screen)
 
         # 缩小屏幕图像的大小以提高匹配速度
-        scale_factor = 0.5
-        screen_gray_resized = cv2.resize(screen_gray, (0, 0), fx=scale_factor, fy=scale_factor)
+        # scale_factor = 0.5
+        # screen_gray_resized = cv2.resize(screen_gray, (0, 0), fx=scale_factor, fy=scale_factor)
 
         # 使用模板匹配
-        result = cv2.matchTemplate(screen_gray_resized, target_img, cv2.TM_CCOEFF_NORMED)
+        result = cv2.matchTemplate(screen_gray, target_img, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
         threshold = 0.7 # 设置匹配阈值
