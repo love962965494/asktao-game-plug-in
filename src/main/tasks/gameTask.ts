@@ -61,7 +61,7 @@ export async function searchGameTask(taskName: string) {
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/inputLogo.jpg')
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('serachGameTask')}.jpg`)
       await screenCaptureToFile(tempCapturePath, [1179, 208], [152, 45])
-      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.6)
 
       return found
     }

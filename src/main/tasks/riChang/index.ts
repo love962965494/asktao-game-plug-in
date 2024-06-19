@@ -483,7 +483,7 @@ export async function meiRiRiChang_DanRen() {
             writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
           }
           await sleep(500)
-        }
+        } 
       }
     }
   }

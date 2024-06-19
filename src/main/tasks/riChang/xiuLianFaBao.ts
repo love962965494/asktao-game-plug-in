@@ -49,9 +49,9 @@ export async function xiuLianFaBao() {
   }
 
   // 多宝道人=》 购买血魂丝涟和蟠螭结
-  for (const gameWindow of allGameWindows) {
-    await gouMaiWuPin(gameWindow)
-  }
+  // for (const gameWindow of allGameWindows) {
+  //   await gouMaiWuPin(gameWindow)
+  // }
 
   for (const gameWindow of allGameWindows) {
     await gameWindow.setForeground()
