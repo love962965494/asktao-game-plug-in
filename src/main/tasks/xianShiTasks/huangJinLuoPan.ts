@@ -5,8 +5,7 @@ import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fil
 import robotUtils from '../../../utils/robot'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
-import { clickGamePoint, readLog } from '../../../utils/common'
-import { hasGameTask, searchGameTask } from '../gameTask'
+import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
 import { useWuPin } from '../wuPinTask'
@@ -17,10 +16,16 @@ export async function huangJinLuoPanLoop() {
   const teamWindowsWithGroup = await getTeamsInfo()
 
   for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
-    await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow)
+    let hasDone = false
+    while (!hasDone) {
+      hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow)
+    }
 
     for (const teamMemberWindow of teamMemberWindows) {
-      await huangJinLuoPan(teamMemberWindow, teamLeaderWindow)
+      let hasDone = false
+      while (!hasDone) {
+        hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow)
+      }
     }
   }
 }
@@ -28,12 +33,12 @@ export async function huangJinLuoPanLoop() {
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl) {
   const hasFinishedRoles = JSON.parse(await readLog('黄金罗盘')) as string[]
   if (hasFinishedRoles.includes(gameWindow.roleInfo.roleName)) {
-    return
+    return true
   }
   await gameWindow.setForeground()
   robotUtils.keyTap('B', ['control'])
 
-  const { size } = global.appContext.cityMap['北海沙滩']
+  const { size } = global.appContext.cityMap['轩辕庙']
   const templateImagePath1 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success1.jpg`)
   const templateImagePath2 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success2.jpg`)
 
@@ -48,7 +53,9 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     await liDui()
   }
   await useWuPin('huangJinLuoPan')
-  await yiJianZuDui(teamLeaderWindow?.roleInfo.roleName)
+  if (!gameWindow.roleInfo.defaultTeamLeader) {
+    await yiJianZuDui(teamLeaderWindow?.roleInfo.roleName)
+  }
   while (hasTask) {
     if (!gameWindow.roleInfo.defaultTeamLeader) {
       await teamLeaderWindow?.setForeground()
@@ -94,18 +101,27 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         } while (true)
       }
       await clickGamePoint('黄金罗盘', `${taskName}_success`)
-      const inBattle = await isInBattle_1(gameWindow)
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_hasBeenFound')}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 
-      if (inBattle) {
-        await waitFinishZhanDou_1(gameWindow)
+      if (found) {
+        return false
+      } else {
+        const inBattle = await isInBattle_1(gameWindow)
+
+        if (inBattle) {
+          await waitFinishZhanDou_1(gameWindow)
+        }
+      
+        await writeLog('黄金罗盘', JSON.stringify(hasFinishedRoles.concat(gameWindow.roleInfo.roleName)), true)
+        hasTask = false
       }
 
-      hasTask = await hasGameTask('黄金罗盘')
-      if (hasTask) {
-        await useWuPin('huangJinLuoPan')
+      if (!gameWindow.roleInfo.defaultTeamLeader) {
+        await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
       }
-
-      await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
       break
     }
 
@@ -114,11 +130,19 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
 
     let prevCenter = [...center]
     ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, nearlyGoneTo)
-    if (!nearlyGoneTo && center.join('') === prevCenter.join('')) {
-      nearlyGoneTo = true
+    const distance = Math.sqrt(Math.pow(center[0] - prevCenter[0], 2) + Math.pow(center[1] - prevCenter[1], 2))
+    if (!nearlyGoneTo) {
+      if (gameWindow.roleInfo.defaultTeamLeader && center.join('') === prevCenter.join('')) {
+        nearlyGoneTo = true
+      }
+      if (!gameWindow.roleInfo.defaultTeamLeader && distance <= 5) {
+        nearlyGoneTo = true
+      }
     }
     count++
   }
+
+  return true
 }
 
 const directions = ['left', 'leftTop', 'top', 'rightTop', 'right', 'rightBottom', 'bottom', 'leftBottom'] as const
