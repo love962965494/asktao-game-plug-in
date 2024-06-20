@@ -69,13 +69,12 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
   if (hasFinished) {
     return hasFinished
   }
-  await hasGoneToNPC(teamLeaderWindow)
-  await goToNPCAndTalk({
+  // await hasGoneToNPC(teamLeaderWindow)
+  await talkToNPC(
     city,
     npcName,
-    conversition: `xuanShangRenWu(${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']})_duiZhang`,
-    gameWindow: teamLeaderWindow,
-    calculatePosition: async () => {
+    `xuanShangRenWu(${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']})_duiZhang`,
+    async () => {
       await moveMouseToBlank()
       const templateImagePath = path.join(
         pythonImagesPath,
@@ -84,8 +83,8 @@ async function lingQuRenWu(teamWindows: GameWindowControl[]) {
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
       const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
-    },
-  })
+    }
+  )
   await sleep(500)
 
   for (const teamMemberWindow of teamMemberWindows) {
@@ -174,13 +173,11 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
   const [teamLeaderWindow, ...teamMemberWindows] = teamWindows
   await teamLeaderWindow.setForeground()
   await escShouCangTasks('xuanShangBOSS', false, true)
-  await hasGoneToNPC(teamLeaderWindow)
-  await goToNPCAndTalk({
+  await talkToNPC(
     city,
     npcName,
-    conversition: `xuanShangRenWu(${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']})_duiZhang`,
-    gameWindow: teamLeaderWindow,
-    calculatePosition: async () => {
+    `xuanShangRenWu(${teamLeaderWindow.roleInfo.gameConfig['仙界神捕']['任务模式']})_duiZhang`,
+    async () => {
       await moveMouseToBlank()
       const templateImagePath = path.join(
         pythonImagesPath,
@@ -189,8 +186,8 @@ async function lingQuJiangLi(teamWindows: GameWindowControl[]) {
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('calculatePosition1')}.jpg`)
       const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
       return position
-    },
-  })
+    }
+  )
 
   await sleep(500)
 
