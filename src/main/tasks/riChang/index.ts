@@ -38,6 +38,7 @@ export async function registerYiJianQianDao() {
   ipcMain.on('yi-jian-ri-chang', async () => yiJianRiChang())
   ipcMain.on('wa-kuang', async () => waKuang())
   ipcMain.on('xiu-lian-fa-bao', async () => xiuLianFaBao())
+  ipcMain.on('shi-men-ren-wu', async () => shiMenRenWu())
 }
 
 // 五雷令
