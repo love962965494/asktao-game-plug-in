@@ -1,9 +1,11 @@
-import { Button, Space } from 'antd'
-import { useContext } from 'react'
+import { Button, Modal, Select, Space } from 'antd'
+import { useContext, useState } from 'react'
 import { AppContext } from 'renderer/App'
 
 export default function GameTaskManage() {
   const { ipcRenderer } = useContext(AppContext)
+  const [huangJinLuoPanModalVisible, setHuangJinLuoPanModalVisible] = useState(false)
+  const [huangJinLuoPanCity, setHuangJinLuoPanCity] = useState('')
 
   return (
     <>
@@ -93,9 +95,26 @@ export default function GameTaskManage() {
           <Button type="primary" onClick={() => ipcRenderer.send('tian-xu-mi-fu')}>
             天墟秘府
           </Button>
-          <Button type="primary" onClick={() => ipcRenderer.send('huang-jin-luo-pan')}>
+          <Button type="primary" onClick={() => setHuangJinLuoPanModalVisible(true)}>
             黄金罗盘
           </Button>
+          <Modal
+            title="选择地图"
+            visible={huangJinLuoPanModalVisible}
+            onOk={() => {
+              ipcRenderer.send('huang-jin-luo-pan', huangJinLuoPanCity)
+              setHuangJinLuoPanModalVisible(false)
+            }}
+            onCancel={() => setHuangJinLuoPanModalVisible(false)}
+          >
+            黄金罗盘地图：
+            <Select style={{ width: 300 }} placeholder="选择" value={huangJinLuoPanCity} onChange={(value) => setHuangJinLuoPanCity(value)}>
+              <Select.Option value="桃柳林">桃柳林</Select.Option>
+              <Select.Option value="轩辕庙">轩辕庙</Select.Option>
+              <Select.Option value="风月谷">风月谷</Select.Option>
+              <Select.Option value="北海沙滩">北海沙滩</Select.Option>
+            </Select>
+          </Modal>
         </Space>
       </div>
     </>

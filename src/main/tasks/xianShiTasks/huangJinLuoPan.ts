@@ -9,28 +9,33 @@ import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
 import { useWuPin } from '../wuPinTask'
+import { ICityMap } from 'constants/types'
 
 const taskName = 'huangJinLuoPan'
 
-export async function huangJinLuoPanLoop() {
+export async function huangJinLuoPanLoop(city: string) {
   const teamWindowsWithGroup = await getTeamsInfo()
+  const historyData = JSON.parse(await readLog('黄金罗盘')) as string[]
+  if (!historyData.includes(new Date().toLocaleDateString())) {
+    await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString()]), true)
+  }
 
   for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
     let hasDone = false
     while (!hasDone) {
-      hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow)
+      hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow, city)
     }
 
     for (const teamMemberWindow of teamMemberWindows) {
       let hasDone = false
       while (!hasDone) {
-        hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow)
+        hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow, city)
       }
     }
   }
 }
 
-export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl) {
+export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {
   const hasFinishedRoles = JSON.parse(await readLog('黄金罗盘')) as string[]
   if (hasFinishedRoles.includes(gameWindow.roleInfo.roleName)) {
     return true
@@ -38,7 +43,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
   await gameWindow.setForeground()
   robotUtils.keyTap('B', ['control'])
 
-  const { size } = global.appContext.cityMap['轩辕庙']
+  const { size } = global.appContext.cityMap[city as keyof ICityMap]
   const templateImagePath1 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success1.jpg`)
   const templateImagePath2 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success2.jpg`)
 
