@@ -204,23 +204,26 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
       return position
     },
   })
-  {
-    let index = 0
-    while (index < 3) {
-      await moveMouseToAndClick(
-        '',
-        {
-          buttonName: '',
-          position: [590, 440],
-          size: [260, 40],
-        },
-        {
-          notCheck: true,
-        }
-      )
-      index++
-    }
-  }
+  await sleep(1000)
+  robotUtils.keyTap('B', ['control'])
+  await sleep(500)
+  // {
+  //   let index = 0
+  //   while (index < 3) {
+  //     await moveMouseToAndClick(
+  //       '',
+  //       {
+  //         buttonName: '',
+  //         position: [590, 440],
+  //         size: [260, 40],
+  //       },
+  //       {
+  //         notCheck: true,
+  //       }
+  //     )
+  //     index++
+  //   }
+  // }
 
   await talkToNPC('天墉城', 'xiaoYaoXian', 'woXiangQuDeFaBaoXiangZhu,qingQianBeiZhiDian')
   await sleep(500)
