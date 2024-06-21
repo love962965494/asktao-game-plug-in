@@ -6,6 +6,7 @@ import robotUtils from '../../../utils/robot'
 import path from 'path'
 import { pythonImagesPath } from '../../../paths'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
+import commonConfig from '../../../constants/config.json'
 
 // 需要所有游戏页面都先把百宝翻牌页面打开
 export async function baiBaoFanPai() {
@@ -39,7 +40,7 @@ export async function baiBaoFanPai() {
       robotUtils.keyTap('enter')
     }
 
-    await sleep(60 * 1000)
+    await sleep(commonConfig.accountsNum === 10 ? 60 * 1000 : 1.5 * 60 * 1000)
 
     for (const gameWindow of gameWindows) {
       await gameWindow.setForeground()
