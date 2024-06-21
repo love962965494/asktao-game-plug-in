@@ -465,11 +465,11 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
           resolve(1)
         }
 
-        _inner()
+        setTimeout(() => _inner(), 10)
       })
       const promise2 = new Promise<number>((resolve) => {
         function _loop() {
-          let timeout =setTimeout(() => {
+          let timeout = setTimeout(() => {
             if (global.appContext.hasFoundTarget[roleAccount]) {
               global.appContext.hasFoundTarget[roleAccount] = false
               clearTimeout(timeout)
@@ -487,9 +487,9 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
 
       if (result === 2) {
         robotUtils.keyTap('X', ['alt'])
-        await sleep(500)
+        await sleep(1000)
         robotUtils.mouseClick('right')
-        await sleep(500)
+        await sleep(1000)
         await moveMouseToBlank()
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
         targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)

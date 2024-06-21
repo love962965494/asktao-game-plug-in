@@ -625,7 +625,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
   const currentHour = new Date().getHours()
   if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
     await xianJieTongJi()
-    await sleep(3 * 60 * 60 * 1000)
+    await sleep(4 * 60 * 60 * 1000)
 
     let count = 0
     while (count < 3) {

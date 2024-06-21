@@ -7,7 +7,7 @@ import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
 import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
-import { getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
+import { displayGameWindows, getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
 import { useWuPin } from '../wuPinTask'
 import { ICityMap } from 'constants/types'
 
@@ -33,6 +33,8 @@ export async function huangJinLuoPanLoop(city: string) {
       }
     }
   }
+
+  await displayGameWindows()
 }
 
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {

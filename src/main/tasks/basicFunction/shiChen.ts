@@ -37,7 +37,7 @@ export async function xunHuanShiChen(isOpenShiChen: boolean, needQuery = false) 
       const date = new Date()
       await writeLog(
         '时辰',
-        JSON.stringify({ today: date.getDate(), hours: [...hours, date.getHours()] }, undefined, 4),
+        JSON.stringify({ today: date.getDate(), hours: [...hours, date.getHours()], roles: [] }, undefined, 4),
         true
       )
     }
@@ -61,7 +61,7 @@ export async function hasExecutedShiChen(today: number, executedHours: number[])
   if (today !== date.getDate()) {
     await writeLog(
       '时辰',
-      JSON.stringify({ today: date.getDate(), hours: [] }, undefined, 4),
+      JSON.stringify({ today: date.getDate(), hours: [], roles: [] }, undefined, 4),
       true
     )
     return false
