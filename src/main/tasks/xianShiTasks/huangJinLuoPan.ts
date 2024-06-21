@@ -105,7 +105,20 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           await sleep(Math.max(Math.round(time / Math.pow(2, count)), 2000))
         } while (true)
       }
-      await clickGamePoint('黄金罗盘', `${taskName}_success`)
+      await clickGamePoint('黄金罗盘', `${taskName}_success`, {
+        callback: async () => {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
+          const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
+
+          if (!found1 && !found2) {
+            return true
+          }
+
+          return false
+        },
+      })
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_hasBeenFound')}.jpg`)
       await screenCaptureToFile(tempCapturePath)
@@ -119,7 +132,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         if (inBattle) {
           await waitFinishZhanDou_1(gameWindow)
         }
-      
+
         await writeLog('黄金罗盘', JSON.stringify(hasFinishedRoles.concat(gameWindow.roleInfo.roleName)), true)
         hasTask = false
       }
