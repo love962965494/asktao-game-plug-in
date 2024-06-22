@@ -8,6 +8,7 @@ import { pythonImagesPath } from '../../../paths'
 import {
   findImagePositions,
   findImagePositionsWithErrorHandle,
+  findImageWithinTemplate,
   screenCaptureToFile,
 } from '../../../utils/fileOperations'
 import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../../utils/common'
@@ -96,7 +97,16 @@ export async function xiuLianFaBao() {
     await searchGameTask(taskName)
     robotUtils.keyToggle('control', 'down')
     await sleep(100)
-    await clickGamePoint('修炼法宝-小花仙', `${pinYin}_xiaoHuaXian`)
+    await clickGamePoint('修炼法宝-小花仙', `${pinYin}_xiaoHuaXian`, {
+      callback: async () => {
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${pinYin}_xiaoHuaXian`)}.jpg`)
+        const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+        await screenCaptureToFile(tempCapturePath)
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        return !found
+      },
+    })
     await sleep(100)
     robotUtils.keyToggle('control', 'up')
     await sleep(100)
@@ -122,7 +132,16 @@ export async function xiuLianFaBao() {
       await searchGameTask(taskName)
       robotUtils.keyToggle('control', 'down')
       await sleep(100)
-      await clickGamePoint('修炼法宝-四神兽', `${pinYin}_siShenShou`)
+      await clickGamePoint('修炼法宝-四神兽', `${pinYin}_siShenShou`, {
+        callback: async () => {
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${pinYin}_siShenShou`)}.jpg`)
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  
+          return !found
+        },
+      })
       await sleep(100)
       robotUtils.keyToggle('control', 'up')
       await sleep(100)
@@ -209,23 +228,6 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
   await sleep(1000)
   robotUtils.keyTap('B', ['control'])
   await sleep(500)
-  // {
-  //   let index = 0
-  //   while (index < 3) {
-  //     await moveMouseToAndClick(
-  //       '',
-  //       {
-  //         buttonName: '',
-  //         position: [590, 440],
-  //         size: [260, 40],
-  //       },
-  //       {
-  //         notCheck: true,
-  //       }
-  //     )
-  //     index++
-  //   }
-  // }
 
   await talkToNPC('天墉城', 'xiaoYaoXian', 'woXiangQuDeFaBaoXiangZhu,qingQianBeiZhiDian')
   await sleep(500)
@@ -238,7 +240,16 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
   await searchGameTask(taskName)
   robotUtils.keyToggle('control', 'down')
   await sleep(100)
-  await clickGamePoint('修炼法宝-龙王', `${pinYin}_longWang`)
+  await clickGamePoint('修炼法宝-龙王', `${pinYin}_longWang`, {
+    callback: async () => {
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${pinYin}_longWang`)}.jpg`)
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return !found
+    },
+  })
   await sleep(100)
   robotUtils.keyToggle('control', 'up')
   await sleep(100)
@@ -252,7 +263,16 @@ async function lingQuRenWu(gameWindow: GameWindowControl) {
   await searchGameTask(taskName)
   robotUtils.keyToggle('control', 'down')
   await sleep(100)
-  await clickGamePoint('修炼法宝-多宝道人', `${pinYin}_duoBaoDaoRen`)
+  await clickGamePoint('修炼法宝-多宝道人', `${pinYin}_duoBaoDaoRen`, {
+    callback: async () => {
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${pinYin}_duoBaoDaoRen`)}.jpg`)
+      const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+      await screenCaptureToFile(tempCapturePath)
+      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+      return !found
+    },
+  })
   await sleep(100)
   robotUtils.keyToggle('control', 'up')
   await sleep(100)
