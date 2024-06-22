@@ -107,12 +107,13 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           await sleep(Math.max(Math.round(time / Math.pow(2, count)), 2000))
         } while (true)
       }
+      let hasBeenFoundTempCapturePath = ''
       await clickGamePoint('黄金罗盘', `${taskName}_success`, {
         callback: async () => {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
-          const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
+          hasBeenFoundTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+          await screenCaptureToFile(hasBeenFoundTempCapturePath)
+          const found1 = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath1)
+          const found2 = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath2)
 
           if (!found1 && !found2) {
             return true
@@ -122,9 +123,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         },
       })
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
-      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_hasBeenFound')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+      const found = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath, 0.7)
 
       if (found) {
         return false
@@ -184,7 +183,7 @@ export async function getDirection(tempCapturePath: string) {
   return direction
 }
 
-const tinyDistance = 3
+const tinyDistance = 2
 function calculatePositions(
   leftTop: number[],
   rightBottom: number[],
