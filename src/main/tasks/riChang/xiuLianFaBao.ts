@@ -14,7 +14,7 @@ import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank } from '../../../
 import { searchGameTask } from '../gameTask'
 import { waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { gouMaiPingTai } from '../basicFunction/gouMaiPingTai'
-import { liDui, yiJianZuDui } from '../basicTasks'
+import { displayGameWindows, liDui, yiJianZuDui } from '../basicTasks'
 import { useWuPin } from '../wuPinTask'
 
 const taskName = '修炼法宝'
@@ -174,6 +174,8 @@ export async function xiuLianFaBao() {
 
     await waitFinishZhanDou_1(teamLeaderWindow)
   }
+
+  await displayGameWindows()
 }
 
 async function lingQuRenWu(gameWindow: GameWindowControl) {
