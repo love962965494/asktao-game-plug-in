@@ -405,17 +405,7 @@ export async function getCurrentGamePosition() {
 
   return currentPosition
 }
-export async function hasGoneToPosition() {
-  const { position, size } = global.appContext.gamePoints['地图坐标']
-  let color = ''
-  while (!color.includes('#8282ff')) {
-    robotjs.moveMouse(96, 29)
-    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetAndExtractThemeColor')}`)
-    await screenCaptureToFile(tempCapturePath, position, size)
-    color = await extractThemeColors(tempCapturePath)
-    await sleep(500)
-  }
-}
+
 export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
   await gameWindow.setForeground()
   gameWindow.setPosition(0, 0)
@@ -432,87 +422,68 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
 
     // 1 正方向  -1 反方向
     let direction = 1
-    let hasFound = false
     let targetPosition: number[] = []
     let rolePosition: number[] = []
-    while (!hasFound) {
-      const promise1 = new Promise<number>((resolve) => {
-        async function _inner() {
-          const position = positions[index]
-          robotUtils.keyTap('B', ['control'])
-          await sleep(100)
-          robotUtils.keyTap('W', ['alt'])
-          clipboard.writeText(`${position[0]}.${position[1]}`)
-          robotUtils.keyTap('V', ['control'])
-          robotUtils.keyTap('enter')
-          await sleep(commonConfig.moveUseTime * 1000)
-          if (direction === 1) {
-            index++
-          } else {
-            index--
-          }
-          if (loop) {
-            if (index < 0 || index > positions.length - 1) {
-              direction = direction === 1 ? -1 : 1
-              index = index + 2 * direction
-            }
-          } else {
-            if (index > positions.length - 1) {
-              index = 0
-            }
-          }
+    LOOP: while (!global.appContext.hasFoundTarget[roleAccount]) {
+      const position = positions[index]
+      robotUtils.keyTap('B', ['control'])
+      await sleep(100)
+      robotUtils.keyTap('W', ['alt'])
+      clipboard.writeText(`${position[0]}.${position[1]}`)
+      robotUtils.keyTap('V', ['control'])
+      robotUtils.keyTap('enter')
 
-          resolve(1)
+      await sleep(commonConfig.moveUseTime * 1000)
+      let i = 0
+      while (i < commonConfig.moveUseTime * 1000) {
+        if (global.appContext.hasFoundTarget[roleAccount]) {
+          break LOOP
         }
 
-        setTimeout(() => _inner(), 10)
-      })
-      const promise2 = new Promise<number>((resolve) => {
-        function _loop() {
-          let timeout = setTimeout(() => {
-            if (global.appContext.hasFoundTarget[roleAccount]) {
-              global.appContext.hasFoundTarget[roleAccount] = false
-              clearTimeout(timeout)
-              resolve(2)
-            }
-
-            _loop()
-          }, 10)
-        }
-
-        _loop()
-      })
-
-      const result = await Promise.race([promise1, promise2])
-
-      if (result === 2) {
-        robotUtils.keyTap('X', ['alt'])
-        await sleep(1000)
-        robotUtils.mouseClick('right')
-        await sleep(1000)
-        await moveMouseToBlank()
-        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
-        targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
-        rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
-        let distance = Math.sqrt(
-          Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
-        )
-
-        while (distance > 400) {
-          const x = Math.round((targetPosition[0] + rolePosition[0]) / 2)
-          const y = Math.round((targetPosition[1] + rolePosition[1]) / 2)
-          robotjs.moveMouse(x, y)
-          robotjs.mouseClick('left')
-          await sleep(2000)
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
-          targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
-          rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
-          distance = Math.sqrt(
-            Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
-          )
-        }
-        hasFound = true
+        i++
       }
+
+      if (direction === 1) {
+        index++
+      } else {
+        index--
+      }
+      if (loop) {
+        if (index < 0 || index > positions.length - 1) {
+          direction = direction === 1 ? -1 : 1
+          index = index + 2 * direction
+        }
+      } else {
+        if (index > positions.length - 1) {
+          index = 0
+        }
+      }
+    }
+
+    robotUtils.keyTap('X', ['alt'])
+    await sleep(1000)
+    robotUtils.mouseClick('right')
+    await sleep(1000)
+    await moveMouseToBlank()
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
+    targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+    rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+    let distance = Math.sqrt(
+      Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
+    )
+
+    while (distance > 400) {
+      const x = Math.round((targetPosition[0] + rolePosition[0]) / 2)
+      const y = Math.round((targetPosition[1] + rolePosition[1]) / 2)
+      robotjs.moveMouse(x, y)
+      robotjs.mouseClick('left')
+      await sleep(2000)
+      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
+      targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+      rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+      distance = Math.sqrt(
+        Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
+      )
     }
 
     return targetPosition

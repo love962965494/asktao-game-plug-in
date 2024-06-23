@@ -1,7 +1,7 @@
 import { pythonImagesPath } from '../../../paths'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import path from 'path'
-import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
+import { compareTwoImages, findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 import robotUtils from '../../../utils/robot'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
@@ -73,9 +73,10 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     clipboard.writeText(`${center[0]}.${center[1]}`)
     robotUtils.keyTap('V', ['control'])
     robotUtils.keyTap('enter')
+
+    await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000))
     await gameWindow.setForeground()
     robotUtils.keyTap('B', ['control'])
-    await sleep(Math.max(Math.round(time / Math.pow(2, count)), 3000))
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
     await screenCaptureToFile(tempCapturePath)
     const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
@@ -104,7 +105,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           clipboard.writeText(`${center[0]}.${center[1]}`)
           robotUtils.keyTap('V', ['control'])
           robotUtils.keyTap('enter')
-          await sleep(Math.max(Math.round(time / Math.pow(2, count)), 2000))
+          await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000))
         } while (true)
       }
       let hasBeenFoundTempCapturePath = ''
@@ -273,4 +274,31 @@ function calculatePositions(
   }
 
   return [newLeftTop, newRightBottom, newCenter]
+}
+
+async function hasGoneToDestination(maxTime: number) {
+  const { position, size } = global.appContext.gamePoints['地图-坐标']
+  const promise1 = new Promise(async (resolve) => {
+    let hasGoneTo = false
+
+    while (!hasGoneTo) {
+      const tempCapturePath1 = path.join(pythonImagesPath, `temp/${randomName('hasGoneToDestination')}.jpg`)
+      await screenCaptureToFile(tempCapturePath1, position, size)
+      await sleep(200)
+      const tempCapturePath2 = path.join(pythonImagesPath, `temp/${randomName('hasGoneToDestination')}.jpg`)
+      await screenCaptureToFile(tempCapturePath2, position, size)
+    
+      const [result] = await compareTwoImages(tempCapturePath1, tempCapturePath2)
+      
+      hasGoneTo = result === 0
+    }
+
+    resolve(1)
+  })
+  const promise2 = new Promise(async (resolve) => {
+    await sleep(maxTime)
+    resolve(2)
+  })
+
+  await Promise.race([promise1, promise2])
 }

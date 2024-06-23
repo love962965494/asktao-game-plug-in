@@ -108,7 +108,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [526, 606], [475, 34])
+  await screenCaptureToFile(srcImagePath, [77, 25], [145, 26])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -168,23 +168,6 @@ export function registerGlobalShortcut() {
   globalShortcut.register('CommandOrControl+Alt+P', async () => {
     app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
     app.exit(0)
-  })
-
-  globalShortcut.register('CommandOrControl+Shift+C', async () => {
-    await getGameWindows()
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('Keyの旺财')!
-    gameWindow.setForeground()
-    gameWindow.setPosition(0, 0)
-    await sleep(2000)
-    const { position, size } = global.appContext.gamePoints['地图坐标']
-    let color = ''
-    while (!color.includes('#8282ff')) {
-      robotjs.moveMouse(96, 29)
-      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetAndExtractThemeColor')}`)
-      await screenCaptureToFile(tempCapturePath, position, size)
-      color = await extractThemeColors(tempCapturePath)
-      await sleep(500)
-    }
   })
 }
 
