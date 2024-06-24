@@ -44,7 +44,6 @@ export default async function tianXuMiFu() {
 
       if (position.length === 2) {
         robotUtils.keyToggle('shift', 'down')
-        await sleep(500)
         await moveMouseToAndClick(
           '',
           {
@@ -63,9 +62,7 @@ export default async function tianXuMiFu() {
             },
           }
         )
-        await sleep(500)
         robotUtils.keyToggle('shift', 'up')
-        await sleep(500)
 
         await clickGamePoint(`域外_${commonConfig.yuWaiDiffcultLevel}`, 'yuwaiNanDu')
       }

@@ -17,6 +17,7 @@ import path from 'path'
 import { pythonImagesPath } from '../../paths'
 import {
   extractThemeColors,
+  findImagePositions,
   findImagePositionsWithErrorHandle,
   findImageWithinTemplate,
   findTargetInVideo,
@@ -460,14 +461,14 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       }
     }
 
-    robotUtils.keyTap('X', ['alt'])
-    await sleep(1000)
+    robotUtils.keyTap('A', ['alt'])
+    await sleep(200)
     robotUtils.mouseClick('right')
-    await sleep(1000)
+    await sleep(200)
     await moveMouseToBlank()
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
-    targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
-    rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+    targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
+    rolePosition = await findImagePositions(tempCapturePath, roleNamePath)
     let distance = Math.sqrt(
       Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
     )
@@ -479,8 +480,8 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       robotjs.mouseClick('left')
       await sleep(2000)
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
-      targetPosition = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
-      rolePosition = await findImagePositionsWithErrorHandle(tempCapturePath, roleNamePath)
+      targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
+      rolePosition = await findImagePositions(tempCapturePath, roleNamePath)
       distance = Math.sqrt(
         Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
       )

@@ -4,7 +4,6 @@ import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import registerTasks from './tasks'
 import { registerGlobalShortcut, unregisterGloableShortcut } from './shortcut'
-import startServer from '../server'
 import { deleteDir } from '../utils/fileOperations'
 import { pythonImagesPath } from '../paths'
 import registerWorkers from './workers'
@@ -12,7 +11,6 @@ import { ICityMap, IGameConfig, IGamePoints, IGameTask, INPC } from 'constants/t
 import { dianXianResolve } from './tasks/monitorTask'
 
 // 服务端端口号
-const port = 3000
 
 global.appContext = {
   isInterrupted: false,
