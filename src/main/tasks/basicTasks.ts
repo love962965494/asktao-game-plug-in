@@ -438,6 +438,7 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       let i = 0
       while (i < commonConfig.moveUseTime * 1000) {
         if (global.appContext.hasFoundTarget[roleAccount]) {
+          global.appContext.hasFoundTarget[roleAccount] = false
           break LOOP
         }
 
@@ -462,13 +463,16 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
     }
 
     robotUtils.keyTap('A', ['alt'])
-    await sleep(200)
+    await sleep(1000)
     robotUtils.mouseClick('right')
-    await sleep(200)
-    await moveMouseToBlank()
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('findTargetInMap')}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
     targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
     rolePosition = await findImagePositions(tempCapturePath, roleNamePath)
+    if (targetPosition.length !== 2) {
+      // 目标消失了
+      return targetPosition
+    }
     let distance = Math.sqrt(
       Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
     )
@@ -480,8 +484,12 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
       robotjs.mouseClick('left')
       await sleep(2000)
       const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('yuWaiFengYun')}.jpg`)
+      await screenCaptureToFile(tempCapturePath)
       targetPosition = await findImagePositions(tempCapturePath, templateImagePath)
       rolePosition = await findImagePositions(tempCapturePath, roleNamePath)
+      if (targetPosition.length !== 2) {
+        break
+      }
       distance = Math.sqrt(
         Math.pow(targetPosition[0] - rolePosition[0], 2) + Math.pow(targetPosition[1] - rolePosition[1], 2)
       )

@@ -67,16 +67,16 @@ export default async function yuWaiFengYun() {
 
       if (isInBattle) {
         await waitFinishZhanDouOfSmallScreen(teamLeaderWindow)
+        robotUtils.keyTap('B', ['control'])
       }
     }
   }
 
-  function _loop() {
-    setTimeout(async () => {
-      await _execute()
-      _loop()
-    }, 1000)
+  async function _loop() {
+    await _execute()
+    await sleep(1000)
+    _loop()
   }
-  
+
   _loop()
 }
