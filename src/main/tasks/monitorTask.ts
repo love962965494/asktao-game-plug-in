@@ -49,6 +49,9 @@ export async function dianXianResolve() {
     await gameWindow.setForeground()
 
     await waitFinishZhanDou_1(gameWindow)
+    robotUtils.keyTap('f1')
+    await sleep(500)
+    robotUtils.keyTap('f1')
     await sleep(1000)
   }
 

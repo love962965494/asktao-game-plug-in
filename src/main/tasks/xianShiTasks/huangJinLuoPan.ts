@@ -305,4 +305,6 @@ async function hasGoneToDestination(maxTime: number) {
   })
 
   await Promise.race([promise1, promise2])
+
+  await sleep(1000)
 }

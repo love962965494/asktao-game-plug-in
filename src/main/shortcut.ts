@@ -33,6 +33,7 @@ import {
   meiRiRiChang_DanRen,
   meiRiRiChang_ZuDui,
   openFuLiCenter,
+  shiMenRenWu,
   wuLeiLing,
   yiJianRiChang,
 } from './tasks/riChang'
@@ -155,7 +156,8 @@ export function registerGlobalShortcut() {
     // await teamLeaderWindow.setForeground()
     // await escShouCangTasks('quanMinShuaDao', true, true)
     // await fuShengLu(gameWindow)
-    await meiRiRiChang_DanRen()
+    // await meiRiRiChang_DanRen()
+    await shiMenRenWu()
 
     // await huangJinLuoPan(gameWindow, teamLeaderWindow)
     // _setWindowTopMost()
