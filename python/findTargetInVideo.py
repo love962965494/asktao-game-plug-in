@@ -30,7 +30,7 @@ def findTarget(target_img_path):
         result = cv2.matchTemplate(screen_gray, target_img, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-        threshold = 0.7 # 设置匹配阈值
+        threshold = 0.8 # 设置匹配阈值
         if max_val > threshold:
             print(True)
             break

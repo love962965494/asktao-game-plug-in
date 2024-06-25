@@ -247,9 +247,6 @@ async function findTargetInVideo(targetImagePath: string, roleName: string) {
 
       const result = stdout.trim() === 'True'
       if (result) {
-        console.log('roleName: ', roleName);
-        console.log('time: ', new Date().toLocaleTimeString());
-        
         global.appContext.hasFoundTarget[roleName] = true
       }
 

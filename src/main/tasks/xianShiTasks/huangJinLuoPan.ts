@@ -15,10 +15,6 @@ const taskName = 'huangJinLuoPan'
 
 export async function huangJinLuoPanLoop(city: string) {
   const teamWindowsWithGroup = await getTeamsInfo()
-  const historyData = JSON.parse(await readLog('黄金罗盘')) as string[]
-  if (!historyData.includes(new Date().toLocaleDateString())) {
-    await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString()]), true)
-  }
 
   for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
     let hasDone = false
@@ -77,41 +73,46 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000))
     await gameWindow.setForeground()
     robotUtils.keyTap('B', ['control'])
-    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
-    const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
+    const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
+    await screenCaptureToFile(zhaoDaoLeTempCapturePath)
+    const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
+    const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
 
     if ((found1 && found2) || nearlyGoneTo) {
       if (!gameWindow.roleInfo.defaultTeamLeader) {
         await liDui()
 
         do {
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found1 = await findImageWithinTemplate(tempCapturePath, templateImagePath1)
-          const found2 = await findImageWithinTemplate(tempCapturePath, templateImagePath2)
+          const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
+          await screenCaptureToFile(zhaoDaoLeTempCapturePath)
+          const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
+          const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
 
           if (found1 && found2) {
             break
           }
 
-          await screenCaptureToFile(tempCapturePath, [1093, 155], [210, 155])
-          const direction = await getDirection(tempCapturePath)
-          ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, true)
-          robotUtils.keyTap('B', ['control'])
-          await sleep(500)
-          robotUtils.keyTap('W', ['alt'])
-          clipboard.writeText(`${center[0]}.${center[1]}`)
-          robotUtils.keyTap('V', ['control'])
-          robotUtils.keyTap('enter')
-          await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000))
+          {
+            const getDirectionTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+            await screenCaptureToFile(getDirectionTempCapturePath, [1093, 155], [210, 155])
+            const direction = await getDirection(getDirectionTempCapturePath)
+            ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, true)
+            robotUtils.keyTap('B', ['control'])
+            await sleep(500)
+            robotUtils.keyTap('W', ['alt'])
+            clipboard.writeText(`${center[0]}.${center[1]}`)
+            robotUtils.keyTap('V', ['control'])
+            robotUtils.keyTap('enter')
+            await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000))
+          }
         } while (true)
       }
-      let hasBeenFoundTempCapturePath = ''
       await clickGamePoint('黄金罗盘', `${taskName}_success`, {
         callback: async () => {
-          hasBeenFoundTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+          const hasBeenFoundTempCapturePath = path.join(
+            pythonImagesPath,
+            `temp/${randomName(`${taskName}_hasClickedLuoPan`)}.jpg`
+          )
           await screenCaptureToFile(hasBeenFoundTempCapturePath)
           const found1 = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath1)
           const found2 = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath2)
@@ -123,8 +124,10 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           return false
         },
       })
+      const beiWaLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_beiWaLe')}.jpg`)
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
-      const found = await findImageWithinTemplate(hasBeenFoundTempCapturePath, templateImagePath, 0.7)
+      await screenCaptureToFile(beiWaLeTempCapturePath)
+      const found = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath, 0.7)
 
       if (found) {
         return false
@@ -145,8 +148,9 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
       break
     }
 
-    await screenCaptureToFile(tempCapturePath, [1093, 155], [210, 155])
-    const direction = await getDirection(tempCapturePath)
+    const getDirectionTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+    await screenCaptureToFile(getDirectionTempCapturePath, [1093, 155], [210, 155])
+    const direction = await getDirection(getDirectionTempCapturePath)
 
     let prevCenter = [...center]
     ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, nearlyGoneTo)
@@ -278,18 +282,22 @@ function calculatePositions(
 
 async function hasGoneToDestination(maxTime: number) {
   const { position, size } = global.appContext.gamePoints['地图-坐标']
+  let hasTimeout = false
   const promise1 = new Promise(async (resolve) => {
     let hasGoneTo = false
 
     while (!hasGoneTo) {
+      if (hasTimeout) {
+        break
+      }
       const tempCapturePath1 = path.join(pythonImagesPath, `temp/${randomName('hasGoneToDestination')}.jpg`)
       await screenCaptureToFile(tempCapturePath1, position, size)
       await sleep(200)
       const tempCapturePath2 = path.join(pythonImagesPath, `temp/${randomName('hasGoneToDestination')}.jpg`)
       await screenCaptureToFile(tempCapturePath2, position, size)
-    
+
       const [result] = await compareTwoImages(tempCapturePath1, tempCapturePath2)
-      
+
       hasGoneTo = result === 0
     }
 
@@ -297,6 +305,7 @@ async function hasGoneToDestination(maxTime: number) {
   })
   const promise2 = new Promise(async (resolve) => {
     await sleep(maxTime)
+    hasTimeout = true
     resolve(2)
   })
 
