@@ -11,7 +11,7 @@ import {
   screenCaptureToFile,
 } from '../../../utils/fileOperations'
 import GameWindowControl from '../../../utils/gameWindowControll'
-import { waitFinishZhanDou } from '../zhanDouTasks'
+import { waitFinishZhanDou, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { chiXiang } from '../wuPinTask'
 
 const city = '无名小镇'
@@ -20,6 +20,8 @@ const taskName = '悬赏令'
 export async function xianJieShenBu() {
   const teamWindowsWithGroup = await getTeamsInfo()
   const teamLeaderWindows = teamWindowsWithGroup.map((teamWindows) => teamWindows[0])
+  console.log('teamLeaderWindows:', teamLeaderWindows);
+  
   const taskPositions: number[][][] = []
   let allHasFinished: boolean[] = []
   for (const teamWindows of teamWindowsWithGroup) {
@@ -163,7 +165,7 @@ async function executePairTask(pairPosition: (number[] | undefined)[], teamLeade
 
   // 等待战斗结束
   for (const teamLeaderWindow of tempTeamLeaderWindows) {
-    await waitFinishZhanDou(teamLeaderWindow)
+    await waitFinishZhanDou_1(teamLeaderWindow)
   }
 
   await sleep(500)
