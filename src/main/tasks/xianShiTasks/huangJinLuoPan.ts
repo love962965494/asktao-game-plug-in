@@ -34,7 +34,11 @@ export async function huangJinLuoPanLoop(city: string) {
 }
 
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {
-  const hasFinishedRoles = JSON.parse(await readLog('黄金罗盘')) as string[]
+  const data = await readLog('黄金罗盘')
+  console.log('huangJinLuoPan: ', data);
+  
+  const hasFinishedRoles = JSON.parse(data) as string[]
+  
   if (hasFinishedRoles.includes(gameWindow.roleInfo.roleName)) {
     return true
   }
@@ -183,7 +187,7 @@ export async function getDirection(tempCapturePath: string) {
   return direction
 }
 
-const tinyDistance = 2
+const tinyDistance = 1
 function calculatePositions(
   leftTop: number[],
   rightBottom: number[],
