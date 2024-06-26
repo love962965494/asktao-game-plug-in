@@ -109,7 +109,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-  await screenCaptureToFile(srcImagePath, [1140, 189], [125, 90])
+  await screenCaptureToFile(srcImagePath, [898, 535], [64, 14])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
