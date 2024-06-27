@@ -128,7 +128,7 @@ export async function loginGame() {
         const promise2 = new Promise<number>((resolve) => {
           async function _test() {
             const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('loginGame4')}.jpg`)
-            const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFailed.png')
+            const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/loginFailed.jpg')
             await screenCaptureToFile(tempCapturePath)
             const hasFound = await findImageWithinTemplate(tempCapturePath, templateImagePath)
 

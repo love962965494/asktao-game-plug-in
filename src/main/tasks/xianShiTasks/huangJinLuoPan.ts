@@ -138,6 +138,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         }
 
         await writeLog('黄金罗盘', JSON.stringify(hasFinishedRoles.concat(gameWindow.roleInfo.roleName)), true)
+        await sleep(5000)
         hasTask = false
       }
 
