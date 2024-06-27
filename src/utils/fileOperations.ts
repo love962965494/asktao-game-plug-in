@@ -38,18 +38,22 @@ async function deleteDir(dirPath: string) {
 
 // 将截图文件转换为png图片
 function screenCaptureToFile(filePath: string, position: number[] = [], size: number[] = []) {
-  const robotScreenPic = robotjs.screen.capture(...position, ...size)
+  const screenCapture = robotjs.screen.capture(...position, ...size)
 
   return MyPromise((resolve, reject) => {
     try {
-      const image = new Jimp(robotScreenPic.width, robotScreenPic.height)
-      let pos = 0
-      image.scan(0, 0, image.bitmap.width, image.bitmap.height, (_x, _y, idx) => {
-        image.bitmap.data[idx + 2] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 1] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 0] = robotScreenPic.image.readUInt8(pos++)
-        image.bitmap.data[idx + 3] = robotScreenPic.image.readUInt8(pos++)
-      })
+      const image = new Jimp(screenCapture.width, screenCapture.height)
+      for (let y = 0; y < screenCapture.height; y++) {
+        for (let x = 0; x < screenCapture.width; x++) {
+          let index = (y * screenCapture.byteWidth) + (x * screenCapture.bytesPerPixel);
+          let r = screenCapture.image[index];
+          let g = screenCapture.image[index + 1];
+          let b = screenCapture.image[index + 2];
+          // Note: robotjs uses BGRA format, while Jimp uses RGBA
+          let hex = Jimp.rgbaToInt(b, g, r, 255); // Setting alpha to 255 (fully opaque)
+          image.setPixelColor(hex, x, y);
+        }
+      }
       image.write(filePath, resolve)
     } catch (e) {
       console.error(e)
