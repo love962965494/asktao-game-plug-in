@@ -187,7 +187,7 @@ export async function getDirection(tempCapturePath: string) {
   }
 
   if (!direction) {
-    throw new Error('getDirection error')
+    return directions[0]
   }
   return direction
 }
