@@ -407,12 +407,12 @@ export async function getCurrentGamePosition() {
   return currentPosition
 }
 
-export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false) {
+export async function findTargetInMap(gameWindow: GameWindowControl, mapName: keyof ICityMap, loop = false, teamIndex = 1) {
   await gameWindow.setForeground()
   gameWindow.setPosition(0, 0)
   const { size } = global.appContext.cityMap[mapName]
   const positions = generateMapCoordinates(size)
-  let index = 0
+  let index = teamIndex === 1 ? 0 : positions.length - 1
   return async (targetName: string, roleAccount: string) => {
     const templateImagePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${targetName}.jpg`)
     const roleNamePath = path.join(pythonImagesPath, `GUIElements/npcRelative/${roleAccount}.jpg`)

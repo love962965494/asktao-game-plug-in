@@ -31,7 +31,7 @@ export default async function tianXuMiFu() {
   for (const teamLeaderWindow of teamLeaderWindows) {
     await teamLeaderWindow.setForeground()
     teamLeaderWindow.restoreGameWindow()
-    const findTarget = await findTargetInMap(teamLeaderWindow, '天墟秘府', true)
+    const findTarget = await findTargetInMap(teamLeaderWindow, '天墟秘府', true, teamLeaderWindow.roleInfo.teamIndex)
     findTargets.push(findTarget)
   }
 
@@ -88,7 +88,6 @@ export default async function tianXuMiFu() {
         isInBattle = await isInBattleOfSmallScreen(teamLeaderWindow)
       }
     }
-
   }
 
   function _loop() {
