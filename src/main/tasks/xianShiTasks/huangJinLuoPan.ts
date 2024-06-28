@@ -74,7 +74,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     robotUtils.keyTap('V', ['control'])
     robotUtils.keyTap('enter')
 
-    await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000))
+    await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000), nearlyGoneTo)
     await gameWindow.setForeground()
     robotUtils.keyTap('B', ['control'])
     const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
@@ -109,7 +109,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
             clipboard.writeText(`${center[0]}.${center[1]}`)
             robotUtils.keyTap('V', ['control'])
             robotUtils.keyTap('enter')
-            await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000))
+            await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000), true)
           }
         } while (true)
       }
@@ -284,7 +284,11 @@ function calculatePositions(
   return [newLeftTop, newRightBottom, newCenter]
 }
 
-async function hasGoneToDestination(maxTime: number) {
+async function hasGoneToDestination(maxTime: number, nearlyGoneTo: boolean) {
+  if (nearlyGoneTo) {
+    await sleep(1000)
+    return
+  }
   const { position, size } = global.appContext.gamePoints['地图-坐标']
   let hasTimeout = false
   const promise1 = new Promise(async (resolve) => {
