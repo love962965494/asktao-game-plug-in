@@ -8,7 +8,7 @@ import { clipboard } from 'electron'
 import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { displayGameWindows, getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
-import { useWuPin } from '../wuPinTask'
+import { chiXiang, useWuPin } from '../wuPinTask'
 import { ICityMap } from 'constants/types'
 
 const taskName = 'huangJinLuoPan'
@@ -18,12 +18,16 @@ export async function huangJinLuoPanLoop(city: string) {
 
   for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
     let hasDone = false
+    await teamLeaderWindow.setForeground()
+    await chiXiang(1, true)
     while (!hasDone) {
       hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow, city)
     }
 
     for (const teamMemberWindow of teamMemberWindows) {
       let hasDone = false
+      await teamMemberWindow.setForeground()
+      await chiXiang(1, true)
       while (!hasDone) {
         hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow, city)
       }
