@@ -15,21 +15,38 @@ const taskName = 'huangJinLuoPan'
 
 export async function huangJinLuoPanLoop(city: string) {
   const teamWindowsWithGroup = await getTeamsInfo()
-
+  const data = await readLog('黄金罗盘')
+  
+  let hasFinishedRoles = JSON.parse(data) as string[]
+  if (!hasFinishedRoles.includes(new Date().toLocaleDateString())) {
+    await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString()]), true)
+    hasFinishedRoles = []
+  }
   for (const [teamLeaderWindow, ...teamMemberWindows] of teamWindowsWithGroup) {
-    let hasDone = false
     await teamLeaderWindow.setForeground()
     await chiXiang(1, true)
-    while (!hasDone) {
-      hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow, city)
+    if (!hasFinishedRoles.includes(teamLeaderWindow.roleInfo.roleName)) {
+      let hasDone = false
+      while (!hasDone) {
+        hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow, city)
+      }
+      hasFinishedRoles.push(teamLeaderWindow.roleInfo.roleName)
+      await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString(), ...hasFinishedRoles]), true)
+      await sleep(5000)
     }
 
     for (const teamMemberWindow of teamMemberWindows) {
-      let hasDone = false
-      await teamMemberWindow.setForeground()
-      await chiXiang(1, true)
-      while (!hasDone) {
-        hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow, city)
+      if (!hasFinishedRoles.includes(teamMemberWindow.roleInfo.roleName)) {
+        let hasDone = false
+        await teamMemberWindow.setForeground()
+        await chiXiang(1, true)
+        while (!hasDone) {
+          hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow, city)
+        }
+
+        hasFinishedRoles.push(teamMemberWindow.roleInfo.roleName)
+        await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString(), ...hasFinishedRoles]), true)
+        await sleep(5000)
       }
     }
   }
@@ -38,14 +55,6 @@ export async function huangJinLuoPanLoop(city: string) {
 }
 
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {
-  const data = await readLog('黄金罗盘')
-  console.log('huangJinLuoPan: ', data);
-  
-  const hasFinishedRoles = JSON.parse(data) as string[]
-  
-  if (hasFinishedRoles.includes(gameWindow.roleInfo.roleName)) {
-    return true
-  }
   await gameWindow.setForeground()
   robotUtils.keyTap('B', ['control'])
 
@@ -142,9 +151,6 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         if (inBattle) {
           await waitFinishZhanDou_1(gameWindow)
         }
-
-        await writeLog('黄金罗盘', JSON.stringify(hasFinishedRoles.concat(gameWindow.roleInfo.roleName)), true)
-        await sleep(5000)
         hasTask = false
       }
 
