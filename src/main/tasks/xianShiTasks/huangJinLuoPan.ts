@@ -98,6 +98,8 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
 
           {
             const getDirectionTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+            robotUtils.keyTap('B', ['control'])
+            await sleep(300)
             await screenCaptureToFile(getDirectionTempCapturePath, [1093, 155], [210, 155])
             const direction = await getDirection(getDirectionTempCapturePath)
             ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, true)
@@ -149,6 +151,8 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     }
 
     const getDirectionTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_getDirection`)}.jpg`)
+    robotUtils.keyTap('B', ['control'])
+    await sleep(300)
     await screenCaptureToFile(getDirectionTempCapturePath, [1093, 155], [210, 155])
     const direction = await getDirection(getDirectionTempCapturePath)
 
