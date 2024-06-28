@@ -1,6 +1,6 @@
 import { loginGame } from './loginTask'
 import { displayGameWindows, isGroupedTeam, liDui, yiJianZuDui } from './basicTasks'
-import { buChongZhuangTai, isInBattle_1, keepZiDong, waitFinishZhanDou_1 } from './zhanDouTasks'
+import { buChongZhuangTai, isInBattle_1, isInBattle_1, keepZiDong, waitFinishZhanDou_1 } from './zhanDouTasks'
 import { getGameWindows, getProcessesByName } from '../../utils/systemCotroll'
 import GameWindowControl from '../../utils/gameWindowControll'
 import { bangPaiZuDui, yiJianRiChang } from './riChang'
@@ -46,13 +46,18 @@ export async function dianXianResolve() {
   }
 
   for (const gameWindow of gameWindows) {
-    await gameWindow.setForeground()
-
-    await waitFinishZhanDou_1(gameWindow)
-    robotUtils.keyTap('f1')
-    await sleep(500)
-    robotUtils.keyTap('f1')
-    await sleep(1000)
+    if (gameWindow.roleInfo.defaultTeamLeader) {
+      await gameWindow.setForeground()
+      const inBattle = await isInBattle_1(gameWindow)
+      if (inBattle) {
+        await waitFinishZhanDou_1(gameWindow)
+      }
+      
+      robotUtils.keyTap('f1')
+      await sleep(500)
+      robotUtils.keyTap('f1')
+      await sleep(1000)
+    }
   }
 
   for (const gameWindow of gameWindows) {
