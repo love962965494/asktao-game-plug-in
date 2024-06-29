@@ -139,5 +139,9 @@
   "修炼法宝": {
     "pinYin": "xiuLianFaBao",
     "description": "[XLFB]"
+  },
+  "九曜神游": {
+    "pinYin": "jiuYaoShenYou",
+    "description": "[JYSY]"
   }
 }

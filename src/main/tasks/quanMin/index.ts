@@ -1,12 +1,15 @@
-import { sleep } from '../../../utils/toolkits'
+import { randomName, sleep } from '../../../utils/toolkits'
 import GameWindowControl from '../../../utils/gameWindowControll'
 import { getGameWindows } from '../../../utils/systemCotroll'
-import { hasGameTask } from '../gameTask'
-import { AsyncQueue, moveMouseToBlank } from '../../../utils/common'
+import { hasGameTask, searchGameTask } from '../gameTask'
+import { AsyncQueue, clickGamePoint, moveMouseToAndClickUseColor, moveMouseToBlank } from '../../../utils/common'
 import { goToNPC, talkToNPC } from '../npcTasks'
 import { ipcMain } from 'electron/main'
 import { buChongZhuangTai, isInBattle_1, keepZiDong } from '../zhanDouTasks'
 import robotUtils from '../../../utils/robot'
+import path from 'path'
+import { pythonImagesPath } from '../../../paths'
+import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 
 export async function registerQuanMin() {
   ipcMain.on('chu-yao-ren-wu', async () => chuYaoRenWu())
@@ -79,10 +82,9 @@ export async function fuMoRenWu() {
             await talkToNPC('轩辕庙', 'luYaZhenRen', 'woZheJiuQu')
           }
         }
-        
+
         hasTask1 = false
       })
-
     }
   }, 3.2 * 60 * 1000)
 
@@ -251,6 +253,46 @@ export async function quanMinShengJi() {
         hasTask2 = false
       })
     }
-    
   }, 0.7 * 60 * 1000)
+}
+
+export async function jiuYaoShenYou() {
+  await getGameWindows()
+  const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+  const teamLeaderWindows: GameWindowControl[] = gameWindows.filter(
+    (gameWindow) => gameWindow.roleInfo.defaultTeamLeader
+  )
+  while (true) {
+    for (const teamLeaderWindow of teamLeaderWindows) {
+      await teamLeaderWindow.setForeground()
+      const inBattle1 = await isInBattle_1(teamLeaderWindow)
+      if (!inBattle1) {
+        await sleep(5000)
+      } else {
+        continue
+      }
+      const inBattle2 = await isInBattle_1(teamLeaderWindow)
+      if (!inBattle2) {
+        await searchGameTask('九曜神游')
+        await clickGamePoint('九曜神游-NPC', 'jiuYaoShenYou', {
+          callback: async () => {
+            const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`jiuYaoShenYou`)}.jpg`)
+            const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+            await screenCaptureToFile(tempCapturePath)
+            const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+            return !found
+          },
+        })
+        await moveMouseToAndClickUseColor(
+          {
+            buttonName: 'jiuYaoShenYou_duiHua',
+            position: [535, 550],
+            size: [330, 36],
+          },
+          '#fa0000'
+        )
+      }
+    }
+  }
 }

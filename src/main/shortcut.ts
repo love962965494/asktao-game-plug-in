@@ -50,7 +50,7 @@ import robotUtils from '../utils/robot'
 import fs from 'fs'
 import { loginGame } from './tasks/loginTask'
 import { monitorGameDiaoXian } from './tasks/monitorTask'
-import { quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
+import { jiuYaoShenYou, quanMinShengJi, xianJieTongJi } from './tasks/quanMin'
 import { exec } from 'child_process'
 import {
   HWND,
@@ -109,7 +109,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [750, 576], [60, 20])
+    await screenCaptureToFile(srcImagePath, [534, 550], [330, 36])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -149,18 +149,19 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    await getGameWindows()
-    const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
-    const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
-    // await teamLeaderWindow.setForeground()
-    // await escShouCangTasks('quanMinShuaDao', true, true)
-    // await fuShengLu(gameWindow)
-    await meiRiRiChang_DanRen()
+    // await getGameWindows()
+    // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+    // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
+    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
+    // // await teamLeaderWindow.setForeground()
+    // // await escShouCangTasks('quanMinShuaDao', true, true)
+    // // await fuShengLu(gameWindow)
+    // await meiRiRiChang_DanRen()
     // await shiMenRenWu()
 
     // await huangJinLuoPan(gameWindow, teamLeaderWindow)
     // _setWindowTopMost()
+    await jiuYaoShenYou()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
