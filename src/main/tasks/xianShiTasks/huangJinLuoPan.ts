@@ -61,6 +61,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
   const { size } = global.appContext.cityMap[city as keyof ICityMap]
   const templateImagePath1 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success1.jpg`)
   const templateImagePath2 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success2.jpg`)
+  const templateImagePath3 = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_success3.jpg`)
 
   let leftTop = [0, 0]
   let rightBottom = [size[0], size[1]]
@@ -94,8 +95,9 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     await screenCaptureToFile(zhaoDaoLeTempCapturePath)
     const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
     const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
+    const found3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-    if ((found1 && found2) || nearlyGoneTo) {
+    if (((found1 || found2) && found3) || nearlyGoneTo) {
       if (!gameWindow.roleInfo.defaultTeamLeader) {
         await liDui()
 
@@ -104,8 +106,9 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           await screenCaptureToFile(zhaoDaoLeTempCapturePath)
           const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
           const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
+          const found3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-          if (found1 && found2) {
+          if ((found1 || found2) && found3) {
             break
           }
 
