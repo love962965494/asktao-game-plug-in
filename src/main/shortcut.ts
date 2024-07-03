@@ -149,7 +149,6 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-<<<<<<< Updated upstream
     // await getGameWindows()
     // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
     // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
@@ -158,16 +157,6 @@ export function registerGlobalShortcut() {
     // // await escShouCangTasks('quanMinShuaDao', true, true)
     // // await fuShengLu(gameWindow)
     // await meiRiRiChang_DanRen()
-=======
-    await getGameWindows()
-    const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
-    const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Keyの随风')!
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
-    await teamLeaderWindow.setForeground()
-    // await escShouCangTasks('quanMinShuaDao', true, true)
-    // await fuShengLu(teamLeaderWindow)
-    await meiRiRiChang_DanRen()
->>>>>>> Stashed changes
     // await shiMenRenWu()
 
     // await huangJinLuoPan(gameWindow, teamLeaderWindow)
