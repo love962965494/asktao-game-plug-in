@@ -93,23 +93,40 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     robotUtils.keyTap('B', ['control'])
     const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
     await screenCaptureToFile(zhaoDaoLeTempCapturePath)
-    const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
-    const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
-    const found3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
+    let zhaoDaoLe = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-    if (((found1 || found2) && found3) || nearlyGoneTo) {
+    if (zhaoDaoLe || nearlyGoneTo) {
+      const beiWaLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_beiWaLe')}.jpg`)
+
       if (!gameWindow.roleInfo.defaultTeamLeader) {
         await liDui()
 
         do {
           const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
           await screenCaptureToFile(zhaoDaoLeTempCapturePath)
-          const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
-          const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
-          const found3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
+          let zhaoDaoLe = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-          if ((found1 || found2) && found3) {
-            break
+          if (zhaoDaoLe) {
+            await clickGamePoint('黄金罗盘', `${taskName}_success`, {
+              callback: async (errorCounts: number) => {
+                if (errorCounts > 5) {
+                  zhaoDaoLe = false
+                  return true
+                }
+                await screenCaptureToFile(beiWaLeTempCapturePath)
+                const found1 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath1)
+                const found2 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath2)
+      
+                if (!found1 && !found2) {
+                  return true
+                }
+      
+                return false
+              },
+            })
+            if (zhaoDaoLe) {
+              break
+            }
           }
 
           {
@@ -128,25 +145,32 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
             await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 2000), true)
           }
         } while (true)
+      } else {
+        await clickGamePoint('黄金罗盘', `${taskName}_success`, {
+          callback: async (errorCounts: number) => {
+            if (errorCounts > 5) {
+              zhaoDaoLe = false
+              return true
+            }
+            await screenCaptureToFile(beiWaLeTempCapturePath)
+            const found1 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath1)
+            const found2 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath2)
+  
+            if (!found1 && !found2) {
+              return true
+            }
+  
+            return false
+          },
+        })
+        if (!zhaoDaoLe) {
+          continue
+        }
       }
-      const beiWaLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_beiWaLe')}.jpg`)
-      await clickGamePoint('黄金罗盘', `${taskName}_success`, {
-        callback: async () => {
-          await screenCaptureToFile(beiWaLeTempCapturePath)
-          const found1 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath1)
-          const found2 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath2)
-
-          if (!found1 && !found2) {
-            return true
-          }
-
-          return false
-        },
-      })
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
-      const found = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath, 0.7)
+      const hasBeenFound = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath, 0.7)
 
-      if (found) {
+      if (hasBeenFound) {
         return false
       } else {
         const inBattle = await isInBattle_1(gameWindow)
