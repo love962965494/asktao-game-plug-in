@@ -109,7 +109,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
           if (zhaoDaoLe) {
             await clickGamePoint('黄金罗盘', `${taskName}_success`, {
               callback: async (errorCounts: number) => {
-                if (errorCounts > 5) {
+                if (errorCounts > 3) {
                   zhaoDaoLe = false
                   return true
                 }
@@ -148,8 +148,8 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
       } else {
         await clickGamePoint('黄金罗盘', `${taskName}_success`, {
           callback: async (errorCounts: number) => {
-            if (errorCounts > 5) {
-              zhaoDaoLe = false
+            if (errorCounts > 3) {
+              nearlyGoneTo = false
               return true
             }
             await screenCaptureToFile(beiWaLeTempCapturePath)
@@ -163,7 +163,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
             return false
           },
         })
-        if (!zhaoDaoLe) {
+        if (!nearlyGoneTo) {
           continue
         }
       }
@@ -198,6 +198,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
     const distance = Math.sqrt(Math.pow(center[0] - prevCenter[0], 2) + Math.pow(center[1] - prevCenter[1], 2))
     if (!nearlyGoneTo) {
       if (gameWindow.roleInfo.defaultTeamLeader && center.join('') === prevCenter.join('')) {
+        81.21
         nearlyGoneTo = true
       }
       if (!gameWindow.roleInfo.defaultTeamLeader && distance <= 5) {
