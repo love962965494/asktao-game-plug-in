@@ -280,14 +280,14 @@ export async function getTeamsInfo() {
 
 // 排列窗口
 const positions = [
+  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) - 60],
   [0, 0],
   [1920 - 800, 0],
-  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) - 60],
   [0, 1040 - 625],
   [1920 - 800, 1040 - 625],
+  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) + 60],
   [125, 100],
   [1920 - 800 - 125, 100],
-  [Math.round((1920 - 800) / 2), Math.round((1040 - 625) / 2) + 60],
   [125, 1040 - 625 - 80],
   [1920 - 800 - 125, 1040 - 625 - 80],
 ]
@@ -299,9 +299,12 @@ export async function displayGameWindows() {
     gameWindow.restoreGameWindow()
   }
 
-  for (const [index, gameWindow] of Object.entries(allGameWindows)) {
+  const allAccounts = global.appContext.accounts.flat(2)
+  for (const gameWindow of allGameWindows) {
     await gameWindow.setForeground()
-    const position = positions[+index]
+    const roleName = gameWindow.roleInfo.roleName
+    const index = allAccounts.findIndex(item => item.roles.includes(roleName))
+    const position = positions[index]
 
     gameWindow.setPosition(position[0], position[1])
     await sleep(100)
