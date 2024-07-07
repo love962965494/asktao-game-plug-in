@@ -90,12 +90,13 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
 
     await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000), nearlyGoneTo)
     await gameWindow.setForeground()
-    robotUtils.keyTap('B', ['control'])
     const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
     await screenCaptureToFile(zhaoDaoLeTempCapturePath)
-    let zhaoDaoLe = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
+    let zhaoDaoLe1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
+    let zhaoDaoLe2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
+    let zhaoDaoLe3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-    if (zhaoDaoLe || nearlyGoneTo) {
+    if ((zhaoDaoLe1 && zhaoDaoLe2 && zhaoDaoLe3) || nearlyGoneTo) {
       const beiWaLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huangJinLuoPan_beiWaLe')}.jpg`)
 
       if (!gameWindow.roleInfo.defaultTeamLeader) {
@@ -104,15 +105,13 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         do {
           const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
           await screenCaptureToFile(zhaoDaoLeTempCapturePath)
-          let zhaoDaoLe = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
+          let zhaoDaoLe1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath1)
+          let zhaoDaoLe2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath2)
+          let zhaoDaoLe3 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, templateImagePath3)
 
-          if (zhaoDaoLe) {
+          if (zhaoDaoLe1 && zhaoDaoLe2 && zhaoDaoLe3) {
             await clickGamePoint('黄金罗盘', `${taskName}_success`, {
-              callback: async (errorCounts: number) => {
-                if (errorCounts > 3) {
-                  zhaoDaoLe = false
-                  return true
-                }
+              callback: async () => {
                 await screenCaptureToFile(beiWaLeTempCapturePath)
                 const found1 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath1)
                 const found2 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath2)
@@ -124,9 +123,6 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
                 return false
               },
             })
-            if (zhaoDaoLe) {
-              break
-            }
           }
 
           {
@@ -147,11 +143,7 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
         } while (true)
       } else {
         await clickGamePoint('黄金罗盘', `${taskName}_success`, {
-          callback: async (errorCounts: number) => {
-            if (errorCounts > 3) {
-              nearlyGoneTo = false
-              return true
-            }
+          callback: async () => {
             await screenCaptureToFile(beiWaLeTempCapturePath)
             const found1 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath1)
             const found2 = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath2)
@@ -163,9 +155,6 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
             return false
           },
         })
-        if (!nearlyGoneTo) {
-          continue
-        }
       }
       const templateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_hasBeenFound.jpg')
       const hasBeenFound = await findImageWithinTemplate(beiWaLeTempCapturePath, templateImagePath, 0.7)

@@ -6,7 +6,7 @@ import path from 'path'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { findImageWithinTemplate, screenCaptureToFile } from '../../../utils/fileOperations'
 import robotUtils from '../../../utils/robot'
-import { clickGamePoint } from '../../../utils/common'
+import { clickGamePoint, hasChecked } from '../../../utils/common'
 
 export async function waKuang() {
   await getGameWindows()
@@ -66,7 +66,14 @@ export async function waKuang() {
             },
           })
           await sleep(500)
-          await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
+          const checked = await hasChecked('收藏任务_玄脉寻矿')
+          if (!checked) {
+            await clickGamePoint('收藏任务_玄脉寻矿', 'waKuang', {
+              randomPixNums: [5, 2],
+            })
+          }
+
+          await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_yiJianZiDong')
           await sleep(1000)
         }
       }

@@ -24,7 +24,7 @@ import {
 import { displayGameWindows, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from '../basicTasks'
 import { escShouCangTasks } from '../gameTask'
 import { goToNPCAndTalk, hasGoneToNPC, talkToNPC } from '../npcTasks'
-import { waitFinishZhanDou } from '../zhanDouTasks'
+import { isInBattle, isInBattle_1, waitFinishZhanDou } from '../zhanDouTasks'
 import { chiXiang } from '../wuPinTask'
 import commonConfig from '../../../constants/config.json'
 import { monitorGameDiaoXian } from '../monitorTask'

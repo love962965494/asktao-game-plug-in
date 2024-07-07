@@ -92,7 +92,6 @@ export async function moveMouseToAndClick(
       robotUtils.mouseClick(otherOptions.rightClick ? 'right' : 'left')
     }
     isInRange = true
-    await sleep(1000)
     await moveMouseToBlank()
 
     const callback =
