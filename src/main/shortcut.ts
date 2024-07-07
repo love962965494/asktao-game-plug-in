@@ -1,4 +1,4 @@
-import { globalShortcut, app } from 'electron'
+import { globalShortcut, app, dialog } from 'electron'
 import GameWindowControl from '../utils/gameWindowControll'
 import { gameWindows, getGameWindows, getProcessesByName } from '../utils/systemCotroll'
 import path from 'path'
@@ -67,25 +67,6 @@ import { gouMaiPingTai } from './tasks/basicFunction/gouMaiPingTai'
 import { useWuPin } from './tasks/wuPinTask'
 
 export function registerGlobalShortcut() {
-  for (let i = 0; i < 9; i++) {
-    globalShortcut.register(`CommandOrControl+Alt+num${i}`, () => {
-      const instance = [...GameWindowControl.getAllGameWindows().values()][i]
-      const alternateWindow = GameWindowControl.getAlternateWindow()
-      if (instance) {
-        const { left, top } = instance.getBounds()
-
-        alternateWindow.setPosition(left, top)
-        alternateWindow.show()
-      }
-    })
-  }
-
-  globalShortcut.register('CommandOrControl+Alt+Enter', () => {
-    const alternateWindow = GameWindowControl.getAlternateWindow()
-
-    alternateWindow.hide()
-  })
-
   // TODO: 截图
   globalShortcut.register('CommandOrControl+Shift+S', async () => {
     async function _smallScreenCapture() {
@@ -149,7 +130,7 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    // await getGameWindows()
+    await getGameWindows()
     // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
     // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
     // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
@@ -168,9 +149,42 @@ export function registerGlobalShortcut() {
     app.exit(0)
   })
 
-  globalShortcut.register('CommandOrControl+Alt+P', async () => {
-    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) })
-    app.exit(0)
+  globalShortcut.register('CommandOrControl+Alt+Z', async () => {
+    const processes = await getProcessesByName('asktao')
+    const gameWindows = processes.map(([_, pId]) => {
+      const gameWindow = WinControl.getByPid(+pId)
+
+      return gameWindow
+    })
+
+    const allAccounts = global.appContext.accounts.flat(2)
+    const loginAccounts: typeof allAccounts = []
+    for (const gameWindow of gameWindows) {
+      const title = gameWindow.getTitle()
+      const loginAccount = allAccounts.find((accountInfo) =>
+        accountInfo.roles.find((roleName) => title.includes(roleName))
+      )
+
+      if (loginAccount) {
+        loginAccounts.push(loginAccount)
+      }
+    }
+
+    const diaoXianAccounts = allAccounts.filter(
+      (accountInfo) => !loginAccounts.find((loginAccountInfo) => loginAccountInfo.account === accountInfo.account)
+    )
+
+    if (diaoXianAccounts.length > 0) {
+      await dialog.showMessageBox({
+        type: 'info',
+        buttons: ['知道了'],
+        message: `掉线账号：${JSON.stringify(
+          diaoXianAccounts.map((item) => item.account),
+          undefined,
+          4
+        )}`,
+      })
+    }
   })
 }
 

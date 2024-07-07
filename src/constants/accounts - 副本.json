@@ -1,0 +1,74 @@
+[
+  [
+    {
+      "account": "wan962965494",
+      "password": "Aa*13673390028",
+      "roles": ["ぃ如梦つ_Be9"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": true,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "erXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "wan962965493",
+      "password": "Aa*13673390028",
+      "roles": ["曼佗罗﹏"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "erXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "yi962965493",
+      "password": "Aa*13673390028",
+      "roles": ["91坤坤"],
+      "teamIndex": 2,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "erXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "yi962965491",
+      "password": "Aa*13673390028",
+      "roles": ["一品红﹏"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "erXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "yi962965496",
+      "password": "Aa*13673390028",
+      "roles": ["小邋遢﹏"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "erXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    }
+  ]
+]
