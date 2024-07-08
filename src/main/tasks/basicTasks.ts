@@ -301,18 +301,29 @@ export async function displayGameWindows() {
 
   const allAccounts = global.appContext.accounts.flat(2)
   let unusedIndexes = Array.from({ length: allAccounts.length }, (_, index) => index)
+  let unknownGameWindows: GameWindowControl[] = []
+
   for (const gameWindow of allGameWindows) {
     await gameWindow.setForeground()
     const roleName = gameWindow?.roleInfo?.roleName
     let index = allAccounts.findIndex(item => item.roles.find(name => name === roleName))
     if (index === -1) {
-      index = unusedIndexes.shift()!
+      unknownGameWindows.push(gameWindow)
+      continue
     } else {
-      unusedIndexes = unusedIndexes.filter(unusedIndex => unusedIndex === index)
+      unusedIndexes = unusedIndexes.filter(unusedIndex => unusedIndex !== index)
     }
     const position = positions[index]
 
     gameWindow.setPosition(position[0], position[1])
+    await sleep(100)
+  }
+
+  for (const unknownGameWindow of unknownGameWindows) {
+    await unknownGameWindow.setForeground()
+    const index = unusedIndexes.shift()!
+    const position = positions[index]
+    unknownGameWindow.setPosition(position[0], position[1])
     await sleep(100)
   }
 }
