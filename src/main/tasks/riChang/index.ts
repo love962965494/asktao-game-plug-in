@@ -556,7 +556,10 @@ export async function gouMaiYaoPin() {
     await talkToNPC('无名小镇', 'wuMingYaoPuLaoBan', 'maiMai', undefined, 100)
     await sleep(500)
     await clickGamePoint('批量购买', 'piLiangGouMai', {
-      callback: async () => {
+      callback: async (errorCounts: number) => {
+        if (errorCounts > 3) {
+          return true
+        }
         const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/gouMaiYaoPin.jpg')
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('piLiangGouMai1')}.jpg`)
         await screenCaptureToFile(tempCapturePath)
