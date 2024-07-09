@@ -361,7 +361,6 @@ const riChangTasks_ZuDui = [
   '收藏任务_帮派日常挑战',
   '收藏任务_沙漠商队',
   '收藏任务_阵营任务',
-  '收藏任务_通天塔',
 ]
 export async function meiRiRiChang_ZuDui() {
   const teamWindowsWithGroup = await getTeamsInfo()
@@ -384,7 +383,7 @@ export async function meiRiRiChang_ZuDui() {
     })
     await sleep(500)
 
-    for (const task of riChangTasks_ZuDui) {
+    for (const task of riChangTasks_ZuDui.concat(commonConfig.danDuTongTianTa ? [] : ['收藏任务_通天塔'])) {
       const isChecked = await hasChecked(task)
 
       if (!isChecked) {
@@ -484,7 +483,7 @@ export async function meiRiRiChang_DanRen() {
             writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
           }
           await sleep(500)
-        } 
+        }
       }
     }
   }
@@ -627,7 +626,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
     if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
       await xianJieTongJi()
       await sleep(4 * 60 * 60 * 1000)
-  
+
       let count = 0
       while (count < 3) {
         for (const [teamLeaderWindow] of teamWindowsWithGroup) {
@@ -639,7 +638,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
         }
         count++
       }
-  
+
       for (const [teamLeaderWindow] of teamWindowsWithGroup) {
         await teamLeaderWindow.setForeground()
         await clickGamePoint('换线', 'huanXian', {
@@ -649,7 +648,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
             const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huanXian')}.jpg`)
             await screenCaptureToFile(tempCapturePath)
             const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-  
+
             return found
           },
         })
@@ -660,12 +659,12 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
   } else {
     await new Promise<void>((resolve, reject) => {
       async function _loop() {
-        setTimeout(() => { 
+        setTimeout(() => {
           const currentHour = new Date().getHours()
           if (currentHour >= 0) {
             resolve()
           }
-         }, 5 * 60 * 1000)
+        }, 5 * 60 * 1000)
       }
 
       _loop()
