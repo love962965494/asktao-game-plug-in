@@ -664,7 +664,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
       async function _loop() {
         setTimeout(() => {
           const currentHour = new Date().getHours()
-          if (currentHour >= 0) {
+          if (currentHour <= 22) {
             resolve()
           } else {
             _loop()
