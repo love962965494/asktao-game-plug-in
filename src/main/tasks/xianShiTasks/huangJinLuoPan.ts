@@ -5,7 +5,7 @@ import { compareTwoImages, findImageWithinTemplate, screenCaptureToFile } from '
 import robotUtils from '../../../utils/robot'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
-import { readLog, writeLog } from '../../../utils/common'
+import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
 import { displayGameWindows, getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
 import { chiXiang, useWuPin } from '../wuPinTask'
@@ -15,6 +15,7 @@ const taskName = 'huangJinLuoPan'
 
 export async function huangJinLuoPanLoop(city: string) {
   const teamWindowsWithGroup = await getTeamsInfo()
+  const allGameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
   const data = await readLog('黄金罗盘')
 
   let hasFinishedRoles = JSON.parse(data) as string[]
@@ -51,7 +52,43 @@ export async function huangJinLuoPanLoop(city: string) {
     }
   }
 
-  await displayGameWindows()
+  // 每个角色再检查一遍是否都完成了
+  let recheckHasFinishedRoles = []
+  const woWaLeTemplateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_woWaLe.jpg')
+  for (const gameWindow of allGameWindows) {
+    await gameWindow.setForeground()
+    await useWuPin('huangJinLuoPan')
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('recheckHuangJinLuoPan')}.jpg`)
+    await screenCaptureToFile(tempCapturePath)
+    const found = await findImageWithinTemplate(tempCapturePath, woWaLeTemplateImagePath)
+
+    if (found) {
+      recheckHasFinishedRoles.push(gameWindow.roleInfo.roleName)
+    }
+  }
+
+  if (recheckHasFinishedRoles.length === allGameWindows.length) {
+    await displayGameWindows()
+  } else {
+    await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString(), ...recheckHasFinishedRoles]), true)
+    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+      await teamLeaderWindow.setForeground()
+      await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
+      await clickGamePoint('换线', 'huanXian', {
+        randomPixNums: [3, 3],
+        callback: async () => {
+          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/jinRu.jpg')
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huanXian')}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          return found
+        },
+      })
+    }
+
+    huangJinLuoPanLoop(city)
+  }
 }
 
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {
