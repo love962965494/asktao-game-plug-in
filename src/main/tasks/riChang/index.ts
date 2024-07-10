@@ -666,6 +666,8 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
           const currentHour = new Date().getHours()
           if (currentHour >= 0) {
             resolve()
+          } else {
+            _loop()
           }
         }, 5 * 60 * 1000)
       }
