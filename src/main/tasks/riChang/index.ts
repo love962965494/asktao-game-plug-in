@@ -383,6 +383,16 @@ export async function meiRiRiChang_ZuDui() {
     })
     await sleep(500)
 
+    if (commonConfig.danDuTongTianTa) {
+      const isChecked = await hasChecked('收藏任务_通天塔')
+
+      if (isChecked) {
+        await clickGamePoint('收藏任务_通天塔', 'meiRiRiChang_tongTianTa', {
+          randomPixNums: [5, 2]
+        })
+      }
+    }
+
     for (const task of riChangTasks_ZuDui.concat(commonConfig.danDuTongTianTa ? [] : ['收藏任务_通天塔'])) {
       const isChecked = await hasChecked(task)
 
