@@ -85,6 +85,8 @@ export async function huangJinLuoPanLoop(city: string) {
           return found
         },
       })
+      await robotUtils.keyTap('enter')
+      await sleep(3000)
     }
 
     huangJinLuoPanLoop(city)
