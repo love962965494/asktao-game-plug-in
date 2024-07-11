@@ -388,7 +388,7 @@ export async function meiRiRiChang_ZuDui() {
 
       if (isChecked) {
         await clickGamePoint('收藏任务_通天塔', 'meiRiRiChang_tongTianTa', {
-          randomPixNums: [5, 2]
+          randomPixNums: [5, 2],
         })
       }
     }
@@ -672,14 +672,14 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
   } else {
     await new Promise<void>((resolve, reject) => {
       async function _loop() {
-        setTimeout(() => {
-          const currentHour = new Date().getHours()
-          if (currentHour <= 22) {
-            resolve()
-          } else {
+        const currentHour = new Date().getHours()
+        if (currentHour <= 22) {
+          resolve()
+        } else {
+          setTimeout(() => {
             _loop()
-          }
-        }, 5 * 60 * 1000)
+          }, 5 * 60 * 1000)
+        }
       }
 
       _loop()
