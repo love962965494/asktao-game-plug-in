@@ -167,6 +167,15 @@ async function lingQuRenWu(teamLeaderWindows: GameWindowControl[]) {
       buttonName: 'lingQuRenWu',
       position,
       size,
+    }, {
+      callback: async () => {
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${pinYin}_xiaoHuaXian`)}.jpg`)
+        const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
+        await screenCaptureToFile(tempCapturePath)
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        return !found
+      }
     })
   }
 
