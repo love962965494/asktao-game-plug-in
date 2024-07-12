@@ -688,6 +688,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
 
   if (needGouMaiYaoPin) {
     await gouMaiYaoPin()
+    await sleep(3000)
   }
 
   await meiRiRiChang_ZuDui()
