@@ -7,7 +7,7 @@ import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
 import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
-import { displayGameWindows, getTeamsInfo, liDui, yiJianZuDui } from '../basicTasks'
+import { displayGameWindows, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from '../basicTasks'
 import { chiXiang, useWuPin } from '../wuPinTask'
 import { ICityMap } from 'constants/types'
 
@@ -57,6 +57,10 @@ export async function huangJinLuoPanLoop(city: string) {
   const woWaLeTemplateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_woWaLe.jpg')
   for (const gameWindow of allGameWindows) {
     await gameWindow.setForeground()
+    const isGrouped = await isGroupedTeam(gameWindow)
+    if (isGrouped) {
+      await liDui()
+    }
     await useWuPin('huangJinLuoPan')
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('recheckHuangJinLuoPan')}.jpg`)
     await screenCaptureToFile(tempCapturePath)
