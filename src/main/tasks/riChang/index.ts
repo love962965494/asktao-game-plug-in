@@ -556,7 +556,10 @@ export async function gouMaiYaoPin() {
     robotUtils.keyTap('W', ['alt'])
     await sleep(300)
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('gouMaiYaoPin')}.jpg`)
-    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath)
+    const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath, {
+      position: [1147, 226],
+      size: [510, 640]
+    })
     await moveMouseToAndClick(templateImagePath, {
       buttonName: 'gouMaiYaoPin',
       position,

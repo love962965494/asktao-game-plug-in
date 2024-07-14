@@ -73,7 +73,7 @@ async function findImagePositionsWithErrorHandle(bigImagePath: string, smallImag
     position = await findImagePositions(bigImagePath, smallImagePath)
     count++
   }
-  return position
+  return options?.position ? [position[0] + options.position[0], position[1] + options.position[1]] : position
 }
 function findImagePositions(bigImagePath: string, smallImagePath: string): Promise<number[]> {
   const filePath = path.join(pythonPath, 'findPositionWithinTemplate.py')
