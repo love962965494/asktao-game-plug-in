@@ -115,6 +115,7 @@ export default function GameTaskManage() {
               <Select.Option value="北海沙滩">北海沙滩</Select.Option>
               <Select.Option value="揽仙镇外">揽仙镇外</Select.Option>
               <Select.Option value="官道南">官道南</Select.Option>
+              <Select.Option value="官道北">官道北</Select.Option>
               <Select.Option value="卧龙坡">卧龙坡</Select.Option>
             </Select>
           </Modal>
