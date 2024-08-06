@@ -138,11 +138,9 @@ export function registerGlobalShortcut() {
     // // await escShouCangTasks('quanMinShuaDao', true, true)
     // // await fuShengLu(gameWindow)
     await meiRiRiChang_DanRen()
-    // await shiMenRenWu()
+    // // await shiMenRenWu()
 
-    // await huangJinLuoPan(gameWindow, teamLeaderWindow)
     // _setWindowTopMost()
-    // await jiuYaoShenYou()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
