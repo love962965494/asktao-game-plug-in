@@ -528,19 +528,28 @@ export async function shiMenRenWu() {
   }
 }
 
-export async function xianJieTongJi() {
+export async function xianJieTongJi(taiXuanZhenJun = false) {
   const teamWindowsWithGroup = await getTeamsInfo()
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {
     await teamLeaderWindow.setForeground()
     await escShouCangTasks('quanMinShuaDao', true)
     await hasGoneToNPC(teamLeaderWindow)
-    await goToNPCAndTalk({
-      city: '无名小镇',
-      npcName: 'yuJianShangRen',
-      conversition: 'haoANaWoJiuZouYiTang',
-      gameWindow: teamLeaderWindow,
-    })
+    if (taiXuanZhenJun) {
+      await goToNPCAndTalk({
+        city: '南天门',
+        npcName: 'taiXuanZhenJun',
+        conversition: 'haoAWoZheJiuQu',
+        gameWindow: teamLeaderWindow,
+      })
+    } else {
+      await goToNPCAndTalk({
+        city: '无名小镇',
+        npcName: 'yuJianShangRen',
+        conversition: 'haoANaWoJiuZouYiTang',
+        gameWindow: teamLeaderWindow,
+      })
+    }
 
     await sleep(1000)
   }
@@ -558,7 +567,7 @@ export async function gouMaiYaoPin() {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('gouMaiYaoPin')}.jpg`)
     const position = await findImagePositionsWithErrorHandle(tempCapturePath, templateImagePath, {
       position: [1147, 226],
-      size: [510, 640]
+      size: [510, 640],
     })
     await moveMouseToAndClick(templateImagePath, {
       buttonName: 'gouMaiYaoPin',
