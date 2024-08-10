@@ -70,5 +70,77 @@
         }
       }
     }
+  ],
+  [
+    {
+      "account": "ai962965490",
+      "password": "Aa*13673390028",
+      "roles": ["☆魔が卓然"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "yiXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "ai962965491",
+      "password": "Aa*13673390028",
+      "roles": ["杜メ甫℡"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": true,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "yiXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "ai962965492",
+      "password": "Aa*13673390028",
+      "roles": ["ソ浅爱"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "yiXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "ai962965493",
+      "password": "Aa*13673390028",
+      "roles": ["飛鼠№在天"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "yiXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    },
+    {
+      "account": "ai962965494",
+      "password": "Aa*13673390028",
+      "roles": ["せLocustそ"],
+      "teamIndex": 1,
+      "lang": "ch",
+      "defaultTeamLeader": false,
+      "gameConfig": {
+        "仙界神捕": {
+          "任务模式": "yiXingMoShi",
+          "奖励模式": "DaoHangJiangLi"
+        }
+      }
+    }
   ]
 ]
