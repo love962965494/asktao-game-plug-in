@@ -355,7 +355,7 @@ export async function yiJianQianDao() {
 
 // 每日日常
 const riChangTasks_ZuDui = [
-  '收藏任务_昆仑神境',
+  // '收藏任务_昆仑神境',
   '收藏任务_仙宠大逃亡',
   '收藏任务_二十八星宿',
   '收藏任务_帮派日常挑战',
@@ -404,6 +404,8 @@ export async function meiRiRiChang_ZuDui() {
     }
 
     await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
+    await sleep(3 * 1000)
+    robotUtils.keyTap('enter')
   }
 }
 
