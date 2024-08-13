@@ -575,7 +575,7 @@ export async function gouMaiYaoPin() {
       buttonName: 'gouMaiYaoPin',
       position,
       size: [371, 34],
-    })
+    }, { quicklyClick: true })
     await hasGoneToNPC(teamLeaderWindow)
     await talkToNPC('无名小镇', 'wuMingYaoPuLaoBan', 'maiMai', undefined, 100)
     await sleep(500)
