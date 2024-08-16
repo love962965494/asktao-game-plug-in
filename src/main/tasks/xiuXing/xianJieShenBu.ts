@@ -116,7 +116,7 @@ async function getTaskProgress(teamWindows: GameWindowControl[]) {
   const [teamLeaderWindow] = teamWindows
   await teamLeaderWindow.setForeground()
   await searchGameTask(taskName)
-  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/xuanShangLing.jpg')
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/tianMo.jpg')
   const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('executePairTask1')}.jpg`)
   await screenCaptureToFile(tempCapturePath)
   const positions = await findMultiMatchPositions(tempCapturePath, templateImagePath)
