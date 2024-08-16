@@ -355,7 +355,7 @@ export async function yiJianQianDao() {
 
 // 每日日常
 const riChangTasks_ZuDui = [
-  // '收藏任务_昆仑神境',
+  '收藏任务_五人副本',
   '收藏任务_仙宠大逃亡',
   '收藏任务_二十八星宿',
   '收藏任务_帮派日常挑战',
