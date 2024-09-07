@@ -16,6 +16,7 @@ export async function baiBaoFanPai() {
   let index = 0
 
   while (index < 21) {
+    let times: { [key: string]: number } = {}
     for (const gameWindow of gameWindows) {
       await gameWindow.setForeground()
       await clickGamePoint('百宝翻牌-他人分享', 'baiBaoFanPai', {
@@ -39,11 +40,15 @@ export async function baiBaoFanPai() {
       })
       await sleep(200)
       robotUtils.keyTap('enter')
+      times[gameWindow.roleInfo.roleName] = new Date().getTime()
     }
 
-    await sleep(commonConfig.accountsNum === 10 ? 60 * 1000 : 1.5 * 60 * 1000)
-
     for (const gameWindow of gameWindows) {
+      const now = new Date().getTime()
+      const pastTime = Math.round((now - times[gameWindow.roleInfo.roleName]) / 1000)
+      if (pastTime < 130) {
+        await sleep((130 - pastTime) * 1000)
+      }
       await gameWindow.setForeground()
       await clickGamePoint('百宝翻牌-分享得积分', 'baiBaoFanPai', {
         callback: async () => {

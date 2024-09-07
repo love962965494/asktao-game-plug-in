@@ -651,7 +651,7 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
   if (commonConfig.needShuaDao) {
     const currentHour = new Date().getHours()
     if ((currentHour >= 20 && currentHour < 24) || (currentHour >= 0 && currentHour < 2)) {
-      await xianJieTongJi()
+      await xianJieTongJi(true)
       await sleep(4 * 60 * 60 * 1000)
 
       let count = 0
