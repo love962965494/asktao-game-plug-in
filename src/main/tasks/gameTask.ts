@@ -120,7 +120,7 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
     await screenCaptureToFile(tempCapturePath, position, taskBarSize)
     await moveMouseToAndClick(tempCapturePath, {
       buttonName: 'shouCangRenWu',
-      position,
+      position: [position[0], position[1] + 40],
       size: taskBarSize,
     }, {
       quicklyClick
