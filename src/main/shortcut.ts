@@ -4,6 +4,7 @@ import { gameWindows, getGameWindows, getProcessesByName } from '../utils/system
 import path from 'path'
 import { logPath, pythonImagesPath } from '../paths'
 import {
+  compareTwoImages,
   extractThemeColors,
   findImageWithinTemplate,
   findMultiMatchPositions,
@@ -11,9 +12,9 @@ import {
   removeBackground,
   screenCaptureToFile,
 } from '../utils/fileOperations'
-import robotjs from 'robotjs'
+import robotjs, { mouseClick, moveMouse, moveMouseSmooth } from 'robotjs'
 import { goToNPCAndTalk, hasGoneToNPC, hasNPCDialog, talkToNPC } from './tasks/npcTasks'
-import { randomName, sleep } from '../utils/toolkits'
+import { randomName, randomPixelNum, sleep } from '../utils/toolkits'
 import { escShouCangTasks, searchGameTask } from './tasks/gameTask'
 import {
   hasMeetLaoJun,
@@ -26,7 +27,7 @@ import {
   waitFinishZhanDou_1,
 } from './tasks/zhanDouTasks'
 import { getTaskProgress, lingQuRenWu } from './tasks/xiuXing'
-import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../utils/common'
+import { clickGamePoint, moveMouseTo, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../utils/common'
 import {
   fuShengLu,
   gouMaiYaoPin,
@@ -90,7 +91,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [473, 226], [40, 30])
+    await screenCaptureToFile(srcImagePath, [473, 368], [240, 30])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -183,6 +184,38 @@ export function registerGlobalShortcut() {
         )}`,
       })
     }
+  })
+
+  globalShortcut.register('CommandOrControl+Alt+X', async () => {
+    const allGameWindows = await getGameWindows()
+    const teamLeaderWindow = GameWindowControl.getGameWindowByRoleName('Kanonの')
+    const teamMemberWindow = GameWindowControl.getGameWindowByRoleName('LittleBuster')
+    await teamMemberWindow?.setForeground()
+    robotUtils.keyTap('B', ['control'])
+
+
+    const jiaoYiTemplateImagePath = path.join(pythonImagesPath, `GUIElements/common/jiaoYi.jpg`)
+    let hasFound = false
+    while (!hasFound) {
+      robotUtils.keyTap('B', ['control'])
+
+      const jiaoYiTempCapturePath = path.join(pythonImagesPath, `temp/${randomName('jiaoYiKuang')}.jpg`)
+      await screenCaptureToFile(jiaoYiTempCapturePath)
+      hasFound = await findImageWithinTemplate(jiaoYiTempCapturePath, jiaoYiTemplateImagePath)
+    }
+
+    await teamLeaderWindow?.setForeground()
+    await useWuPin('yuTianSuo', 1, true)
+    await clickGamePoint('交易-确定', 'jiaoYiQueDing')
+    // await moveMouseToAndClick(
+    //   tempCapturePath,
+    //   {
+    //     buttonName: 'jiaoYi',
+    //     position: [810, 26],
+    //     size: [120, 90],
+    //   },
+    //   { rightClick: true }
+    // )
   })
 }
 

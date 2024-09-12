@@ -31,8 +31,8 @@ if __name__ == "__main__":
     image1_path = sys.argv[1]
     image2_path = sys.argv[2]
     threshold_value = int(sys.argv[3])
-    # image1_path = 'C:/Users/sc/Desktop/liDui_1.jpg'
-    # image2_path = 'C:/Users/sc/Desktop/liDui_3.jpg'
+    # image1_path = 'C:/Users/sc/Desktop/jiaoyi_2.jpg'
+    # image2_path = 'C:/Users/sc/Desktop/jiaoYiTouXiang_2.jpg'
     # threshold_value = 10
     # image2_path = 'C:/Users/asus/Desktop/groupTeam_JiaRu_2.jpg'
     found = compare_images(image1_path, image2_path, threshold_value)

@@ -409,7 +409,7 @@ export async function meiRiRiChang_ZuDui() {
   }
 }
 
-const riChangTasks_DanRen = ['收藏任务_娃娃训练营']
+const riChangTasks_DanRen = ['收藏任务_娃娃训练营', '收藏任务_师门任务', '收藏任务_门派试炼', '收藏任务_助人为乐']
 export async function meiRiRiChang_DanRen() {
   const teamWindowsWithGroup = await getTeamsInfo()
 
@@ -423,7 +423,7 @@ export async function meiRiRiChang_DanRen() {
       await teamWindow.setForeground()
       // 预设方案三
       robotUtils.keyTap('R', ['control'])
-      await chiXiang(2)
+      // await chiXiang(2)
       robotUtils.keyTap('B', ['control'])
       await sleep(1000)
       robotUtils.keyTap('escape')
@@ -448,7 +448,7 @@ export async function meiRiRiChang_DanRen() {
       })
       await sleep(500)
 
-      for (const task of riChangTasks_DanRen.concat(commonConfig.danDuShiMen ? [] : ['收藏任务_师门任务'])) {
+      for (const task of riChangTasks_DanRen) {
         const isChecked = await hasChecked(task)
 
         if (!isChecked) {
@@ -471,31 +471,29 @@ export async function meiRiRiChang_DanRen() {
     }
   }
 
-  if (!commonConfig.danDuShiMen) {
-    const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
-    const hasFoundQianMianGuai = {} as { [key: string]: boolean }
+  const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/qianMianGuai.jpg')
+  const hasFoundQianMianGuai = {} as { [key: string]: boolean }
 
-    writeLog('师门任务', '', true)
-    while (true) {
-      for (const teamWindows of teamWindowsWithGroup) {
-        for (const teamWindow of teamWindows) {
-          if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
-            continue
-          }
-          await teamWindow.setForeground()
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiMen')}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-          if (found) {
-            hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
-            robotUtils.keyTap('f1')
-            await sleep(200)
-            robotUtils.keyTap('f1')
-            writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
-          }
-          await sleep(500)
+  writeLog('师门任务', '', true)
+  while (true) {
+    for (const teamWindows of teamWindowsWithGroup) {
+      for (const teamWindow of teamWindows) {
+        if (hasFoundQianMianGuai[teamWindow.roleInfo.roleName]) {
+          continue
         }
+        await teamWindow.setForeground()
+        const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shiMen')}.jpg`)
+        await screenCaptureToFile(tempCapturePath)
+        const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+        if (found) {
+          hasFoundQianMianGuai[teamWindow.roleInfo.roleName] = true
+          robotUtils.keyTap('f1')
+          await sleep(200)
+          robotUtils.keyTap('f1')
+          writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
+        }
+        await sleep(500)
       }
     }
   }
@@ -571,11 +569,15 @@ export async function gouMaiYaoPin() {
       position: [1147, 226],
       size: [510, 640],
     })
-    await moveMouseToAndClick(templateImagePath, {
-      buttonName: 'gouMaiYaoPin',
-      position,
-      size: [371, 34],
-    }, { quicklyClick: true })
+    await moveMouseToAndClick(
+      templateImagePath,
+      {
+        buttonName: 'gouMaiYaoPin',
+        position,
+        size: [371, 34],
+      },
+      { quicklyClick: true }
+    )
     await hasGoneToNPC(teamLeaderWindow)
     await talkToNPC('无名小镇', 'wuMingYaoPuLaoBan', 'maiMai', undefined, 100)
     await sleep(500)
