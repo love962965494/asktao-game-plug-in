@@ -138,7 +138,7 @@ export function registerGlobalShortcut() {
     // // await teamLeaderWindow.setForeground()
     // // await escShouCangTasks('quanMinShuaDao', true, true)
     // // await fuShengLu(gameWindow)
-    // await meiRiRiChang_DanRen()
+    await meiRiRiChang_DanRen()
     // await shiMenRenWu()
 
     // _setWindowTopMost()

@@ -423,7 +423,7 @@ export async function meiRiRiChang_DanRen() {
       await teamWindow.setForeground()
       // 预设方案三
       robotUtils.keyTap('R', ['control'])
-      // await chiXiang(2)
+      await chiXiang(2)
       robotUtils.keyTap('B', ['control'])
       await sleep(1000)
       robotUtils.keyTap('escape')
@@ -491,7 +491,37 @@ export async function meiRiRiChang_DanRen() {
           robotUtils.keyTap('f1')
           await sleep(200)
           robotUtils.keyTap('f1')
-          writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
+          await writeLog('师门任务', `${teamWindow.roleInfo.roleName}`)
+
+          // 发现千面怪，取消师门任务，继续执行其他任务
+          robotUtils.keyTap('B', ['control'])
+          await sleep(1000)
+          robotUtils.keyTap('escape')
+          await sleep(1000)
+          await clickGamePoint('收藏任务_图标', 'meiRiRiChang_ZuDui', {
+            callback: async () => {
+              const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/ziDongRenWuPeiZhi.jpg')
+              const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('meiRiRiChang_DanRen')}.jpg`)
+              await screenCaptureToFile(tempCapturePath)
+    
+              const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+              return found
+            },
+            randomPixNums: [5, 2],
+          })
+          await sleep(500)
+          await clickGamePoint('收藏任务_单人', 'meiRiRiChang_DanRen', {
+            tabOptions: {
+              isTab: true,
+              activeTabColor: '#785a00',
+            },
+          })
+          await sleep(500)
+          // 取消师门任务
+          await clickGamePoint('收藏任务_师门任务', 'meiRiRiChang_ZuDui',{
+            randomPixNums: [5, 2],
+          })
+          await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
         }
         await sleep(500)
       }
