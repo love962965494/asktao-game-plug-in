@@ -73,8 +73,8 @@ export async function xiuLianFaBao() {
     await sleep(500)
     await talkToNPC('蓬莱岛', 'duoBaoDaoRen', 'dongXiGeiNi,gaoSuWoFangFaBa')
     await sleep(500)
-    await useWuPin('panChiJie', 1, true)
-    await useWuPin('xueHunSiLian', 1, true)
+    await useWuPin('panChiJie', { times: 1, hasOpenedWuPinLan: true })
+    await useWuPin('xueHunSiLian', { times: 1, hasOpenedWuPinLan: true })
     await clickGamePoint('修炼法宝-多宝道人-提交', 'duoBaoDaoRen_tiJiao')
 
     let index = 0
@@ -138,7 +138,7 @@ export async function xiuLianFaBao() {
           const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/renWuRiZhi.jpg')
           await screenCaptureToFile(tempCapturePath)
           const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-  
+
           return !found
         },
       })

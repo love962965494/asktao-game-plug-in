@@ -7,7 +7,8 @@ import { findImagePositions, findImagePositionsWithErrorHandle, screenCaptureToF
 import { hasGameTask } from './gameTask'
 
 const packages = ['装备-包裹', '装备-行囊1', '装备-行囊2', '装备-坐骑']
-export async function findWuPinPosition(name: string, hasOpenedWuPinLan: boolean) {
+const jiaoYiPackages = ['交易-装备-包裹', '交易-装备-行囊1', '交易-装备-行囊2', '交易-装备-坐骑']
+export async function findWuPinPosition(name: string, hasOpenedWuPinLan: boolean, isJiaoYi: boolean) {
   const wuPinImagePath = path.join(pythonImagesPath, `GUIElements/wuPinRelative/${name}.jpg`)
   if (!hasOpenedWuPinLan) {
     robotUtils.keyTap('B', ['control'])
@@ -16,14 +17,15 @@ export async function findWuPinPosition(name: string, hasOpenedWuPinLan: boolean
     await sleep(200)
   }
 
-  for (const packageName of packages) {
+  const arr = isJiaoYi ? jiaoYiPackages : packages
+  for (const packageName of arr) {
     await clickGamePoint(packageName, 'hasWuPin', { tabOptions: { isTab: true, activeTabColor: '#785a00' } })
 
     await sleep(200)
 
     {
       await moveMouseToBlank()
-      const { position, size } = global.appContext.gamePoints['装备-物品框框']
+      const { position, size } = global.appContext.gamePoints[isJiaoYi ? '交易-装备-物品框框' : '装备-物品框框']
       let tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('hasWuPin')}.jpg`)
       await screenCaptureToFile(tempCapturePath, position, size)
       const wuPinPosition = await findImagePositions(tempCapturePath, wuPinImagePath)
@@ -40,8 +42,16 @@ export async function findWuPinPosition(name: string, hasOpenedWuPinLan: boolean
 export const wuPinSize = [120, 90]
 
 // 使用物品
-export async function useWuPin(name: string, times: number = 1, hasOpenedWuPinLan = false) {
-  const position = await findWuPinPosition(name, hasOpenedWuPinLan)
+export async function useWuPin(
+  name: string,
+  options: {
+    times?: number
+    hasOpenedWuPinLan?: boolean
+    isJiaoYi?: boolean
+  } = { times: 1, hasOpenedWuPinLan: false, isJiaoYi: false }
+) {
+  const { times = 1, hasOpenedWuPinLan, isJiaoYi } = options
+  const position = await findWuPinPosition(name, hasOpenedWuPinLan || false, isJiaoYi || false)
 
   if (position.length > 0) {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('useWuPin')}.jpg`)
@@ -71,7 +81,7 @@ export async function useWuPin(name: string, times: number = 1, hasOpenedWuPinLa
 // 吃香
 export async function chiXiang(times: number, buXiang: boolean = true) {
   if (buXiang) {
-    await useWuPin('qiangLiQuMoXiang', times)
+    await useWuPin('qiangLiQuMoXiang', { times })
     return
   }
   const hasQuMoXiang = await hasGameTask('强力驱魔香时间')
@@ -79,5 +89,5 @@ export async function chiXiang(times: number, buXiang: boolean = true) {
     return
   }
 
-  await useWuPin('qiangLiQuMoXiang', times)
+  await useWuPin('qiangLiQuMoXiang', { times })
 }
