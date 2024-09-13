@@ -64,7 +64,7 @@ export async function searchGameTask(taskName: string) {
       const found = await findImageWithinTemplate(tempCapturePath, templateImagePath, 0.6)
 
       return found
-    }
+    },
   })
   await sleep(500)
 
@@ -118,13 +118,26 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
   {
     const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu3')}.jpg`)
     await screenCaptureToFile(tempCapturePath, position, taskBarSize)
-    await moveMouseToAndClick(tempCapturePath, {
-      buttonName: 'shouCangRenWu',
-      position: [position[0], position[1] + 40],
-      size: taskBarSize,
-    }, {
-      quicklyClick
-    })
+    await moveMouseToAndClick(
+      tempCapturePath,
+      {
+        buttonName: 'shouCangRenWu',
+        position: [position[0], position[1] + 40],
+        size: taskBarSize,
+      },
+      {
+        quicklyClick,
+        callback: async () => {
+          const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/${taskName}.jpg`)
+          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('shouCangRenWu4')}.jpg`)
+          await screenCaptureToFile(tempCapturePath)
+
+          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+          return !found
+        },
+      }
+    )
   }
 
   return hasFinished
