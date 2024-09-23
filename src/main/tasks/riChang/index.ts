@@ -742,6 +742,25 @@ export async function yiJianRiChang(needGouMaiYaoPin = true) {
 
   await meiRiRiChang_ZuDui()
 
+  // await new Promise((resolve) => {
+  //   let hasFinished: { [key: string]: boolean } = {}
+  //   setInterval(async () => {
+  //     for (const [teamLeaderWindow] of teamWindowsWithGroup) {
+  //       if (hasFinished[teamLeaderWindow.roleInfo.roleName]) {
+  //         continue
+  //       }
+  //       await teamLeaderWindow.setForeground()
+  //       const isInBattle1 = await isInBattle_1(teamLeaderWindow)
+
+  //       // 不在战斗中
+  //       if (!isInBattle1) {
+  //         await sleep(10 * 1000)
+          
+  //       }
+  //     }
+  //   }, 5 * 60 * 1000)
+  // })
+
   await sleep(commonConfig.zuDuiTaskTime * 60 * 60 * 1000)
 
   for (const [teamLeaderWindow] of teamWindowsWithGroup) {

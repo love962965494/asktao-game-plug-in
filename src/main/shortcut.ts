@@ -92,7 +92,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1030, 620], [645, 380])
+    await screenCaptureToFile(srcImagePath, [1154, 905], [220, 34])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -133,16 +133,23 @@ export function registerGlobalShortcut() {
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
     // await getGameWindows()
-    // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
+    // // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
     // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
-    // // await teamLeaderWindow.setForeground()
+    // // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
+    // await teamLeaderWindow.setForeground()
+    // const { position, size } = global.appContext.gamePoints['地图-通天塔']
+    // const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/tongTianTa.jpg`)
+    // const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('tongTianTa')}.jpg`)
+    // await screenCaptureToFile(tempCapturePath, position, size)
+    // const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
     // // await escShouCangTasks('quanMinShuaDao', true, true)
     // // await fuShengLu(gameWindow)
     await meiRiRiChang_DanRen()
     // await shiMenRenWu()
 
     // _setWindowTopMost()
+
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
