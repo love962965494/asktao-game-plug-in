@@ -205,6 +205,16 @@ export async function liDui() {
   })
 }
 
+export async function zanLi() {
+  await moveMouseToBlank()
+  robotUtils.keyTap('B', ['control'])
+  await sleep(200)
+  robotUtils.keyTap('T', ['alt'])
+  await sleep(200)
+
+  await clickGamePoint('暂离', 'zanLi')
+}
+
 // 升为队长
 const captureSize = [100, 26]
 const rolePositions = [
@@ -517,4 +527,29 @@ export async function findTargetInMap(gameWindow: GameWindowControl, mapName: ke
 
     return targetPosition
   }
+}
+
+export async function keepFly(gameWindow: GameWindowControl) {
+  const isFlying = await checkIsFlying(gameWindow)
+
+  if (!isFlying) {
+    robotUtils.keyTap('f5')
+    await sleep(3000)
+  }
+}
+
+export async function checkIsFlying(gameWindow: GameWindowControl) {
+  await gameWindow.setForeground()
+  robotUtils.keyTap('X', ['alt'])
+  await sleep(1000)
+  await moveMouseToBlank()
+
+  const templateImagePath = path.join(pythonImagesPath, `GUIElements/common/flyBall.jpg`)
+  const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('isFlying')}.jpg`)
+  await screenCaptureToFile(tempCapturePath)
+  const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+
+  robotUtils.mouseClick('right')
+
+  return found
 }

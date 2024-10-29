@@ -5,11 +5,21 @@ import { compareTwoImages, findImageWithinTemplate, screenCaptureToFile } from '
 import robotUtils from '../../../utils/robot'
 import { randomName, sleep } from '../../../utils/toolkits'
 import { clipboard } from 'electron'
-import { clickGamePoint, readLog, writeLog } from '../../../utils/common'
+import { clickGamePoint, moveMouseToAndClick, moveMouseToBlank, readLog, writeLog } from '../../../utils/common'
 import { isInBattle_1, waitFinishZhanDou_1 } from '../zhanDouTasks'
-import { displayGameWindows, getTeamsInfo, isGroupedTeam, liDui, yiJianZuDui } from '../basicTasks'
+import {
+  checkIsFlying,
+  displayGameWindows,
+  getTeamsInfo,
+  isGroupedTeam,
+  keepFly,
+  liDui,
+  yiJianZuDui,
+  zanLi,
+} from '../basicTasks'
 import { chiXiang, useWuPin } from '../wuPinTask'
 import { ICityMap } from 'constants/types'
+import jiaoYi, { findYuTianSuo } from '../jiaoYiTask'
 
 const taskName = 'huangJinLuoPan'
 
@@ -29,7 +39,7 @@ export async function huangJinLuoPanLoop(city: string) {
     if (!hasFinishedRoles.includes(teamLeaderWindow.roleInfo.roleName)) {
       let hasDone = false
       while (!hasDone) {
-        hasDone = await huangJinLuoPan(teamLeaderWindow, teamLeaderWindow, city)
+        hasDone = await huangJinLuoPan1(teamLeaderWindow, teamLeaderWindow, city)
       }
       hasFinishedRoles.push(teamLeaderWindow.roleInfo.roleName)
       await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString(), ...hasFinishedRoles]), true)
@@ -42,7 +52,7 @@ export async function huangJinLuoPanLoop(city: string) {
         await teamMemberWindow.setForeground()
         await chiXiang(1, true)
         while (!hasDone) {
-          hasDone = await huangJinLuoPan(teamMemberWindow, teamLeaderWindow, city)
+          hasDone = await huangJinLuoPan1(teamMemberWindow, teamLeaderWindow, city)
         }
 
         hasFinishedRoles.push(teamMemberWindow.roleInfo.roleName)
@@ -52,49 +62,7 @@ export async function huangJinLuoPanLoop(city: string) {
     }
   }
 
-  // 每个角色再检查一遍是否都完成了
-  let recheckHasFinishedRoles = []
-  const woWaLeTemplateImagePath = path.join(pythonImagesPath, 'GUIElements/taskRelative/huangJinLuoPan_woWaLe.jpg')
-  for (const gameWindow of allGameWindows) {
-    await gameWindow.setForeground()
-    const isGrouped = await isGroupedTeam(gameWindow)
-    if (isGrouped) {
-      await liDui()
-    }
-    await useWuPin('huangJinLuoPan')
-    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('recheckHuangJinLuoPan')}.jpg`)
-    await screenCaptureToFile(tempCapturePath)
-    const found = await findImageWithinTemplate(tempCapturePath, woWaLeTemplateImagePath)
-
-    if (found) {
-      recheckHasFinishedRoles.push(gameWindow.roleInfo.roleName)
-    }
-  }
-
-  if (recheckHasFinishedRoles.length === allGameWindows.length) {
-    await displayGameWindows()
-  } else {
-    await writeLog('黄金罗盘', JSON.stringify([new Date().toLocaleDateString(), ...recheckHasFinishedRoles]), true)
-    for (const [teamLeaderWindow] of teamWindowsWithGroup) {
-      await teamLeaderWindow.setForeground()
-      await yiJianZuDui(teamLeaderWindow.roleInfo.roleName)
-      await clickGamePoint('换线', 'huanXian', {
-        randomPixNums: [3, 3],
-        callback: async () => {
-          const templateImagePath = path.join(pythonImagesPath, 'GUIElements/common/jinRu.jpg')
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huanXian')}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-          return found
-        },
-      })
-      await robotUtils.keyTap('enter')
-      await sleep(3000)
-    }
-
-    huangJinLuoPanLoop(city)
-  }
+  await displayGameWindows()
 }
 
 export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWindow: GameWindowControl, city: string) {
@@ -199,6 +167,143 @@ export async function huangJinLuoPan(gameWindow: GameWindowControl, teamLeaderWi
       }
     }
     count++
+  }
+
+  return true
+}
+
+export async function huangJinLuoPan1(
+  gameWindow: GameWindowControl,
+  teamLeaderWindow: GameWindowControl,
+  city: string
+) {
+  const { size } = global.appContext.cityMap[city as keyof ICityMap]
+  let leftTop = [0, 0]
+  let rightBottom = [size[0], size[1]]
+  let center = [Math.round((leftTop[0] + rightBottom[0]) / 2), Math.round((leftTop[1] + rightBottom[1]) / 2)]
+
+  if (teamLeaderWindow.roleInfo.roleName !== gameWindow.roleInfo.roleName) {
+    const isFlying = await checkIsFlying(teamLeaderWindow)
+    console.log('isFlying: ', isFlying);
+    
+    if (isFlying) {
+      robotUtils.keyTap('f5')
+      await sleep(3000)
+    }
+
+    // 交易
+    await gameWindow.setForeground()
+    await zanLi()
+    // robotUtils.keyTap('W', ['alt'])
+    // clipboard.writeText(`${center[0] + 5}.${center[1] + 5}`)
+    // robotUtils.keyTap('V', ['control'])
+    // robotUtils.keyTap('enter')
+    // await sleep(3000)
+    await teamLeaderWindow?.setForeground()
+    await findYuTianSuo()
+    await jiaoYi(teamLeaderWindow!, gameWindow!, ['yuTianSuo'])
+
+    await teamLeaderWindow.setForeground()
+    await liDui()
+    await gameWindow.setForeground()
+    await useWuPin('yuTianSuo')
+    await useWuPin('huangJinLuoPan', { hasOpenedWuPinLan: true })
+    await yiJianZuDui(gameWindow.roleInfo.roleName)
+    robotUtils.keyTap('f5')
+    await sleep(3000)
+  }
+
+  const meiZhaoDaoNeTemplateImagePath = path.join(
+    pythonImagesPath,
+    `GUIElements/taskRelative/${taskName}_meiZhaoDaoNe.jpg`
+  )
+  const beiWaLeTempCapturePath = path.join(pythonImagesPath, `GUIElements/taskRelative/${taskName}_beiWaLe.jpg`)
+
+  const time = 40 * 1000
+  let count = 1
+  let nearlyGoneTo = false
+  let hasTask = true
+  while (hasTask) {
+    robotUtils.keyTap('B', ['control'])
+    await sleep(1000)
+    robotUtils.keyTap('W', ['alt'])
+    clipboard.writeText(`${center[0]}.${center[1]}`)
+    robotUtils.keyTap('V', ['control'])
+    robotUtils.keyTap('enter')
+
+    await hasGoneToDestination(Math.max(Math.round(time / Math.pow(2, count)), 3000), nearlyGoneTo)
+    await gameWindow.setForeground()
+
+    const getDirectionTempCapturePath = path.join(
+      pythonImagesPath,
+      `temp/${randomName(`${taskName}_getDirection`)}.jpg`
+    )
+    await screenCaptureToFile(getDirectionTempCapturePath, [1093, 155], [210, 155])
+    let direction = await getDirection(getDirectionTempCapturePath)
+
+    if (!direction) {
+      // 找到了
+      await useWuPin('huangJinLuoPan')
+      const zhaoDaoLeTempCapturePath = path.join(pythonImagesPath, `temp/${randomName(`${taskName}_zhaoDaoLe`)}.jpg`)
+      await screenCaptureToFile(zhaoDaoLeTempCapturePath)
+      const found1 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, meiZhaoDaoNeTemplateImagePath)
+      const found2 = await findImageWithinTemplate(zhaoDaoLeTempCapturePath, beiWaLeTempCapturePath)
+      if (found1) {
+        // 还没找到
+      } else if (found2) {
+        // 被别人挖了
+        return false
+      } else {
+        // 找到了
+        const inBattle = await isInBattle_1(gameWindow)
+
+        if (inBattle) {
+          await waitFinishZhanDou_1(gameWindow)
+        }
+    
+        hasTask = false
+        continue
+      }
+    }
+
+    direction = direction || directions[0]
+    let prevCenter = [...center]
+    ;[leftTop, rightBottom, center] = calculatePositions(leftTop, rightBottom, center, direction, nearlyGoneTo)
+    if (!nearlyGoneTo) {
+      if (center.join('') === prevCenter.join('')) {
+        nearlyGoneTo = true
+      }
+    }
+    count++
+  }
+
+  // TODO: 任务做完, 交换御天梭
+  if (teamLeaderWindow.roleInfo.roleName !== gameWindow.roleInfo.roleName) {
+    robotUtils.keyTap('W', ['alt'])
+    const center = [Math.round((leftTop[0] + rightBottom[0]) / 2), Math.round((leftTop[1] + rightBottom[1]) / 2)]
+    clipboard.writeText(`${center[0]}.${center[1]}`)
+    robotUtils.keyTap('V', ['control'])
+    robotUtils.keyTap('enter')
+    await sleep(60 * 1000)
+
+    // 交易
+    robotUtils.keyTap('f5')
+    await sleep(3000)
+
+    await teamLeaderWindow.setForeground()
+    await zanLi()
+    // robotUtils.keyTap('W', ['alt'])
+    // clipboard.writeText(`${center[0] + 5}.${center[1] + 5}`)
+    // robotUtils.keyTap('V', ['control'])
+    // robotUtils.keyTap('enter')
+    // await sleep(3000)
+    await gameWindow.setForeground()
+    await findYuTianSuo()
+    await jiaoYi(gameWindow!, teamLeaderWindow!, ['yuTianSuo'])
+
+    await teamLeaderWindow.setForeground()
+    robotUtils.keyTap('f5')
+    await sleep(3000)
   }
 
   return true

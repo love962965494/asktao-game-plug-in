@@ -211,6 +211,7 @@ export async function clickGamePoint(
     tabOptions?: {
       isTab: boolean
       activeTabColor: string
+      top_n?: number
     }
     notMoveMouse?: boolean
   }
@@ -228,7 +229,7 @@ export async function clickGamePoint(
         const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName(captureName)}.jpg`)
         await screenCaptureToFile(tempCapturePath, position, size)
 
-        const colors = await extractThemeColors(tempCapturePath)
+        const colors = await extractThemeColors(tempCapturePath, otherOptions.tabOptions?.top_n)
 
         if (colors.includes(otherOptions.tabOptions?.activeTabColor || '')) {
           return true

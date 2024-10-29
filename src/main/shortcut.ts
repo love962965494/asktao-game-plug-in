@@ -40,13 +40,16 @@ import {
   yiJianRiChang,
 } from './tasks/riChang'
 import {
+  checkIsFlying,
   displayGameWindows,
   findTargetInMap,
   getCurrentGamePosition,
   getTeamsInfo,
   isGroupedTeam,
+  keepFly,
   liDui,
   yiJianZuDui,
+  zanLi,
 } from './tasks/basicTasks'
 import robotUtils from '../utils/robot'
 import fs from 'fs'
@@ -67,6 +70,7 @@ import { shiChen } from './tasks/basicFunction/shiChen'
 import { getDirection, huangJinLuoPan } from './tasks/xianShiTasks/huangJinLuoPan'
 import { gouMaiPingTai } from './tasks/basicFunction/gouMaiPingTai'
 import { useWuPin } from './tasks/wuPinTask'
+import jiaoYi, { findYuTianSuo } from './tasks/jiaoYiTask'
 
 export function registerGlobalShortcut() {
   // TODO: 截图
@@ -92,7 +96,7 @@ export function registerGlobalShortcut() {
     const randomName1 = 'testScreenCapture'
     let srcImagePath = path.join(pythonImagesPath, `testCapture/${randomName1}.jpg`)
     // 1304, 464
-    await screenCaptureToFile(srcImagePath, [1154, 905], [220, 34])
+    await screenCaptureToFile(srcImagePath, [1325, 942], [170, 42])
 
     // await screenCaptureToFile(srcImagePath)
     // const colors = await extractThemeColors(srcImagePath, 10)
@@ -132,24 +136,13 @@ export function registerGlobalShortcut() {
     console.log('process: ', process)
   }
   globalShortcut.register('CommandOrControl+Shift+F', async () => {
-    // await getGameWindows()
-    // // const gameWindows = [...(await GameWindowControl.getAllGameWindows().values())]
-    // const teamLeaderWindow = await GameWindowControl.getGameWindowByRoleName('Kanonの')!
-    // // const gameWindow = await GameWindowControl.getGameWindowByRoleName('AngelBeat')!
-    // await teamLeaderWindow.setForeground()
-    // const { position, size } = global.appContext.gamePoints['地图-通天塔']
-    // const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/tongTianTa.jpg`)
-    // const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('tongTianTa')}.jpg`)
-    // await screenCaptureToFile(tempCapturePath, position, size)
-    // const found = await findImageWithinTemplate(tempCapturePath, templateImagePath)
-
-    // // await escShouCangTasks('quanMinShuaDao', true, true)
-    // // await fuShengLu(gameWindow)
     await meiRiRiChang_DanRen()
-    // await shiMenRenWu()
+    // const allGameWindows = await getGameWindows()
+    // const teamLeaderWindow = GameWindowControl.getGameWindowByRoleName('Kanonの')
+    // const teamMemberWindow = GameWindowControl.getGameWindowByRoleName('LittleBuster')
 
-    // _setWindowTopMost()
-
+    // await teamMemberWindow?.setForeground()
+    // await zanLi()
   })
 
   globalShortcut.register('CommandOrControl+Alt+L', async () => {
@@ -198,48 +191,14 @@ export function registerGlobalShortcut() {
     const allGameWindows = await getGameWindows()
     const teamLeaderWindow = GameWindowControl.getGameWindowByRoleName('Kanonの')
     const teamMemberWindow = GameWindowControl.getGameWindowByRoleName('LittleBuster')
-    await teamMemberWindow?.setForeground()
-    robotUtils.keyTap('B', ['control'])
-    await sleep(1000)
-    robotUtils.keyTap('X', ['alt'])
-    await sleep(1000)
-    await moveMouseToBlank()
-
-    let teamLeaderPosition: number[] = []
-
-    // find team leader position and jiao yi
-    {
-      const teamLeaderImagePath = path.join(
-        pythonImagesPath,
-        `GUIElements/npcRelative/jiaoYi_${teamLeaderWindow?.roleInfo.account}.jpg`
-      )
-      const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('juesePosition')}.jpg`)
-      await screenCaptureToFile(tempCapturePath)
-      teamLeaderPosition = await findImagePositions(tempCapturePath, teamLeaderImagePath)
-    }
-
-    await moveMouseToAndClick(
-      '',
-      {
-        buttonName: 'jiaoYiKuang',
-        position: [teamLeaderPosition[0], teamLeaderPosition[1] - 200],
-        size: [100, 150],
-      },
-      {
-        callback: async () => {
-          const jiaoYiTemplateImagePath = path.join(pythonImagesPath, `GUIElements/common/jiaoYi.jpg`)
-          const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('jiaoYiKuang')}.jpg`)
-          await screenCaptureToFile(tempCapturePath)
-          const found = await findImageWithinTemplate(tempCapturePath, jiaoYiTemplateImagePath)
-
-          return found
-        },
-      }
-    )
-
     await teamLeaderWindow?.setForeground()
-    await useWuPin('yuTianSuo', { times: 1, hasOpenedWuPinLan: true, isJiaoYi: true })
-    await clickGamePoint('交易-确定', 'jiaoYiQueDing')
+    await findYuTianSuo()
+    await jiaoYi(teamLeaderWindow!, teamMemberWindow!, ['yuTianSuo'])
+
+    await teamMemberWindow?.setForeground()
+    robotUtils.keyTap('E', ['alt'])
+    await sleep(500)
+    await useWuPin('yuTianSuo')
   })
 }
 
