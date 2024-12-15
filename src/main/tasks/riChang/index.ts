@@ -77,7 +77,16 @@ export async function wuLeiLing() {
   await sleep(1000)
   robotUtils.keyTap('escape')
   await sleep(1000)
-  await clickGamePoint('收藏任务', 'wuLeiLing', {
+  let hasFoundHuoDongTask = false
+  {
+    const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/huoDongTask.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huoDongTask')}.jpg`)
+    await screenCaptureToFile(
+      tempCapturePath,
+    )
+    hasFoundHuoDongTask = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  }
+  await clickGamePoint(hasFoundHuoDongTask ? '收藏任务_2' : '收藏任务_1', 'wuLeiLing', {
     tabOptions: {
       isTab: true,
       activeTabColor: '#1e140a',
@@ -386,25 +395,25 @@ export async function meiRiRiChang_ZuDui() {
     })
     await sleep(500)
 
-    if (commonConfig.danDuTongTianTa) {
-      const isChecked = await hasChecked('收藏任务_通天塔')
+    // if (commonConfig.danDuTongTianTa) {
+    //   const isChecked = await hasChecked('收藏任务_通天塔')
 
-      if (isChecked) {
-        await clickGamePoint('收藏任务_通天塔', 'meiRiRiChang_tongTianTa', {
-          randomPixNums: [5, 2],
-        })
-      }
-    }
+    //   if (isChecked) {
+    //     await clickGamePoint('收藏任务_通天塔', 'meiRiRiChang_tongTianTa', {
+    //       randomPixNums: [5, 2],
+    //     })
+    //   }
+    // }
 
-    for (const task of riChangTasks_ZuDui.concat(commonConfig.danDuTongTianTa ? [] : ['收藏任务_通天塔'])) {
-      const isChecked = await hasChecked(task)
+    // for (const task of riChangTasks_ZuDui.concat(commonConfig.danDuTongTianTa ? [] : ['收藏任务_通天塔'])) {
+    //   const isChecked = await hasChecked(task)
 
-      if (!isChecked) {
-        await clickGamePoint(task, 'meiRiRiChang_ZuDui', {
-          randomPixNums: [5, 2],
-        })
-      }
-    }
+    //   if (!isChecked) {
+    //     await clickGamePoint(task, 'meiRiRiChang_ZuDui', {
+    //       randomPixNums: [5, 2],
+    //     })
+    //   }
+    // }
 
     await clickGamePoint('收藏任务_一键自动', 'meiRiRiChang_ZuDui')
     await sleep(3 * 1000)

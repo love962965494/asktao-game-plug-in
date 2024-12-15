@@ -90,7 +90,16 @@ export async function escShouCangTasks(taskName: string, ignoreHasFinished = fal
   await sleep(300)
   robotUtils.keyTap('escape')
   await sleep(300)
-  await clickGamePoint('收藏任务', 'xianJieShenBu', {
+  let hasFoundHuoDongTask = false
+  {
+    const templateImagePath = path.join(pythonImagesPath, `GUIElements/taskRelative/huoDongTask.jpg`)
+    const tempCapturePath = path.join(pythonImagesPath, `temp/${randomName('huoDongTask')}.jpg`)
+    await screenCaptureToFile(
+      tempCapturePath,
+    )
+    hasFoundHuoDongTask = await findImageWithinTemplate(tempCapturePath, templateImagePath)
+  }
+  await clickGamePoint(hasFoundHuoDongTask ? '收藏任务_2' : '收藏任务_1', 'xianJieShenBu', {
     tabOptions: {
       isTab: true,
       activeTabColor: '#1e140a',
